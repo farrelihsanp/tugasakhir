@@ -1,7 +1,15 @@
 import { z } from 'zod';
 import { Role } from '@prisma/client';
 
-export const registerSchema = z.object({
+/* -------------------------------------------------------------------------- */
+/*                                  REGISTER                                  */
+/* -------------------------------------------------------------------------- */
+
+export const emailSchema = z.object({
+  email: z.string().email('Invalid email format').min(1, 'Email is required'),
+});
+
+export const completeRegisterSchema = z.object({
   name: z
     .string()
     .min(2, 'Name must be at least 2 characters long')
@@ -15,11 +23,15 @@ export const registerSchema = z.object({
       /^[a-zA-Z0-9_]+$/,
       'Username can only contain letters, numbers, and underscore',
     ),
-  email: z.string().email('Invalid email format'),
-
-  role: z.nativeEnum(Role).optional(),
+  password: z.string().min(6, 'Password must be at least 6 characters'),
+  reTypePassword: z.string().min(6, 'Password must be at least 6 characters'),
+  role: z.nativeEnum(Role),
   referralCode: z.string().optional(),
 });
+
+/* -------------------------------------------------------------------------- */
+/*                                    LOGIN                                   */
+/* -------------------------------------------------------------------------- */
 
 export const loginSchema = z.object({
   emailOrUsername: z.string().min(1, 'Email or username is required'),

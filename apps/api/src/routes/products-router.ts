@@ -42,19 +42,15 @@ router
 
 // Get a product by ID
 router
-  .route('/detail-product/:storeId/:productId')
-  .get(
-    verifyToken,
-    roleGuard(['CUSTOMERS', 'SUPERADMIN', 'STOREADMIN']),
-    getDetailProductByIdByStoreId,
-  );
+  .route('/detail-product/:storeSlug/:productSlug')
+  .get(verifyToken, getDetailProductByIdByStoreId);
 
 // Get all products by store
 router.route('/products-store/:storeId').get(getAllProductsByStoreId);
 
 // get all products by category
 router
-  .route('/productsBycategories/:storeId/:categoryId')
+  .route('/productsBycategories/:storeSlug/:categorySlug')
   .get(
     verifyToken,
     roleGuard(['CUSTOMERS', 'SUPERADMIN', 'STOREADMIN']),
@@ -62,11 +58,7 @@ router
   );
 
 // get all cheap products
-router.route('/cheap-products-store/:storeId').get(
-  // verifyToken,
-  // roleGuard(['CUSTOMERS', 'SUPERADMIN', 'STOREADMIN']),
-  getCheapProductsByStoreId,
-);
+router.route('/cheap-products-store/:storeId').get(getCheapProductsByStoreId);
 
 router.get('/product-change-data', getFilteredProductChanges);
 

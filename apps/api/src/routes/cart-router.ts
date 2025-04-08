@@ -5,6 +5,7 @@ import {
   increaseQuantityProduct,
   decreaseQuantityProduct,
   deleteCartItem,
+  getCart,
 } from '../controllers/cart-controller.js';
 import { verifyToken } from '../middlewares/auth-middleware.js';
 import { roleGuard } from '../middlewares/auth-middleware.js';
@@ -33,5 +34,7 @@ router.delete(
   roleGuard(['CUSTOMERS']),
   deleteCartItem,
 );
+
+router.get('/my-cart', verifyToken, roleGuard(['CUSTOMERS']), getCart);
 
 export default router;

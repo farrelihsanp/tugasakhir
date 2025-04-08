@@ -6,6 +6,8 @@ import {
   deleteAddress,
   getAllAddresses,
   setPrimaryAddress,
+  getPrimaryAddress,
+  getAddressById,
 } from '../controllers/address-controller.js';
 
 import { verifyToken } from '../middlewares/auth-middleware.js';
@@ -33,5 +35,11 @@ router
 router
   .route('/set-primary')
   .post(verifyToken, roleGuard(['CUSTOMERS']), setPrimaryAddress);
+
+router
+  .route('/get-primary')
+  .get(verifyToken, roleGuard(['CUSTOMERS']), getPrimaryAddress);
+
+router.route('/:id').get(verifyToken, roleGuard(['CUSTOMERS']), getAddressById);
 
 export default router;

@@ -12,15 +12,21 @@ export interface StoreData {
 }
 
 export interface Store {
-  id: number;
+  id: string;
   name: string;
-  address: string;
+  slug: string; // ✅ Tambahkan ini
+  latitude: number;
+  longitude: number;
+  maxServiceDistance: number;
+  isPrimary: boolean;
+  isActive: boolean;
 }
 
 export interface Category {
   id: number;
   name: string;
   image: string;
+  slug: string;
 }
 
 export interface Product {
@@ -85,6 +91,8 @@ export interface StoreContextType {
   categories: Category[];
   loading: boolean;
   error: string | null;
+  user: User | null;
+  handleLogout: () => void;
 }
 
 export interface ProductItemProps {
@@ -93,4 +101,12 @@ export interface ProductItemProps {
   price: number;
   excerpt: string;
   stock: number;
+}
+
+export interface User {
+  id: number;
+  name: string;
+  email: string;
+  username: string;
+  profileImage: string;
 }

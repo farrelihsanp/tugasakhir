@@ -7,10 +7,10 @@ import { upload } from '../middlewares/upload-middleware.js';
 
 const router = Router();
 
-import { verifyToken } from '../middlewares/auth-middleware.js';
+router.route('/register').post(register);
 
-router.route('/register').post(upload.single('profileImage'), register);
-
-router.route('/fill-data').post(verifyToken, completeRegister);
+router
+  .route('/fill-data')
+  .post(upload.single('profileImage'), completeRegister);
 
 export default router;

@@ -52,10 +52,10 @@ export default function LoginPage() {
           router.push('/');
           break;
         case 'SUPERADMIN':
-          router.push('/dashboard/superadmin');
+          router.push('/');
           break;
         case 'STOREADMIN':
-          router.push('/dashboard/storeadmin');
+          router.push('/');
           break;
         case 'UNSET':
         default:
@@ -139,7 +139,7 @@ export default function LoginPage() {
         <p className="mt-1 text-sm text-center text-gray-600">
           forgot your password?
           <Link
-            href="/auth/reset-password"
+            href="/reset-password"
             className="text-green-600 hover:underline"
           >
             click here

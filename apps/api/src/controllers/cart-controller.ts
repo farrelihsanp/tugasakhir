@@ -327,3 +327,45 @@ export const getTotalAmountCart = async (
     next(error);
   }
 };
+
+export const getCart = async (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) => {
+  try {
+    const userId = req.user?.id;
+    if (!userId) {
+      res.status(401).json({ error: 'Unauthorized' });
+      return;
+    }
+
+    const cart = await prisma.cart.findUnique({
+      where: { userId: userId },
+      include: {
+        cartItems: {
+          include: {
+            storeProduct: {
+              include: { product: { include: { ProductImages: true } } },
+            },
+          },
+        },
+      },
+    });
+
+    if (!cart) {
+      res.status(404).json({ error: 'Cart not found' });
+      return;
+    }
+
+    res.status(200).json({
+      ok: true,
+      message: 'Cart retrieved successfully',
+      data: cart,
+    });
+    return;
+  } catch (error) {
+    console.error('Error retrieving cart:', error);
+    next(error);
+  }
+};

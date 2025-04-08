@@ -20,7 +20,7 @@ export const calculateShippingCost = async (
     include: {
       cartItems: {
         include: {
-          product: true,
+          Product: true,
         },
       },
     },
@@ -30,8 +30,9 @@ export const calculateShippingCost = async (
     res.status(404).json({ error: 'Cart not found' });
     return;
   }
+
   const totalWeight = cartUser.cartItems.reduce(
-    (total, item) => total + item.product.weight * item.quantity,
+    (total, item) => total + (item.Product?.weight || 0) * item.quantity,
     0,
   );
 
@@ -49,6 +50,7 @@ export const calculateShippingCost = async (
   const destinationAddress = await prisma.address.findFirst({
     where: {
       userId: userId,
+      isPrimary: true,
     },
     select: {
       postalCode: true,
@@ -56,7 +58,6 @@ export const calculateShippingCost = async (
     },
   });
 
-  // Validate required fields
   if (!destinationAddress || !destinationAddress.postalCode) {
     res.status(400).json({ error: 'Destination postal code is required' });
     return;
@@ -66,16 +67,17 @@ export const calculateShippingCost = async (
   /*                        CARI ORIGIN POSTAL CODE STORE                       */
   /* -------------------------------------------------------------------------- */
 
+  const { storeSlug } = req.params;
+
   const postalCodeStore = await prisma.store.findFirst({
     where: {
-      id: +req.params.id,
+      slug: storeSlug,
     },
     select: {
       postalCode: true,
     },
   });
 
-  // Validate required fields
   if (!postalCodeStore || !postalCodeStore.postalCode) {
     res.status(400).json({ error: 'Origin postal code is required' });
     return;
@@ -117,6 +119,11 @@ export const calculateShippingCost = async (
     }
 
     const data = await response.json();
+    if (!data || !data.rajaongkir || !data.rajaongkir.results) {
+      res.status(500).json({ error: 'Invalid response from shipping API' });
+      return;
+    }
+
     res.status(200).json({
       ok: true,
       message: 'Shipping cost calculated successfully',

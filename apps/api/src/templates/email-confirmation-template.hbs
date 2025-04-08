@@ -2,7 +2,7 @@
   <head>
     <meta charset='UTF-8' />
     <meta name='viewport' content='width=device-width, initial-scale=1.0' />
-    <title>Confirm Your Login</title>
+    <title>Confirm Your Registration</title>
     <style>
       body {
         font-family: Arial, sans-serif;
@@ -59,19 +59,18 @@
   </head>
   <body>
     <div class='container'>
-      <h1>Confirm Your Login</h1>
-      <p>Hey there,</p>
+      <h1>Confirm Your Registration</h1>
+      <p>Hello! You recently registered with the email {{email}}</p>
       <p>
-        We noticed you recently tried to log in to your account. To make sure
-        it’s really you, please click the button below to confirm your login.
+        To complete your registration and activate your account, please click
+        the button below to confirm your email address.
       </p>
-      <a href='{{confirmationLink}}' class='button'>Yes, It's Me!</a>
+      <a href='{{confirmationLink}}' class='button'>Confirm My Email</a>
       <p>
-        If you didn't request this, don't worry—you can safely ignore this
-        email.
+        If you didn't request this registration, please ignore this email.
       </p>
       <div class='footer'>
-        <p>Thanks for being part of our community!</p>
+        <p>Thanks for joining our community!</p>
         <p>&copy; 2025 Resend Platform. All rights reserved.</p>
       </div>
     </div>

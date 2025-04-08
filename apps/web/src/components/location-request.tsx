@@ -20,79 +20,88 @@ enum GeolocationErrorCode {
 export const Geolocation = () => {
   const [latitude, setLatitude] = useState<number | null>(null);
   const [longitude, setLongitude] = useState<number | null>(null);
+  const [hasTriedLocation, setHasTriedLocation] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
   const { setNearestStore } = useStoreContext();
 
+  if (error) {
+    console.error(error);
+  }
+
   useEffect(() => {
-    if (!navigator.geolocation) {
+    if (!window.navigator.geolocation) {
       setError('Geolocation is not supported by your browser');
+      setHasTriedLocation(true);
       return;
     }
 
-    const handleSuccess = (position: Position) => {
-      setLatitude(position.coords.latitude);
-      setLongitude(position.coords.longitude);
-    };
-
-    const handleError = (error: GeolocationPositionError) => {
-      switch (error.code) {
-        case GeolocationErrorCode.PERMISSION_DENIED:
-          setError('User denied the request for Geolocation.');
-          break;
-        case GeolocationErrorCode.POSITION_UNAVAILABLE:
-          setError('Location information is unavailable.');
-          break;
-        case GeolocationErrorCode.TIMEOUT:
-          setError('The request to get user location timed out.');
-          break;
-        case GeolocationErrorCode.UNKNOWN_ERROR:
-          setError('An unknown error occurred.');
-          break;
-        default:
-          setError('An unexpected error occurred.');
-      }
-    };
-
-    window.navigator.geolocation.getCurrentPosition(handleSuccess, handleError);
+    window.navigator.geolocation.getCurrentPosition(
+      (position: Position) => {
+        setLatitude(position.coords.latitude);
+        setLongitude(position.coords.longitude);
+        setHasTriedLocation(true);
+      },
+      (error: GeolocationPositionError) => {
+        switch (error.code) {
+          case GeolocationErrorCode.PERMISSION_DENIED:
+            setError('User denied the request for Geolocation.');
+            break;
+          case GeolocationErrorCode.POSITION_UNAVAILABLE:
+            setError('Location information is unavailable.');
+            break;
+          case GeolocationErrorCode.TIMEOUT:
+            setError('The request to get user location timed out.');
+            break;
+          case GeolocationErrorCode.UNKNOWN_ERROR:
+            setError('An unknown error occurred.');
+            break;
+          default:
+            setError('An unexpected error occurred.');
+        }
+        setHasTriedLocation(true);
+      },
+    );
   }, []);
 
   useEffect(() => {
-    if (latitude !== null && longitude !== null) {
-      const url = `http://localhost:8000/api/v1/stores/nearest-store?latitudeUser=${latitude}&longitudeUser=${longitude}`;
+    if (!hasTriedLocation) return;
 
-      fetch(url, {
-        method: 'GET',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-      })
-        .then((response) => {
-          if (!response.ok) {
-            throw new Error('Network response was not ok');
-          }
-          return response.json();
-        })
-        .then((data) => {
-          setNearestStore(data.data);
-        })
-        .catch((error) => {
-          console.error('There was a problem with the fetch operation:', error);
-          setError('Failed to fetch nearest store');
+    const fetchNearestStore = async () => {
+      try {
+        let url = `http://localhost:8000/api/v1/stores/nearest-store`;
+
+        if (latitude !== null && longitude !== null) {
+          url += `?latitudeUser=${latitude}&longitudeUser=${longitude}`;
+        }
+
+        const response = await fetch(url, {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json',
+          },
         });
-    }
-  }, [latitude, longitude, setNearestStore]);
 
-  return (
-    <div>
-      <h1>Geolocation Information</h1>
-      {error ? (
-        <p style={{ color: 'red' }}>Error: {error}</p>
-      ) : (
-        <div>
-          <p>Latitude: {latitude}</p>
-          <p>Longitude: {longitude}</p>
-        </div>
-      )}
-    </div>
-  );
+        const data = await response.json();
+
+        if (!response.ok) {
+          if (response.status === 403) {
+            setError(data.message || 'Jarak lokasi terlalu jauh dari store.');
+            setNearestStore(null);
+          } else {
+            throw new Error(data.message || 'Failed to fetch nearest store.');
+          }
+          return;
+        }
+
+        setNearestStore(data.data);
+      } catch (err: unknown) {
+        console.error('Fetch error:', err);
+        setError((err as Error).message || 'Failed to fetch nearest store');
+      }
+    };
+
+    fetchNearestStore();
+  }, [hasTriedLocation, latitude, longitude, setNearestStore]);
+
+  return null;
 };

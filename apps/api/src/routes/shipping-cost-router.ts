@@ -7,7 +7,7 @@ const router = express.Router();
 
 // Endpoint to calculate shipping cost
 router
-  .route('/calculate')
+  .route('/calculate/:storeSlug')
   .post(verifyToken, roleGuard(['CUSTOMERS']), calculateShippingCost);
 
 export default router;

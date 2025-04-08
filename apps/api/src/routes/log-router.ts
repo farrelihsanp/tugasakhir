@@ -3,7 +3,7 @@ import {
   getCurrentUser,
   login,
   logout,
-  resetPassword,
+  submitNewPassword,
   sendEmailresetPassword,
   updateUserProfile,
 } from '../controllers/log-controller.js';
@@ -17,7 +17,7 @@ router.route('/login').post(login);
 router.route('/logout').post(logout);
 router.route('/me').get(verifyToken, getCurrentUser);
 router.route('/reset-password').post(sendEmailresetPassword);
-router.route('/submit-new-password').post(resetPassword);
+router.route('/submit-new-password').post(submitNewPassword);
 router
   .route('/update-profile/:userId')
   .put(verifyToken, upload.single('profileImage'), updateUserProfile);

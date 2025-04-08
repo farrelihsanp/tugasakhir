@@ -71,6 +71,7 @@ model User {
     referralCount       Int      @default(0)
     provider            Provider
     isVerified          Boolean  @default(false)
+    passwordConfirmed   Boolean  @default(false)
     proofOfPaymentImage String?
 
     Cart              Cart?
@@ -117,6 +118,8 @@ model Address {
     postalCode Int
     country    String
     number     Int
+    latitude   Float?
+    longitude  Float?
     isPrimary  Boolean  @default(false)
     isActive   Boolean  @default(false)
     createdAt  DateTime @default(now())

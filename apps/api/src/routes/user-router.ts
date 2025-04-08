@@ -9,13 +9,11 @@ const router = express.Router();
 
 import { verifyToken, roleGuard } from '../middlewares/auth-middleware.js';
 
-router
-  .route('/users')
-  .get(verifyToken, roleGuard(['SUPERADMINS']), getAllUsers);
+router.route('/users').get(verifyToken, roleGuard(['SUPERADMIN']), getAllUsers);
 
 router
   .route('/users/:id')
-  .get(verifyToken, roleGuard(['SUPERADMINS']), getUserById)
-  .delete(verifyToken, roleGuard(['SUPERADMINS']), deleteUser);
+  .get(verifyToken, roleGuard(['SUPERADMIN']), getUserById)
+  .delete(verifyToken, roleGuard(['SUPERADMIN']), deleteUser);
 
 export default router;

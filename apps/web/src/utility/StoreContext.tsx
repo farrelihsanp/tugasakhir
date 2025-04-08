@@ -7,6 +7,7 @@ import {
   Product,
   cheapProducts,
   StoreContextType,
+  User,
 } from '../types/types';
 
 const StoreContext = createContext<StoreContextType | undefined>(undefined);
@@ -26,41 +27,103 @@ export const StoreProvider: React.FC<{ children: React.ReactNode }> = ({
   const [products, setProducts] = useState<Product[]>([]);
   const [cheapProducts, setCheapProducts] = useState<cheapProducts[]>([]);
   const [categories, setCategories] = useState<Category[]>([]);
+  const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    if (nearestStore?.id) {
-      setLoading(true);
-      setError(null);
+    setLoading(true);
+    setError(null);
 
-      const fetchProducts = fetch(
-        `http://localhost:8000/api/v1/products-store/${nearestStore.id}`,
-      ).then((res) => res.json());
+    fetch('http://localhost:8000/api/v1/auth/me', {
+      method: 'GET',
+      credentials: 'include',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    })
+      .then((res) => res.json())
+      .then((data) => {
+        setUser(data);
+      })
+      .catch((error) => {
+        console.error('Fetch error (user):', error);
+        setError(`Failed to fetch user data: ${error.message}`);
+      })
+      .finally(() => {
+        setLoading(false);
+      });
+  }, []);
 
-      const fetchCategories = fetch(
-        `http://localhost:8000/api/v1/all-categories`,
-      ).then((res) => res.json());
+  useEffect(() => {
+    setLoading(true);
+    setError(null);
 
-      const fetchCheapProducts = fetch(
-        `http://localhost:8000/api/v1/cheap-products-store/${nearestStore.id}`,
-      ).then((res) => res.json());
+    fetch('http://localhost:8000/api/v1/all-categories')
+      .then((res) => res.json())
+      .then((data) => {
+        setCategories(data.data);
+      })
+      .catch((error) => {
+        console.error('Fetch error (categories):', error);
+        setError(`Failed to fetch categories: ${error.message}`);
+      })
+      .finally(() => {
+        setLoading(false);
+      });
+  }, []);
 
-      Promise.all([fetchProducts, fetchCategories, fetchCheapProducts])
-        .then(([productData, categoryData, cheapProductsData]) => {
-          setProducts(productData.data);
-          setCategories(categoryData.data);
+  useEffect(() => {
+    if (!nearestStore?.id) return;
+
+    setLoading(true);
+    setError(null);
+
+    const fetchProducts = fetch(
+      `http://localhost:8000/api/v1/products-store/${nearestStore.id}`,
+    ).then((res) => res.json());
+
+    const fetchCheapProducts = fetch(
+      `http://localhost:8000/api/v1/cheap-products-store/${nearestStore.id}`,
+    ).then((res) => res.json());
+
+    Promise.all([fetchProducts, fetchCheapProducts])
+      .then(([productData, cheapProductsData]) => {
+        setProducts(productData.data);
+        if (cheapProductsData?.data) {
           setCheapProducts(cheapProductsData.data);
-        })
-        .catch((error) => {
-          console.error('Fetch error:', error);
-          setError(`Failed to fetch data: ${error.message}`);
-        })
-        .finally(() => {
-          setLoading(false);
-        });
-    }
+        } else {
+          console.warn(
+            'Cheap Products data is empty or not in the expected format',
+          );
+        }
+      })
+      .catch((error) => {
+        console.error('Fetch error (products):', error);
+        setError(`Failed to fetch product data: ${error.message}`);
+      })
+      .finally(() => {
+        setLoading(false);
+      });
   }, [nearestStore]);
+
+  // Handle logout within the context
+  const handleLogout = async () => {
+    try {
+      const response = await fetch('http://localhost:8000/api/v1/auth/logout', {
+        method: 'POST',
+        credentials: 'include',
+      });
+      if (response.ok) {
+        setUser(null); // Clear user data on logout
+        window.location.href = '/'; // Redirect to homepage or login page
+      } else {
+        throw new Error('Logout failed');
+      }
+    } catch (err) {
+      setError((err as Error).message);
+    }
+  };
 
   return (
     <StoreContext.Provider
@@ -70,8 +133,10 @@ export const StoreProvider: React.FC<{ children: React.ReactNode }> = ({
         cheapProducts,
         products,
         categories,
+        user,
         loading,
         error,
+        handleLogout,
       }}
     >
       {children}

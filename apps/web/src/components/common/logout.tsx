@@ -4,7 +4,7 @@ import { useRouter } from 'next/navigation';
 
 interface LogoutModalProps {
   onClose: () => void;
-  onLogoutSuccess?: () => void; // [HIGHLIGHT] new callback
+  onLogoutSuccess?: () => void;
 }
 
 export default function LogoutModal({
@@ -53,7 +53,7 @@ export default function LogoutModal({
       <div className="bg-white shadow-md rounded p-6 w-full max-w-sm text-center">
         <h2 className="text-2xl font-bold mb-4">Logout</h2>
         <p className="mb-6 text-sm text-gray-600">
-          Are you sure you want to log out from Event Management Platform?
+          Are you sure you want to log out from Quickmart?
         </p>
 
         <div className="flex items-center justify-center space-x-4">

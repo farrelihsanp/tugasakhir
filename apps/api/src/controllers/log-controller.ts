@@ -137,12 +137,12 @@ export const sendEmailresetPassword = async (
 
   try {
     const user = await prisma.user.findUnique({ where: { email } });
+
     if (!user) {
       res.status(400).json({ error: 'User not found' });
       return;
     }
 
-    // Generate a confirmation token
     const confirmToken = crypto.randomBytes(20).toString('hex');
     const passwordResetLink = `http://localhost:8000/api/v1/confirm/reset-password?token=${confirmToken}`;
 
@@ -163,7 +163,6 @@ export const sendEmailresetPassword = async (
       passwordResetLink: passwordResetLink,
     });
 
-    // Send the email
     const { error } = await resend.emails.send({
       from: 'Password Reset <reset@resend.dev>',
       to: email,
@@ -182,41 +181,52 @@ export const sendEmailresetPassword = async (
   }
 };
 
-export const resetPassword = async (
+export const submitNewPassword = async (
   req: Request,
   res: Response,
   next: NextFunction,
 ) => {
   try {
-    const token = req.query.token;
+    const querytoken = req.query.token;
 
-    if (!token) {
+    if (!querytoken) {
       res.status(400).json({ message: 'Token is required!' });
       return;
     }
 
-    const confirmToken = await prisma.confirmToken.findFirst({
-      where: { token: token.toString() },
+    const confirmTokenRecord = await prisma.confirmToken.findFirst({
+      where: { token: querytoken.toString() },
+      include: { user: true },
     });
 
-    if (!confirmToken || confirmToken.expiredDate < new Date()) {
-      res.status(400).json({ message: 'Invalid or expired token' });
+    if (!confirmTokenRecord || confirmTokenRecord.expiredDate < new Date()) {
+      res.status(400).json({ message: 'Invalid or expired token!' });
       return;
     }
 
+    const user = confirmTokenRecord.user;
     const { password } = req.body;
+
+    if (!user.passwordConfirmed) {
+      res.status(400).json({ error: 'you must confirm at your email' });
+      return;
+    }
+
+    await prisma.user.update({
+      where: { id: Number(user?.id) },
+      data: { passwordConfirmed: false },
+    });
 
     const salt = await genSalt(10);
     const hashedPassword = await hash(password, salt);
 
     await prisma.user.update({
-      where: { id: confirmToken.userId },
+      where: { id: Number(user?.id) },
       data: { password: hashedPassword },
     });
 
-    await prisma.confirmToken.update({
-      where: { id: confirmToken.id },
-      data: { used: true },
+    await prisma.confirmToken.delete({
+      where: { id: confirmTokenRecord.id },
     });
 
     res.status(200).json({ message: 'Password reset successfully' });
@@ -248,7 +258,6 @@ export const updateUserProfile = async (
   try {
     let cloudinaryData;
 
-    // Fetch the existing user data
     const user = await prisma.user.findUnique({
       where: { id: Number(userId) },
     });
@@ -258,7 +267,13 @@ export const updateUserProfile = async (
       return;
     }
 
-    // If a new file is uploaded, upload it to Cloudinary
+    await prisma.user.update({
+      where: { id: Number(userId) },
+      data: {
+        emailConfirmed: false,
+      },
+    });
+
     if (req.file) {
       try {
         cloudinaryData = await cloudinary.uploader.upload(req.file.path, {
@@ -272,16 +287,14 @@ export const updateUserProfile = async (
         return;
       }
     } else {
-      // If no new image is uploaded, retain the existing profile image
       profileImage = user.profileImage;
     }
 
-    // Construct the data object dynamically
     const data: UserData = {};
 
     if (name) data.name = name;
     if (username) data.username = username;
-    if (profileImage) data.profileImage = profileImage; // Use the existing or new image
+    if (profileImage) data.profileImage = profileImage;
     if (email) {
       data.email = email;
       const confirmToken = crypto.randomBytes(20).toString('hex');

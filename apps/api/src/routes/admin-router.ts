@@ -5,6 +5,7 @@ import {
   deleteAdmin,
   getAllAdmins,
   getAdminById,
+  assignStoreAdmin,
 } from '../controllers/admin-controller.js';
 
 import { verifyToken, roleGuard } from '../middlewares/auth-middleware.js';
@@ -48,5 +49,12 @@ router.delete(
 
 // Route for getting an admin by ID
 router.get('/:id', verifyToken, roleGuard(['SUPERADMIN']), getAdminById);
+
+router.post(
+  '/assign-store-admin',
+  verifyToken,
+  roleGuard(['SUPERADMIN']),
+  assignStoreAdmin,
+);
 
 export default router;

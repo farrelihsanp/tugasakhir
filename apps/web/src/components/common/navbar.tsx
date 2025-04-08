@@ -5,13 +5,14 @@ import Link from 'next/link';
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import LogoutModal from './logout';
+import { useStoreContext } from '../../utility/StoreContext';
 
 interface UserInfo {
   id: number;
   name: string;
-  username: string; // Added to match the Prisma schema
+  username: string;
   role: 'CUSTOMERS' | 'STOREADMIN' | 'SUPERADMIN' | null;
-  profileImage?: string; // Optional field to match the Prisma schema
+  profileImage?: string;
 }
 
 export default function Navbar() {
@@ -19,6 +20,8 @@ export default function Navbar() {
   const [showLogoutModal, setShowLogoutModal] = useState(false);
   const [user, setUser] = useState<UserInfo | null>(null);
   const [loadingUser, setLoadingUser] = useState(true);
+
+  const { nearestStore } = useStoreContext();
 
   useEffect(() => {
     fetchUser();
@@ -36,10 +39,10 @@ export default function Navbar() {
       const data = await res.json();
       setUser({
         id: data.id,
-        name: data.name, // Ensure this matches the Prisma schema
-        username: data.username, // Added to match the Prisma schema
+        name: data.name,
+        username: data.username,
         role: data.role,
-        profileImage: data.profileImage, // Optional field
+        profileImage: data.profileImage,
       });
     } catch (error) {
       console.error('Error fetching user info:', error);
@@ -114,112 +117,142 @@ export default function Navbar() {
     );
   }
 
-  // Conditional rendering based on user role
-  const renderNavbar = () => {
-    if (user.role === 'CUSTOMERS') {
-      return (
-        <section>
-          <div className=" bg-blue-600 py-3 flex items-center justify-between ">
-            <LogoWebsite />
-            <div className="RightContainer flex justify-center items-center mx-5 gap-3">
-              <div className="relative w-10 h-10">
-                <Link href="/dashboard/customers/profile">
-                  {user.profileImage && (
-                    <Image
-                      src={user.profileImage}
-                      alt="photo profile"
-                      layout="fill"
-                      objectFit="cover"
-                      className="rounded-full"
-                    />
-                  )}
-                </Link>
-              </div>
-              <div>
-                <p>Hi! {user.name}</p>
-              </div>
-              <button
-                onClick={handleLogoutClick}
-                className="bg-white text-red-900 px-3 py-1 rounded hover:bg-gray-100"
-              >
-                Logout
-              </button>
+  const roleComponents = {
+    CUSTOMERS: (
+      <section>
+        <div className=" bg-blue-600 py-3 flex items-center justify-between ">
+          <LogoWebsite />
+          <div className="RightContainer flex justify-center items-center mx-5 gap-3">
+            <div>
+              <Link href="/my-cart" className="text-white">
+                Cart
+              </Link>
             </div>
-          </div>
-        </section>
-      );
-    } else if (user.role === 'STOREADMIN') {
-      return (
-        <section>
-          <div className=" bg-blue-600 py-3 flex items-center justify-between ">
-            <LogoWebsite />
-            <div className="RightContainer flex justify-center items-center mx-5 gap-3">
-              <div className="relative w-10 h-10">
-                <Link href="#">
-                  {user.profileImage && (
-                    <Image
-                      src={user.profileImage}
-                      alt="photo profile"
-                      layout="fill"
-                      objectFit="cover"
-                      className="rounded-full"
-                    />
-                  )}
-                </Link>
-              </div>
-              <div>
-                <p>Hi! {user.name}</p>
-              </div>
-              <button
-                onClick={handleLogoutClick}
-                className="bg-white text-red-900 px-3 py-1 rounded hover:bg-gray-100"
-              >
-                Logout
-              </button>
+            <div>
+              <Link href="/my-vouchers" className="text-white">
+                My Voucher
+              </Link>
             </div>
-          </div>
-        </section>
-      );
-    } else if (user.role === 'SUPERADMIN') {
-      // Add SUPERADMIN specific links here if needed
-      return (
-        <section>
-          <div className=" bg-blue-600 py-3 flex items-center justify-between ">
-            <LogoWebsite />
-            <div className="RightContainer flex justify-center items-center mx-5 gap-3">
-              <div className="relative w-10 h-10">
-                <Link href="#">
-                  {user.profileImage && (
-                    <Image
-                      src={user.profileImage}
-                      alt="photo profile"
-                      layout="fill"
-                      objectFit="cover"
-                      className="rounded-full"
-                    />
-                  )}
-                </Link>
-              </div>
-              <div>
-                <p>Hi! {user.name}</p>
-              </div>
-              <button
-                onClick={handleLogoutClick}
-                className="bg-white text-red-900 px-3 py-1 rounded hover:bg-gray-100"
-              >
-                Logout
-              </button>
+            <div>
+              <Link href="/my-order" className="text-white">
+                Order
+              </Link>
             </div>
+            <div>
+              <Link
+                href={`/${nearestStore?.slug}/product`}
+                className="text-white"
+              >
+                Product
+              </Link>
+            </div>
+            <div>
+              <Link href="/category" className="text-white">
+                Category
+              </Link>
+            </div>
+            <div className="relative w-10 h-10">
+              <Link href={`/customer/${user.username}/profile`}>
+                {user.profileImage && (
+                  <Image
+                    src={user.profileImage}
+                    alt="photo profile"
+                    layout="fill"
+                    objectFit="cover"
+                    className="rounded-full"
+                  />
+                )}
+              </Link>
+            </div>
+
+            <div>
+              <p>Hi! {user.name}</p>
+            </div>
+            <button
+              onClick={handleLogoutClick}
+              className="bg-white text-red-900 px-3 py-1 rounded hover:bg-gray-100"
+            >
+              Logout
+            </button>
           </div>
-        </section>
-      );
-    }
-    return null; // Fallback for unknown roles
+        </div>
+      </section>
+    ),
+    STOREADMIN: (
+      <section>
+        <div className=" bg-blue-600 py-3 flex items-center justify-between ">
+          <LogoWebsite />
+          <div className="RightContainer flex justify-center items-center mx-5 gap-3">
+            <div className="relative w-10 h-10">
+              <Link href="#">
+                {user.profileImage && (
+                  <Image
+                    src={user.profileImage}
+                    alt="photo profile"
+                    layout="fill"
+                    objectFit="cover"
+                    className="rounded-full"
+                  />
+                )}
+              </Link>
+            </div>
+            <div>
+              <p>Hi! {user.name}</p>
+            </div>
+            <button
+              onClick={handleLogoutClick}
+              className="bg-white text-red-900 px-3 py-1 rounded hover:bg-gray-100"
+            >
+              Logout
+            </button>
+          </div>
+        </div>
+      </section>
+    ),
+    SUPERADMIN: (
+      <section>
+        <div className=" bg-blue-600 py-3 flex items-center justify-between ">
+          <LogoWebsite />
+          <div className="RightContainer flex justify-center items-center mx-5 gap-3">
+            <div>
+              <Link
+                href={`/superadmin/${user?.username}`}
+                className="text-white"
+              >
+                Dashboard
+              </Link>
+            </div>
+            <div className="relative w-10 h-10">
+              <Link href={`/superadmin/${user?.username}/profile`}>
+                {user.profileImage && (
+                  <Image
+                    src={user.profileImage}
+                    alt="photo profile"
+                    layout="fill"
+                    objectFit="cover"
+                    className="rounded-full"
+                  />
+                )}
+              </Link>
+            </div>
+            <div>
+              <p>Hi! {user.name}</p>
+            </div>
+            <button
+              onClick={handleLogoutClick}
+              className="bg-white text-red-900 px-3 py-1 rounded hover:bg-gray-100"
+            >
+              Logout
+            </button>
+          </div>
+        </div>
+      </section>
+    ),
   };
 
   return (
     <>
-      {renderNavbar()}
+      {roleComponents[user.role!]}
       {showLogoutModal && (
         <LogoutModal
           onClose={handleCloseModal}

@@ -3,8 +3,8 @@ import { prisma } from '../configs/prisma.js';
 import cloudinary from '../configs/cloudinary.js';
 import fs from 'node:fs/promises';
 import { getDistance } from 'geolib';
+import { convertAddressToCoordinates } from '../utils/geocode.js';
 
-// Create a new store
 export const createStore = async (
   req: Request,
   res: Response,
@@ -20,10 +20,7 @@ export const createStore = async (
       country,
       postalCode,
       phoneNumber,
-      latitude,
-      longitude,
       maxServiceDistance,
-      storeAdminIds, // New field to accept store admin IDs
     } = req.body;
 
     // Validate required fields
@@ -35,17 +32,11 @@ export const createStore = async (
       !country ||
       !postalCode ||
       !phoneNumber ||
-      !latitude ||
-      !longitude ||
-      !maxServiceDistance ||
-      !storeAdminIds || // Ensure storeAdminIds is provided
-      !Array.isArray(storeAdminIds) || // Ensure storeAdminIds is an array
-      storeAdminIds.length === 0 // Ensure storeAdminIds is not empty
+      !maxServiceDistance
     ) {
-      console.log(req.body);
-      res
-        .status(400)
-        .json({ error: 'All fields are required, including storeAdminIds' });
+      res.status(400).json({
+        error: 'All fields are required, including maxServiceDistance',
+      });
       return;
     }
 
@@ -77,24 +68,12 @@ export const createStore = async (
       }
     }
 
-    // Fetch user details to check roles
-    const users = await prisma.user.findMany({
-      where: {
-        id: {
-          in: storeAdminIds.map((id: number) => +id),
-        },
-      },
-    });
-
-    // Filter users with role 'STOREADMIN'
-    const validStoreAdminIds = users
-      .filter((user) => user.role === 'STOREADMIN')
-      .map((user) => user.id);
-
-    if (validStoreAdminIds.length === 0) {
-      res.status(400).json({ error: 'No valid store admins provided' });
-      return;
-    }
+    // Get coordinates from address
+    const coordinates = await convertAddressToCoordinates(
+      `${address}, ${city}, ${postalCode}, ${country}`,
+    );
+    const latitude = coordinates?.results[0]?.geometry?.lat ?? 0;
+    const longitude = coordinates?.results[0]?.geometry?.lng ?? 0;
 
     // Create new store entry in the database
     const newStore = await prisma.store.create({
@@ -106,16 +85,11 @@ export const createStore = async (
         country,
         postalCode,
         phoneNumber,
-        latitude: +latitude,
-        longitude: Number(longitude),
-        maxServiceDistance: +maxServiceDistance,
+        latitude,
+        longitude,
+        maxServiceDistance: +maxServiceDistance * 1000,
         slug,
         storeImage,
-        StoreUser: {
-          create: validStoreAdminIds.map((id: number) => ({
-            userId: id,
-          })),
-        },
       },
     });
 
@@ -131,7 +105,6 @@ export const createStore = async (
   }
 };
 
-// Update an existing store
 export const updateStore = async (
   req: Request,
   res: Response,
@@ -147,14 +120,11 @@ export const updateStore = async (
       country,
       postalCode,
       phoneNumber,
-      latitude,
-      longitude,
       maxServiceDistance,
-      storeAdminIds, // New field to accept store admin IDs
     } = req.body;
 
     // Get the store ID from request parameters
-    const { id } = req.params; // Retrieve id from req.params
+    const { id } = req.params;
 
     // Validate required fields
     if (
@@ -166,16 +136,10 @@ export const updateStore = async (
       !country ||
       !postalCode ||
       !phoneNumber ||
-      !latitude ||
-      !longitude ||
-      !maxServiceDistance ||
-      !storeAdminIds || // Ensure storeAdminIds is provided
-      !Array.isArray(storeAdminIds) || // Ensure storeAdminIds is an array
-      storeAdminIds.length === 0 // Ensure storeAdminIds is not empty
+      !maxServiceDistance
     ) {
-      console.log(req.body);
       res.status(400).json({
-        error: 'All fields are required, including storeAdminIds and id',
+        error: 'All fields are required, including id and maxServiceDistance',
       });
       return;
     }
@@ -207,24 +171,12 @@ export const updateStore = async (
       }
     }
 
-    // Fetch user details to check roles
-    const users = await prisma.user.findMany({
-      where: {
-        id: {
-          in: storeAdminIds.map((id: number) => +id),
-        },
-      },
-    });
-
-    // Filter users with role 'STOREADMIN'
-    const validStoreAdminIds = users
-      .filter((user) => user.role === 'STOREADMIN')
-      .map((user) => user.id);
-
-    if (validStoreAdminIds.length === 0) {
-      res.status(400).json({ error: 'No valid store admins provided' });
-      return;
-    }
+    // Get coordinates from address
+    const coordinates = await convertAddressToCoordinates(
+      `${address}, ${city}, ${postalCode}, ${country}`,
+    );
+    const latitude = coordinates?.results[0]?.geometry?.lat ?? 0;
+    const longitude = coordinates?.results[0]?.geometry?.lng ?? 0;
 
     // Fetch the store to update
     const storeToUpdate = await prisma.store.findUnique({
@@ -247,18 +199,12 @@ export const updateStore = async (
         country,
         postalCode,
         phoneNumber,
-        latitude: +latitude,
-        longitude: Number(longitude),
-        maxServiceDistance: +maxServiceDistance,
+        latitude,
+        longitude,
+        maxServiceDistance: +maxServiceDistance * 1000,
         slug,
         storeImage:
           storeImage !== undefined ? storeImage : storeToUpdate.storeImage, // Use existing image if no new image is provided
-        StoreUser: {
-          deleteMany: {},
-          create: validStoreAdminIds.map((id: number) => ({
-            userId: id,
-          })),
-        },
       },
     });
 
@@ -338,36 +284,45 @@ export const getNearestStore = async (
 ) => {
   const { latitudeUser, longitudeUser } = req.query;
 
-  // Validate that latitudeUser and longitudeUser are provided
-  if (!latitudeUser || !longitudeUser) {
-    res.status(400).json({ message: 'Latitude and longitude are required.' });
-    return;
-  }
-
   try {
-    const stores = await prisma.store.findMany({
+    const allStores = await prisma.store.findMany({
       where: {
         isActive: true,
       },
     });
 
-    if (!stores || stores.length === 0) {
+    if (!allStores || allStores.length === 0) {
       res.status(404).json({ message: 'No active stores found.' });
       return;
     }
 
-    let nearestStore = stores[0];
+    // Jika tidak ada koordinat dari user (tidak memberi izin lokasi)
+    if (!latitudeUser || !longitudeUser) {
+      const primaryStore = allStores.find((store) => store.isPrimary);
+      if (primaryStore) {
+        res.status(200).json({
+          ok: true,
+          message: 'No location provided, returning primary store',
+          data: primaryStore,
+        });
+      } else {
+        res.status(404).json({ message: 'Primary store not found.' });
+        return;
+      }
+    }
+
+    const userLat = Number(latitudeUser);
+    const userLong = Number(longitudeUser);
+
+    let nearestStore = allStores[0];
     let minDistance = getDistance(
-      { latitude: Number(latitudeUser), longitude: Number(longitudeUser) },
-      {
-        latitude: nearestStore.latitude,
-        longitude: nearestStore.longitude,
-      },
+      { latitude: userLat, longitude: userLong },
+      { latitude: nearestStore.latitude, longitude: nearestStore.longitude },
     );
 
-    for (const store of stores) {
+    for (const store of allStores) {
       const distance = getDistance(
-        { latitude: Number(latitudeUser), longitude: Number(longitudeUser) },
+        { latitude: userLat, longitude: userLong },
         { latitude: store.latitude, longitude: store.longitude },
       );
       if (distance < minDistance) {
@@ -376,9 +331,24 @@ export const getNearestStore = async (
       }
     }
 
-    res
-      .status(200)
-      .json({ ok: true, message: 'Nearest store found', data: nearestStore });
+    if (
+      nearestStore.maxServiceDistance !== null &&
+      minDistance > nearestStore.maxServiceDistance
+    ) {
+      res.status(403).json({
+        ok: false,
+        message:
+          'Lokasi Anda terlalu jauh dari store. Coba menuju ke lokasi yang dekat dengan store.',
+        data: null,
+      });
+      return;
+    }
+
+    res.status(200).json({
+      ok: true,
+      message: 'Nearest store found',
+      data: nearestStore,
+    });
   } catch (error) {
     console.error(error);
     next(error);

@@ -114,7 +114,7 @@ async function main() {
     });
 
     const storeadminPassword5 = await hash('storeadminpass', salt);
-    const storeadmin5 = await prisma.user.create({
+    await prisma.user.create({
       data: {
         name: 'Bagus Saragih',
         username: 'bagussaragih',
@@ -129,30 +129,14 @@ async function main() {
       },
     });
 
-    const storeadminPassword6 = await hash('storeadminpass', salt);
-    const storeadmin6 = await prisma.user.create({
-      data: {
-        name: 'Mustofa Abdurrahman',
-        username: 'mustofaabduh',
-        password: storeadminPassword6,
-        email: 'mustofaabduh@example.com',
-        emailConfirmed: true,
-        role: 'STOREADMIN',
-        profileImage:
-          'https://res.cloudinary.com/dm1cnsldc/image/upload/v1739627186/education-confrence_jujt4f.jpg',
-        referralNumber: 'REF123500',
-        provider: 'CREDENTIALS',
-      },
-    });
-
     // Customer User
-    const customerPassword = await hash('salsabila123', salt);
+    const customerPassword = await hash('farrel123', salt);
     const customer1 = await prisma.user.create({
       data: {
-        name: 'Salsabila Yara',
-        username: 'salsabilayara',
+        name: 'Farrel Ihsan Prahaditya',
+        username: 'farrelihsanp',
         password: customerPassword,
-        email: 'salsabilayara@gmail.com',
+        email: 'farrel.prahaditya@gmail.com',
         emailConfirmed: true,
         role: 'CUSTOMERS',
         profileImage:
@@ -178,43 +162,59 @@ async function main() {
       },
     });
 
+    const customerPassword3 = await hash('fitra123', salt);
+    await prisma.user.create({
+      data: {
+        name: 'Fitra Firmansyah',
+        username: 'fitrafirmansyah',
+        password: customerPassword3,
+        email: 'fitrafirmansyah@gmail.com',
+        emailConfirmed: true,
+        role: 'CUSTOMERS',
+        profileImage:
+          'https://res.cloudinary.com/dm1cnsldc/image/upload/v1739728940/event/images/s6x3zkhiibcahfndhmxe.jpg',
+        referralNumber: 'REF129999',
+        provider: 'CREDENTIALS',
+      },
+    });
+
     /* -------------------------------------------------------------------------- */
     /*                                  Store Seed                                */
     /* -------------------------------------------------------------------------- */
     const store1 = await prisma.store.create({
       data: {
-        name: 'Toko MCD Jatipadang',
+        name: 'Toko Apple Apartment Jatipadang',
         storeImage:
           'https://i.pinimg.com/736x/a6/a6/80/a6a680d5757a99612ac553be1e3b9fe9.jpg',
-        address: 'Jl. Sentosa No. 123',
-        city: 'Medan',
-        province: 'Sumatera Utara',
+        address: 'Jl. Jatipadang Raya',
+        city: 'Jakarta Selatan',
+        province: 'DKI Jakarta',
         country: 'Indonesia',
         postalCode: '20111',
         phoneNumber: '081234567890',
-        slug: 'toko-kelontong-sentosa',
-        latitude: -6.286015044331,
-        longitude: 106.83111469363126,
-        maxServiceDistance: 25.0,
+        slug: 'toko-apple-apartment-jatipadang',
+        latitude: -6.291792587863591,
+        longitude: 106.82860649874273,
+        maxServiceDistance: 25000.0,
         isActive: true,
       },
     });
 
     const store2 = await prisma.store.create({
       data: {
-        name: 'Toko Kelontong Binus Lawson',
+        name: 'Toko Taman Karang Pola',
         storeImage:
           'https://i.pinimg.com/736x/a6/a6/80/a6a680d5757a99612ac553be1e3b9fe9.jpg',
-        address: 'Jl. Permata No. 456',
-        city: 'Pekanbaru',
-        province: 'Riau',
+        address: 'Jl. Raya Ragunan',
+        city: 'Jakarta Selatan',
+        province: 'DKI Jakarta',
         country: 'Indonesia',
         postalCode: '28111',
         phoneNumber: '081234567891',
-        slug: 'toko-kelontong-permata',
-        latitude: -6.200563589115056,
-        longitude: 106.78477571923685,
-        maxServiceDistance: 100.0,
+        slug: 'toko-taman-karang-pola',
+        latitude: -6.286289550419184,
+        longitude: 106.83149673268163,
+        maxServiceDistance: 100000.0,
         isActive: true,
         isPrimary: true,
       },
@@ -234,12 +234,12 @@ async function main() {
         slug: 'toko-kelontong-jaya',
         latitude: -6.210676140910337,
         longitude: 106.82231722418967,
-        maxServiceDistance: 20.0,
+        maxServiceDistance: 20000.0,
         isActive: true,
       },
     });
 
-    await prisma.store.create({
+    const store4 = await prisma.store.create({
       data: {
         name: 'Toko Kelontong SPBU Kemang',
         storeImage:
@@ -253,7 +253,7 @@ async function main() {
         slug: 'toko-kelontong-makmur',
         latitude: -6.266846372000018,
         longitude: 106.81561643680142,
-        maxServiceDistance: 50.0,
+        maxServiceDistance: 50000.0,
         isActive: true,
       },
     });
@@ -270,9 +270,9 @@ async function main() {
         postalCode: '10110',
         phoneNumber: '081234567894',
         slug: 'toko-kelontong-sehat',
-        latitude: -6.291616589951082,
-        longitude: 106.81663803093814,
-        maxServiceDistance: 15.0,
+        latitude: -6.181125939416333,
+        longitude: 106.82691064650164,
+        maxServiceDistance: 150000.0,
         isActive: true,
       },
     });
@@ -302,21 +302,7 @@ async function main() {
     await prisma.storeUser.create({
       data: {
         userId: storeadmin4.id,
-        storeId: store1.id,
-      },
-    });
-
-    await prisma.storeUser.create({
-      data: {
-        userId: storeadmin5.id,
-        storeId: store2.id,
-      },
-    });
-
-    await prisma.storeUser.create({
-      data: {
-        userId: storeadmin6.id,
-        storeId: store3.id,
+        storeId: store4.id,
       },
     });
 
@@ -487,7 +473,7 @@ async function main() {
     });
     await prisma.storeProduct.create({
       data: {
-        storeId: store1.id,
+        storeId: store2.id,
         productId: semangka.id,
         price: 5000,
         stock: 150,
@@ -541,7 +527,7 @@ async function main() {
     });
     await prisma.storeProduct.create({
       data: {
-        storeId: store1.id,
+        storeId: store3.id,
         productId: chitato.id,
         price: 5000,
         stock: 150,
@@ -595,7 +581,7 @@ async function main() {
     });
     await prisma.storeProduct.create({
       data: {
-        storeId: store1.id,
+        storeId: store4.id,
         productId: airAqua.id,
         price: 3000,
         stock: 200,
@@ -2014,21 +2000,14 @@ async function main() {
       },
     });
 
-    const semangkaStoreProduct = await prisma.storeProduct.findFirst({
+    const jerukStoreProduct = await prisma.storeProduct.findFirst({
       where: {
-        productId: semangka.id,
+        productId: jeruk.id,
         storeId: store1.id,
       },
     });
 
-    const panciStoreProduct = await prisma.storeProduct.findFirst({
-      where: {
-        productId: panci.id,
-        storeId: store1.id,
-      },
-    });
-
-    // Tambahkan ke cart
+    // Tambahkan ke cart Salsabila (semua dari store1)
     const cartItemsData = [
       {
         product: tomat,
@@ -2041,8 +2020,8 @@ async function main() {
         quantity: 1,
       },
       {
-        product: semangka,
-        storeProduct: semangkaStoreProduct,
+        product: jeruk,
+        storeProduct: jerukStoreProduct,
         quantity: 3,
       },
     ];
@@ -2080,7 +2059,8 @@ async function main() {
         isActive: true,
         minPurchase: 50000,
         maxPriceReduction: 10000,
-        voucherImage: 'https://example.com/diskon-sayuran.jpg',
+        voucherImage:
+          'https://dummyimage.com/600x400/90ee90/fff&text=voucher+diskon+sayuran',
       },
     });
 
@@ -2099,7 +2079,8 @@ async function main() {
         isActive: true,
         minPurchase: 30000,
         maxPriceReduction: 5000,
-        voucherImage: 'https://example.com/diskon-makanan-ringan.jpg',
+        voucherImage:
+          'https://dummyimage.com/600x400/90ee90/fff&text=voucher+diskon+makanan+ringan',
       },
     });
 
@@ -2118,7 +2099,8 @@ async function main() {
         isActive: true,
         minPurchase: 50000,
         maxPriceReduction: 10000,
-        voucherImage: 'https://example.com/diskon-minuman.jpg',
+        voucherImage:
+          'https://dummyimage.com/600x400/90ee90/fff&text=voucher+diskon+15',
       },
     });
 
@@ -2186,8 +2168,8 @@ async function main() {
         quantity: 1,
       },
       {
-        product: panci,
-        storeProduct: panciStoreProduct,
+        product: jeruk,
+        storeProduct: jerukStoreProduct,
         quantity: 3,
       },
     ];

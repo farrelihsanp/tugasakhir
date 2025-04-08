@@ -2,6 +2,7 @@
 import { NextFunction, Request, Response } from 'express';
 import { prisma } from '../configs/prisma.js';
 import { Address } from '../types/express.d.js';
+import { convertAddressToCoordinates } from '../utils/geocode.js';
 
 // Menambahkan alamat baru
 export const addAddress = async (
@@ -46,24 +47,29 @@ export const addAddress = async (
       return;
     }
 
+    const coordinates = await convertAddressToCoordinates(
+      `${street}, ${city}, ${postalCode}, ${country}`,
+    );
+
+    const latitude = coordinates?.results[0]?.geometry?.lat ?? 0;
+    const longitude = coordinates?.results[0]?.geometry?.lng ?? 0;
+
     const newAddress = await prisma.address.create({
       data: {
         userId: Number(userId),
         street,
         city,
         postalCode: Number(postalCode),
-        number: Number(postalCode),
+        number: Number(number),
         country,
+        latitude: latitude,
+        longitude: longitude,
       },
     });
 
-    res.status(201).json({
-      ok: true,
-      message: 'Address added successfully',
-      data: newAddress,
-    });
+    res.status(201).json({ message: 'Address added successfully', newAddress });
   } catch (error) {
-    console.error('Error adding address:', error);
+    console.error(error);
     next(error);
   }
 };
@@ -122,16 +128,26 @@ export const updateAddress = async (
       return;
     }
 
+    const coordinates = await convertAddressToCoordinates(
+      `${street}, ${city}, ${postalCode}, ${country}`,
+    );
+
+    const latitude = coordinates?.results[0]?.geometry?.lat ?? 0;
+    const longitude = coordinates?.results[0]?.geometry?.lng ?? 0;
+
     // Update the address
     const updatedAddress = await prisma.address.update({
       where: { id: Number(address.id) },
       data: {
+        userId,
         street,
         city,
         postalCode: Number(postalCode),
         number: Number(number),
         country,
         isPrimary,
+        latitude: latitude,
+        longitude: longitude,
       },
     });
 
@@ -229,6 +245,45 @@ export const setPrimaryAddress = async (
     });
   } catch (error) {
     console.error('Error setting primary address:', error);
+    next(error);
+  }
+};
+
+export const getPrimaryAddress = async (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) => {
+  const userId = req.user?.id;
+
+  if (!userId) {
+    res.status(401).json({ message: 'Unauthorized' });
+    return;
+  }
+
+  try {
+    const address = await prisma.address.findFirst({
+      where: { userId: Number(userId), isPrimary: true },
+    });
+    res.status(200).json({ ok: true, data: address });
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const getAddressById = async (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) => {
+  const { id } = req.params;
+
+  try {
+    const address = await prisma.address.findUnique({
+      where: { id: Number(id) },
+    });
+    res.status(200).json({ ok: true, data: address });
+  } catch (error) {
     next(error);
   }
 };

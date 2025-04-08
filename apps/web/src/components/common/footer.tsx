@@ -4,7 +4,7 @@ import Link from 'next/link';
 export default function Footer() {
   return (
     <section>
-      <div className="bg-blue-600 py-3 mt-10">
+      <div className="bg-blue-600 py-3">
         <div className="flex items-center justify-center">
           <div>
             <Link href="#">

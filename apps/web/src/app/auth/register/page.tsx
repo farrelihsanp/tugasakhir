@@ -1,226 +1,119 @@
 'use client';
 
-import React, { useState } from 'react';
-import { useRouter } from 'next/navigation';
-import { toast, ToastContainer } from 'react-toastify';
+import React, { useState, useEffect } from 'react';
+import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
 const Register = () => {
-  const router = useRouter();
+  const [emailInput, setEmailInput] = useState('');
+  const [errorMessage, setErrorMessage] = useState('');
+  const [successMessage, setSuccessMessage] = useState('');
+  const [isLoading, setIsLoading] = useState(false); // New state for loading
 
-  const [formData, setFormData] = useState({
-    name: '',
-    username: '',
-    email: '',
-    role: 'CUSTOMERS',
-    referralCode: '',
-  });
-
-  const [profileImage, setProfileImage] = useState<File | null>(null);
-  const [loading, setLoading] = useState(false);
-
-  const handleChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>,
-  ) => {
-    const { name, value } = e.target;
-    setFormData({
-      ...formData,
-      [name]: value,
-    });
+  const handleEmailChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setEmailInput(event.target.value);
   };
 
-  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (e.target.files && e.target.files.length > 0) {
-      setProfileImage(e.target.files[0]);
+  const handleRegister = async (event: React.FormEvent) => {
+    event.preventDefault();
+
+    if (!emailInput) {
+      setErrorMessage('Email is required!');
+      return;
     }
-  };
 
-  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
+    setIsLoading(true); // Start loading
 
-    setLoading(true);
+    localStorage.setItem('email', emailInput);
 
     try {
-      const formDataToSend = {
-        ...formData,
-        profileImage: profileImage,
-      };
-
-      const formDataToSendServer = new FormData();
-      formDataToSendServer.append('name', formData.name);
-      formDataToSendServer.append('username', formData.username);
-      formDataToSendServer.append('email', formData.email);
-      formDataToSendServer.append('role', formData.role);
-      formDataToSendServer.append('referralCode', formData.referralCode);
-      if (profileImage) {
-        formDataToSendServer.append('profileImage', profileImage);
-      }
-
+      // Kirim permintaan POST ke API register
       const response = await fetch(
         'http://localhost:8000/api/v1/auth/register',
         {
-          credentials: 'include',
           method: 'POST',
-          body: formDataToSendServer,
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ emailInput }),
         },
       );
 
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.message || 'Registration failed');
+      if (response.ok) {
+        setSuccessMessage(
+          'Registration successful! Please check your email for confirmation.',
+        );
+        setErrorMessage('');
+        toast.success('Registration successful!'); // Success toastify
+        setTimeout(() => {
+          window.location.href = 'http://localhost:3000'; // Redirect after success
+        }, 3000); // Wait 3 seconds before redirect
+      } else {
+        const data = await response.json();
+        setErrorMessage(data.message || 'An error occurred, please try again.');
+        setSuccessMessage('');
       }
-
-      toast.success('Registration successful! Check your email to confirm.');
-
-      // Reset form fields
-      setFormData({
-        name: '',
-        username: '',
-        email: '',
-        role: 'CUSTOMERS',
-        referralCode: '',
-      });
-      setProfileImage(null);
-
-      // Redirect to email confirmation page
-      router.push('/email-confirmation');
     } catch (error) {
-      if (error instanceof Error) {
-        toast.error(error.message);
-      }
+      console.error(error);
+      setErrorMessage('An error occurred, please try again later.');
+      setSuccessMessage('');
     } finally {
-      setLoading(false);
+      setIsLoading(false); // Stop loading
     }
   };
 
+  useEffect(() => {
+    const savedEmail = localStorage.getItem('email');
+    if (savedEmail) {
+      setEmailInput(savedEmail);
+    }
+  }, []);
+
   return (
-    <div className="flex items-center justify-center min-h-screen bg-gray-100">
-      <ToastContainer
-        position="top-right"
-        autoClose={5000}
-        hideProgressBar={false}
-        newestOnTop={false}
-        closeOnClick
-        rtl={false}
-        pauseOnFocusLoss
-        draggable
-        pauseOnHover
-        theme="light"
-      />
-      <div className="w-full max-w-md p-6 bg-white rounded-lg shadow-md">
-        <h2 className="text-2xl font-bold mb-6 text-center">Register</h2>
-        <form onSubmit={handleSubmit}>
-          <div className="mb-4">
-            <label
-              htmlFor="name"
-              className="block text-sm font-medium text-gray-700"
+    <>
+      <div className="flex justify-center items-center min-h-screen bg-gray-100">
+        <div className="bg-white p-8 rounded-lg shadow-lg w-full max-w-md">
+          <h1 className="text-2xl font-semibold text-center mb-6">Register</h1>
+          <form onSubmit={handleRegister}>
+            <div className="mb-4">
+              <label
+                className="block text-sm font-medium text-gray-700"
+                htmlFor="email"
+              >
+                Email:
+              </label>
+              <input
+                id="email"
+                type="email"
+                value={emailInput}
+                onChange={handleEmailChange}
+                required
+                className="w-full px-4 py-2 mt-1 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
+              />
+            </div>
+            {errorMessage && (
+              <p className="text-red-500 text-sm">{errorMessage}</p>
+            )}
+            {successMessage && (
+              <p className="text-green-500 text-sm">{successMessage}</p>
+            )}
+            <button
+              type="submit"
+              className="w-full mt-4 py-2 px-4 bg-blue-500 text-white font-semibold rounded-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              disabled={isLoading} // Disable button when loading
             >
-              Name
-            </label>
-            <input
-              type="text"
-              id="name"
-              name="name"
-              value={formData.name}
-              onChange={handleChange}
-              className="mt-1 p-2 w-full border rounded-md"
-              required
-            />
-          </div>
-          <div className="mb-4">
-            <label
-              htmlFor="username"
-              className="block text-sm font-medium text-gray-700"
-            >
-              Username
-            </label>
-            <input
-              type="text"
-              id="username"
-              name="username"
-              value={formData.username}
-              onChange={handleChange}
-              className="mt-1 p-2 w-full border rounded-md"
-              required
-            />
-          </div>
-          <div className="mb-4">
-            <label
-              htmlFor="email"
-              className="block text-sm font-medium text-gray-700"
-            >
-              Email
-            </label>
-            <input
-              type="email"
-              id="email"
-              name="email"
-              value={formData.email}
-              onChange={handleChange}
-              className="mt-1 p-2 w-full border rounded-md"
-              required
-            />
-          </div>
-          <div className="mb-4">
-            <label
-              htmlFor="role"
-              className="block text-sm font-medium text-gray-700"
-            >
-              Role
-            </label>
-            <select
-              id="role"
-              name="role"
-              value={formData.role}
-              onChange={handleChange}
-              className="mt-1 p-2 w-full border rounded-md"
-            >
-              <option value="CUSTOMERS">Customer</option>
-              <option value="STOREADMIN">Store Admin</option>
-            </select>
-          </div>
-          <div className="mb-4">
-            <label
-              htmlFor="referralCode"
-              className="block text-sm font-medium text-gray-700"
-            >
-              Referral Code (optional)
-            </label>
-            <input
-              type="text"
-              id="referralCode"
-              name="referralCode"
-              value={formData.referralCode}
-              onChange={handleChange}
-              className="mt-1 p-2 w-full border rounded-md"
-            />
-          </div>
-          <div className="mb-4">
-            <label
-              htmlFor="profileImage"
-              className="block text-sm font-medium text-gray-700"
-            >
-              Profile Image (optional)
-            </label>
-            <input
-              type="file"
-              id="profileImage"
-              name="profileImage"
-              onChange={handleFileChange}
-              className="mt-1 p-2 w-full border rounded-md"
-              accept="image/*"
-            />
-          </div>
-          <button
-            type="submit"
-            className="w-full p-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 disabled:opacity-50"
-            disabled={loading}
-          >
-            {loading ? 'Registering...' : 'Register'}
-          </button>
-        </form>
+              {isLoading ? 'Registering...' : 'Register'}{' '}
+              {/* Display loading text */}
+            </button>
+            {isLoading && (
+              <div className="text-center mt-4">
+                <div className="spinner-border animate-spin border-4 border-t-4 border-blue-500 w-6 h-6 rounded-full"></div>
+              </div>
+            )}
+          </form>
+        </div>
       </div>
-    </div>
+    </>
   );
 };
 

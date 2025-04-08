@@ -379,13 +379,35 @@ export const getDetailProductByIdByStoreId = async (
   res: Response,
   next: NextFunction,
 ) => {
-  const { storeId, productId } = req.params;
+  const { storeSlug, productSlug } = req.params;
 
   try {
+    const store = await prisma.store.findFirst({
+      where: {
+        slug: storeSlug,
+      },
+    });
+
+    if (!store) {
+      res.status(404).json({ error: 'Store not found' });
+      return;
+    }
+
+    const productId = await prisma.product.findFirst({
+      where: {
+        slug: productSlug,
+      },
+    });
+
+    if (!productId) {
+      res.status(404).json({ error: 'Product not found' });
+      return;
+    }
+
     const storeProduct = await prisma.storeProduct.findFirst({
       where: {
-        storeId: Number(storeId),
-        productId: Number(productId),
+        storeId: store.id,
+        productId: productId.id,
       },
       include: {
         product: {
@@ -457,16 +479,32 @@ export const getAllProductsByCategoryByStoreId = async (
   res: Response,
   next: NextFunction,
 ) => {
-  const { storeId, categoryId } = req.params;
+  const { storeSlug, categorySlug } = req.params;
 
   try {
+    const store = await prisma.store.findFirst({
+      where: {
+        slug: storeSlug,
+      },
+      select: {
+        id: true,
+      },
+    });
+
+    if (!store) {
+      res.status(404).json({ error: 'Store not found' });
+      return;
+    }
+
     const products = await prisma.storeProduct.findMany({
       where: {
-        storeId: Number(storeId),
+        storeId: store.id,
         product: {
           CategoryProduct: {
             some: {
-              categoryId: Number(categoryId),
+              Category: {
+                slug: categorySlug,
+              },
             },
           },
         },

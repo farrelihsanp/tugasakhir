@@ -185,9 +185,12 @@ export const getAllAdmins = async (
 
     const admins = await prisma.user.findMany({
       where: { role: 'STOREADMIN' },
+      include: {
+        StoreUser: { include: { store: true } },
+      },
     });
 
-    res.status(200).json({ ok: true, data: admins });
+    res.status(200).json(admins);
   } catch (error) {
     next(error);
   }
@@ -219,6 +222,87 @@ export const getAdminById = async (
     }
 
     res.status(200).json(admin);
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const assignStoreAdmin = async (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) => {
+  try {
+    const { userId, storeId } = req.body;
+
+    if (!userId || !storeId) {
+      res.status(400).json({ message: 'User ID and Store ID are required!' });
+      return;
+    }
+
+    const storeExists = await prisma.store.findUnique({
+      where: { id: Number(storeId) },
+    });
+
+    if (!storeExists) {
+      res.status(404).json({ message: 'Store not found!' });
+      return;
+    }
+
+    const user = await prisma.user.findUnique({
+      where: { id: Number(userId) },
+    });
+
+    if (!user) {
+      res.status(404).json({ message: 'User not found!' });
+      return;
+    }
+
+    if (!Role.SUPERADMIN) {
+      res.status(400).json({
+        message: 'User must be a superadmin to be assigned as store admin.',
+      });
+      return;
+    }
+
+    // Check if the store already has a store admin
+    const existingStoreAdmin = await prisma.storeUser.findFirst({
+      where: {
+        storeId: Number(storeId),
+        user: {
+          role: Role.STOREADMIN,
+        },
+      },
+    });
+
+    if (existingStoreAdmin) {
+      res.status(400).json({
+        message: 'This store already has a store admin!',
+      });
+      return;
+    }
+
+    // Update user role to STOREADMIN
+    await prisma.user.update({
+      where: { id: Number(userId) },
+      data: {
+        role: Role.STOREADMIN,
+      },
+    });
+
+    // Assign the user as store admin
+    await prisma.storeUser.create({
+      data: {
+        userId: Number(userId),
+        storeId: Number(storeId),
+      },
+    });
+
+    res.status(200).json({
+      message: 'User successfully assigned as store admin!',
+      userId,
+      storeId,
+    });
   } catch (error) {
     next(error);
   }

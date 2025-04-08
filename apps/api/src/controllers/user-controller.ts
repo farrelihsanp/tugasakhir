@@ -1,5 +1,6 @@
 import { Request, Response, NextFunction } from 'express';
 import { prisma } from '../configs/prisma.js';
+import { Role } from '@prisma/client';
 
 export const getAllUsers = async (
   _req: Request,
@@ -7,7 +8,9 @@ export const getAllUsers = async (
   next: NextFunction,
 ) => {
   try {
-    const users = await prisma.user.findMany();
+    const users = await prisma.user.findMany({
+      where: { role: Role.CUSTOMERS },
+    });
     res.status(200).json(users);
   } catch (error) {
     next(error);
