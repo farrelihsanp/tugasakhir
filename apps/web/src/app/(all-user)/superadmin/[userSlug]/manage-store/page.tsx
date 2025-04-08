@@ -101,7 +101,7 @@ const ManageStoresPage: React.FC = () => {
                     </div>
                     <div>
                       <Link
-                        href={`manage-store/edit/${store.id}`}
+                        href={`manage-store/edit-store/${store.id}`}
                         className="text-green-500 hover:text-green-700 transition-colors"
                       >
                         Edit

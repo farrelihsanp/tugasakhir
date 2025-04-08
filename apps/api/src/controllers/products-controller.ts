@@ -10,19 +10,21 @@ export const createProduct = async (
   next: NextFunction,
 ): Promise<void> => {
   try {
-    const { storeId, name, excerpt, description, price, categoryIds, weight } =
-      req.body;
+    const { name, excerpt, description, categoryIds, weight } = req.body;
 
-    if (
-      !storeId ||
-      !name ||
-      !excerpt ||
-      !description ||
-      !price ||
-      !categoryIds ||
-      !weight
-    ) {
+    if (!name || !excerpt || !description || !categoryIds || !weight) {
       res.status(400).json({ error: 'All required fields must be filled' });
+      return;
+    }
+
+    const existingProduct = await prisma.product.findFirst({
+      where: {
+        name,
+      },
+    });
+
+    if (existingProduct) {
+      res.status(400).json({ error: 'Product name already exists' });
       return;
     }
 
@@ -101,17 +103,6 @@ export const createProduct = async (
         },
       },
     });
-
-    if (price <= 50000) {
-      await prisma.storeProduct.update({
-        where: {
-          id: newProduct.id,
-        },
-        data: {
-          isCheap: true,
-        },
-      });
-    }
 
     if (req.files && Array.isArray(req.files)) {
       for (const file of req.files) {

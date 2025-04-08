@@ -67,8 +67,8 @@ const CreateStorePage = () => {
         maxServiceDistance: '',
       });
       router.push('/dashboard/superadmin');
-    } catch (error) {
-      setMessage(error.message);
+    } catch (error: unknown) {
+      setMessage((error as Error).message);
     }
   };
 

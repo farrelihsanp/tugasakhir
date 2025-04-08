@@ -12,7 +12,7 @@ function generateRandomString(length: number) {
 // Konfigurasi penyimpanan lokal
 const storage = multer.diskStorage({
   destination: function (_req, _file, cb) {
-    cb(null, 'public/uploads'); // Direktori penyimpanan file
+    cb(null, 'public/uploads');
   },
   filename: (_req, file, cb) => {
     const uniquePrefix = `img-${Date.now()}-${generateRandomString(10)}`;
