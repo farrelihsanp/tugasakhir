@@ -2,7 +2,7 @@ import { NextFunction, Request, Response } from 'express';
 import { prisma } from '../configs/prisma.js';
 import cloudinary from '../configs/cloudinary.js';
 import fs from 'node:fs/promises';
-import { VoucherType } from '@prisma/client';
+import { VoucherType, VoucherCategory } from '@prisma/client';
 
 export const createVoucher = async (
   req: Request,
@@ -22,6 +22,7 @@ export const createVoucher = async (
       description,
       code,
       voucherType,
+      voucherCategory,
       value,
       discountRate,
       startDate,
@@ -38,6 +39,7 @@ export const createVoucher = async (
     if (
       !name ||
       !code ||
+      !voucherCategory ||
       !voucherType ||
       !discountRate ||
       !startDate ||
@@ -75,6 +77,7 @@ export const createVoucher = async (
         name,
         description,
         code,
+        voucherCategory: voucherCategory as VoucherCategory,
         voucherType: voucherType as VoucherType,
         value: Number(value),
         startDate: new Date(startDate),
@@ -132,6 +135,7 @@ export const updateVoucher = async (
       name,
       description,
       code,
+      voucherCategory,
       voucherType,
       value,
       discountRate,
@@ -149,6 +153,7 @@ export const updateVoucher = async (
     if (
       !name ||
       !code ||
+      !voucherCategory ||
       !voucherType ||
       !discountRate ||
       !startDate ||
@@ -184,7 +189,8 @@ export const updateVoucher = async (
       storeId: Number(storeId),
       description,
       code,
-      voucherType: voucherType,
+      voucherCategory: voucherCategory as VoucherCategory,
+      voucherType: voucherType as VoucherType,
       value: Number(value),
       startDate: new Date(startDate),
       endDate: new Date(endDate),
@@ -322,15 +328,14 @@ export const getAllVouchersUser = async (
 };
 
 // Apply a voucher to an order BELUM
-export const applyVoucherToCart = async (
+export const applyVoucher = async (
   req: Request,
   res: Response,
   next: NextFunction,
 ) => {
   try {
     const userId = req.user?.id;
-    const orderId = req.params.id;
-    const { voucherId } = req.body;
+    const { voucherId, shippingCostSelected } = req.body;
 
     if (!voucherId) {
       res.status(400).json({ error: 'Voucher ID is required' });
@@ -339,11 +344,6 @@ export const applyVoucherToCart = async (
 
     if (!userId) {
       res.status(401).json({ error: 'Unauthorized' });
-      return;
-    }
-
-    if (!orderId) {
-      res.status(400).json({ error: 'Order ID is required' });
       return;
     }
 
@@ -378,127 +378,122 @@ export const applyVoucherToCart = async (
       return;
     }
 
-    const totalAmount = cartUser.cartItems.reduce(
-      (total, item) => total + item.total,
-      0,
-    );
-
-    if (!totalAmount) {
-      res.status(404).json({ error: 'Cart not found' });
-      return;
-    }
-
     /* -------------------------------------------------------------------------- */
-    /*               KETENTUAN VOUCHER AMOUNT                                     */
+    /*                               TOTAL BELANJAAN                              */
     /* -------------------------------------------------------------------------- */
-    if (voucherSelectedToApply.voucherType === 'AMOUNT') {
-      if (voucherSelectedToApply.minPurchase) {
-        if (totalAmount < voucherSelectedToApply.minPurchase) {
-          res.status(400).json({
-            error: 'Voucher amount exceeds minimum purchase amount',
-          });
+
+    const totalAmount = cartUser.totalAmount;
+
+    // VOUCHER BELANJAAN
+
+    if (
+      voucherSelectedToApply.voucherCategory === VoucherCategory.SHIPPING_COST
+    ) {
+      let finalAmountAfterVoucher: number = 0;
+      if (voucherSelectedToApply.voucherType === 'AMOUNT') {
+        const voucherValue = voucherSelectedToApply.value;
+        finalAmountAfterVoucher = totalAmount - voucherValue;
+
+        if (totalAmount < voucherValue) {
+          res
+            .status(400)
+            .json({ error: 'Voucher amount exceeds total amount' });
+          return;
+        }
+
+        if (finalAmountAfterVoucher < 0) {
+          res
+            .status(400)
+            .json({ error: 'Voucher amount exceeds total amount' });
+          return;
+        }
+
+        // PERSENTASE
+      } else if (voucherSelectedToApply.voucherType === 'PERCENTAGE') {
+        const voucherValue = voucherSelectedToApply.value;
+        finalAmountAfterVoucher = (totalAmount * (100 - voucherValue)) / 100;
+
+        const maxPriceReduction = voucherSelectedToApply.maxPriceReduction;
+
+        if (maxPriceReduction && finalAmountAfterVoucher > maxPriceReduction) {
+          finalAmountAfterVoucher = maxPriceReduction;
+        }
+
+        if (finalAmountAfterVoucher < 0) {
+          res
+            .status(400)
+            .json({ error: 'Voucher amount exceeds total amount' });
           return;
         }
       }
 
-      const voucherAmount = voucherSelectedToApply.value;
-      const finalAmountAfterVoucher = totalAmount - voucherAmount;
-
-      if (totalAmount < voucherAmount) {
-        res.status(400).json({ error: 'Voucher amount exceeds total amount' });
-        return;
-      }
-
-      if (finalAmountAfterVoucher < 0) {
-        res.status(400).json({ error: 'Voucher amount exceeds total amount' });
-        return;
-      }
+      await prisma.cart.update({
+        where: {
+          id: cartUser.id,
+        },
+        data: {
+          totalAmountAfterVoucher: finalAmountAfterVoucher,
+          valueVoucher: finalAmountAfterVoucher - totalAmount,
+        },
+      });
     }
 
     /* -------------------------------------------------------------------------- */
-    /*                           KETENTUAN VOUCHER PERSEN                          */
-    /* -------------------------------------------------------------------------- */
-    if (voucherSelectedToApply.voucherType === 'PERCENTAGE') {
-      const voucherAmount = voucherSelectedToApply.value;
-      const finalAmountAfterVoucher =
-        (totalAmount * (100 - voucherAmount)) / 100;
+    // VOUCHER JASA ONGKIR
 
-      const maxPriceReduction = voucherSelectedToApply.maxPriceReduction;
+    let finalShippingCost: number = 0;
 
-      if (maxPriceReduction) {
-        if (finalAmountAfterVoucher > maxPriceReduction) {
-          const finalAmountAfterVoucher = maxPriceReduction;
+    if (
+      voucherSelectedToApply.voucherCategory === VoucherCategory.SHIPPING_COST
+    ) {
+      if (voucherSelectedToApply.voucherType === 'AMOUNT') {
+        const voucherValue = voucherSelectedToApply.value;
+        finalShippingCost = shippingCostSelected - voucherValue;
 
-          if (!finalAmountAfterVoucher) {
-            res.status(400).json({
-              error: 'Voucher amount exceeds maximum price reduction',
-            });
-            return;
-          }
+        if (shippingCostSelected < voucherValue) {
+          res
+            .status(400)
+            .json({ error: 'Voucher amount exceeds total amount' });
+          return;
+        }
 
-          res.status(400).json({
-            error: 'Voucher amount exceeds maximum price reduction',
-          });
+        if (finalShippingCost < 0) {
+          res
+            .status(400)
+            .json({ error: 'Voucher amount exceeds total amount' });
+          return;
+        }
+
+        // PERSENTASE
+      } else if (voucherSelectedToApply.voucherType === 'PERCENTAGE') {
+        const voucherValue = voucherSelectedToApply.value;
+        finalShippingCost = (shippingCostSelected * (100 - voucherValue)) / 100;
+
+        const maxPriceReduction = voucherSelectedToApply.maxPriceReduction;
+
+        if (maxPriceReduction && finalShippingCost > maxPriceReduction) {
+          finalShippingCost = maxPriceReduction;
+        }
+
+        if (finalShippingCost < 0) {
+          res
+            .status(400)
+            .json({ error: 'Voucher amount exceeds total amount' });
           return;
         }
       }
-
-      if (totalAmount < voucherAmount) {
-        res.status(400).json({ error: 'Voucher amount exceeds total amount' });
-        return;
-      }
-
-      if (finalAmountAfterVoucher < 0) {
-        res.status(400).json({ error: 'Voucher amount exceeds total amount' });
-        return;
-      }
     }
+
+    /* -------------------------------------------------------------------------- */
 
     res.status(200).json({
       ok: true,
       message: 'Voucher applied successfully',
-    });
-  } catch (error) {
-    next(error);
-  }
-};
-
-export const manageVoucherStock = async (
-  req: Request,
-  res: Response,
-  next: NextFunction,
-) => {
-  try {
-    const { id, stock } = req.body;
-
-    if (!id || stock === undefined) {
-      res.status(400).json({ error: 'Voucher ID and stock are required' });
-      return;
-    }
-
-    const voucher = await prisma.voucher.findUnique({
-      where: { id: Number(id) },
-    });
-
-    if (!voucher) {
-      res.status(404).json({ error: 'Voucher not found' });
-      return;
-    }
-
-    const updatedVoucher = await prisma.voucher.update({
-      where: { id: Number(id) },
       data: {
-        stock,
+        finalShippingCost,
       },
     });
-
-    res.status(200).json({
-      ok: true,
-      message: 'Voucher stock updated successfully',
-      data: updatedVoucher,
-    });
   } catch (error) {
-    console.error('Error managing voucher stock:', error);
     next(error);
   }
 };

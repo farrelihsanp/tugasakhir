@@ -19,28 +19,28 @@ export const createOrder = async (
   req: Request,
   res: Response,
   next: NextFunction,
-  paymentMethodType: PaymentMethodType,
 ) => {
   try {
     const userId = req.user?.id;
-    const storeId = req.params.id;
+    const { storeSlug } = req.params;
+
+    const storeId = await prisma.store.findFirst({
+      where: { slug: storeSlug },
+      select: { id: true },
+    });
 
     if (!storeId) {
-      res.status(400).json({ error: 'Store ID is required' });
+      res.status(404).json({ error: 'Store not found' });
+      return;
+    }
+
+    if (!storeSlug) {
+      res.status(400).json({ error: 'Store slug is required' });
       return;
     }
 
     if (!userId) {
       res.status(401).json({ error: 'Unauthorized' });
-      return;
-    }
-
-    const BuyerCustomer = await prisma.user.findUnique({
-      where: { id: userId, role: 'CUSTOMERS' },
-    });
-
-    if (!BuyerCustomer) {
-      res.status(404).json({ error: 'BuyerCustomer not found' });
       return;
     }
 
@@ -67,16 +67,6 @@ export const createOrder = async (
       return;
     }
 
-    const totalHasilBelanjaan = hasilBelanjaan.reduce((acc, item) => {
-      return acc + item.total;
-    }, 0);
-
-    if (totalHasilBelanjaan === 0) {
-      res.status(400).json({ error: 'No items in the cart' });
-      return;
-    }
-
-    // Select courier details
     const {
       courierName,
       code,
@@ -100,13 +90,12 @@ export const createOrder = async (
       return;
     }
 
-    // Find shipping address
     const shippingAddress = await prisma.address.findFirst({
-      where: { userId: userId, isActive: true },
+      where: { userId: userId, isPrimary: true },
     });
 
     if (!shippingAddress) {
-      res.status(400).json({ error: 'No primary shipping address found' });
+      res.status(400).json({ error: 'No Acticve shipping address found' });
       return;
     }
 
@@ -126,9 +115,9 @@ export const createOrder = async (
         userId: userId,
         storeId: +storeId,
         shippingAddressId: shippingAddress.id,
-        totalAmount: totalHasilBelanjaan + shippingCost,
+        totalAmount: cartBuyerCustomer.totalAmount + shippingCost,
         slug: createSlug('ORDER'),
-        paymentMethodType: paymentMethodType,
+        paymentMethodType: PaymentMethodType.UNSET,
         status: OrderStatus.WAITING_FOR_PAYMENT,
         createdAt: new Date(),
         updatedAt: new Date(),
@@ -198,17 +187,19 @@ export const payWithBankTransfer = async (
   next: NextFunction,
 ) => {
   try {
-    const newOrder = await createOrder(
-      req,
-      res,
-      next,
-      PaymentMethodType.BANK_TRANSFER,
-    );
+    const newOrder = await createOrder(req, res, next);
 
     if (!newOrder) {
       res.status(400).json({ error: 'Order creation failed' });
       return;
     }
+
+    await prisma.order.update({
+      where: { id: newOrder.id },
+      data: {
+        paymentMethodType: PaymentMethodType.BANK_TRANSFER,
+      },
+    });
 
     res.status(201).json({ ok: true, data: { order: newOrder } });
   } catch (error) {
@@ -223,17 +214,19 @@ export const payWithMidTrans = async (
   next: NextFunction,
 ) => {
   try {
-    const newOrder = await createOrder(
-      req,
-      res,
-      next,
-      PaymentMethodType.MIDTRANS,
-    );
+    const newOrder = await createOrder(req, res, next);
 
     if (!newOrder) {
       res.status(400).json({ error: 'Order creation failed' });
       return;
     }
+
+    await prisma.order.update({
+      where: { id: newOrder.id },
+      data: {
+        paymentMethodType: PaymentMethodType.MIDTRANS,
+      },
+    });
 
     const customer = await prisma.user.findUnique({
       where: { id: newOrder.userId },
@@ -355,7 +348,7 @@ export const cancelOrder = async (
   next: NextFunction,
 ) => {
   try {
-    const { orderSlug } = req.params;
+    const { orderId } = req.body;
     const userId = req.user?.id;
 
     if (!userId) {
@@ -363,9 +356,14 @@ export const cancelOrder = async (
       return;
     }
 
+    if (!orderId) {
+      res.status(400).json({ error: 'Order ID is required' });
+      return;
+    }
+
     const orderCostumer = await prisma.order.findFirst({
       where: {
-        slug: orderSlug,
+        id: Number(orderId),
       },
     });
 
@@ -435,7 +433,7 @@ export const orderConfirmed = async (
   next: NextFunction,
 ) => {
   try {
-    const { orderSlug } = req.params;
+    const { orderId } = req.body;
     const userId = req.user?.id;
 
     if (!userId) {
@@ -443,9 +441,14 @@ export const orderConfirmed = async (
       return;
     }
 
+    if (!orderId) {
+      res.status(400).json({ error: 'Order ID is required' });
+      return;
+    }
+
     const orderCostumer = await prisma.order.findFirst({
       where: {
-        slug: orderSlug,
+        id: Number(orderId),
       },
     });
 

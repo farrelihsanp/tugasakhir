@@ -1,6 +1,58 @@
 import { NextFunction, Request, Response } from 'express';
 import { prisma } from '../configs/prisma.js';
 
+export const getTotalCartItems = async (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) => {
+  try {
+    const userId = req.user?.id;
+    if (!userId) {
+      res.status(401).json({ error: 'Unauthorized' });
+      return;
+    }
+
+    const cart = await prisma.cart.findUnique({
+      where: { userId: userId },
+      include: { cartItems: true },
+    });
+
+    if (!cart) {
+      res.status(404).json({ error: 'Cart not found' });
+      return;
+    }
+
+    const hasilBelanjaan = await prisma.cartItem.findMany({
+      where: { cartId: cart.id },
+
+      include: {
+        storeProduct: {
+          include: { product: true },
+        },
+      },
+    });
+
+    if (hasilBelanjaan.length === 0) {
+      res.status(400).json({ error: 'No items in the cart' });
+      return;
+    }
+
+    const totalHasilBelanjaan = hasilBelanjaan.reduce((acc, item) => {
+      return acc + item.total;
+    }, 0);
+
+    const finalAmount = await prisma.cart.update({
+      where: { userId: userId },
+      data: { totalAmount: totalHasilBelanjaan },
+    });
+
+    return finalAmount;
+  } catch (error) {
+    next(error);
+  }
+};
+
 export const addToCart = async (
   req: Request,
   res: Response,
@@ -42,11 +94,16 @@ export const addToCart = async (
       return;
     }
 
-    const cart = await prisma.cart.upsert({
-      where: { userId: userId },
-      update: {},
-      create: { userId: userId },
+    const cart = await prisma.cart.findFirst({
+      where: {
+        userId: userId,
+      },
     });
+
+    if (!cart) {
+      res.status(404).json({ error: 'Cart not found' });
+      return;
+    }
 
     let cartItem = await prisma.cartItem.findFirst({
       where: {
@@ -77,6 +134,16 @@ export const addToCart = async (
         },
       });
     }
+
+    // UPDATE FINAL KE CART UNTUK TOTALNYA
+    const fetchCart = await getTotalCartItems(req, res, next);
+
+    await prisma.cart.update({
+      where: { id: cart.id },
+      data: {
+        totalAmount: Number(fetchCart),
+      },
+    });
 
     res.status(200).json({
       ok: true,
@@ -123,7 +190,7 @@ export const increaseQuantityProduct = async (
       return;
     }
 
-    const updated = await prisma.cartItem.update({
+    await prisma.cartItem.update({
       where: { id: cartItemId },
       data: {
         quantity: { increment: quantity },
@@ -132,9 +199,28 @@ export const increaseQuantityProduct = async (
       },
     });
 
-    res
-      .status(200)
-      .json({ message: 'Update quantity successfully', data: updated });
+    const cart = await prisma.cart.findFirst({
+      where: {
+        userId: userId,
+      },
+    });
+
+    if (!cart) {
+      res.status(404).json({ error: 'Cart not found' });
+      return;
+    }
+
+    // UPDATE FINAL KE CART UNTUK TOTALNYA
+    const fetchCart = await getTotalCartItems(req, res, next);
+
+    await prisma.cart.update({
+      where: { id: cart.id },
+      data: {
+        totalAmount: Number(fetchCart),
+      },
+    });
+
+    res.status(200).json({ message: 'Update quantity successfully' });
     return;
   } catch (error) {
     console.error('Error updating quantity:', error);
@@ -180,7 +266,7 @@ export const decreaseQuantityProduct = async (
       return;
     }
 
-    const updated = await prisma.cartItem.update({
+    await prisma.cartItem.update({
       where: { id: cartItemId },
       data: {
         quantity: newQuantity,
@@ -188,9 +274,28 @@ export const decreaseQuantityProduct = async (
       },
     });
 
-    res
-      .status(200)
-      .json({ message: 'Update quantity successfully', data: updated });
+    const cart = await prisma.cart.findFirst({
+      where: {
+        userId: userId,
+      },
+    });
+
+    if (!cart) {
+      res.status(404).json({ error: 'Cart not found' });
+      return;
+    }
+
+    // UPDATE FINAL KE CART UNTUK TOTALNYA
+    const fetchCart = await getTotalCartItems(req, res, next);
+
+    await prisma.cart.update({
+      where: { id: cart.id },
+      data: {
+        totalAmount: Number(fetchCart),
+      },
+    });
+
+    res.status(200).json({ message: 'Update quantity successfully' });
     return;
   } catch (error) {
     console.error('Error updating quantity:', error);
@@ -216,7 +321,12 @@ export const deleteCartItem = async (
       return;
     }
 
-    await prisma.cartItem.deleteMany({ where: { id: { in: cartItemIds } } });
+    await prisma.cartItem.delete({
+      where: {
+        id: Number(cartItemIds),
+      },
+    });
+
     res.status(200).json({ message: 'Delete cart item successfully' });
     return;
   } catch (error) {
@@ -225,33 +335,33 @@ export const deleteCartItem = async (
   }
 };
 
-export const getAllAddressesUser = async (
-  req: Request,
-  res: Response,
-  next: NextFunction,
-) => {
-  try {
-    const userId = req.user?.id;
-    if (!userId) {
-      res.status(401).json({ error: 'Unauthorized' });
-      return;
-    }
+// export const getAllAddressesUser = async (
+//   req: Request,
+//   res: Response,
+//   next: NextFunction,
+// ) => {
+//   try {
+//     const userId = req.user?.id;
+//     if (!userId) {
+//       res.status(401).json({ error: 'Unauthorized' });
+//       return;
+//     }
 
-    const addresses = await prisma.address.findMany({
-      where: { userId: Number(userId) },
-    });
+//     const addresses = await prisma.address.findMany({
+//       where: { userId: Number(userId) },
+//     });
 
-    res.status(200).json({
-      ok: true,
-      message: 'Addresses retrieved successfully',
-      data: addresses,
-    });
-    return;
-  } catch (error) {
-    console.error('Error retrieving addresses:', error);
-    next(error);
-  }
-};
+//     res.status(200).json({
+//       ok: true,
+//       message: 'Addresses retrieved successfully',
+//       data: addresses,
+//     });
+//     return;
+//   } catch (error) {
+//     console.error('Error retrieving addresses:', error);
+//     next(error);
+//   }
+// };
 
 export const setShippingAddress = async (
   req: Request,

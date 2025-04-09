@@ -221,9 +221,9 @@ export const setPrimaryAddress = async (
       return;
     }
 
-    const { addressIds } = req.body;
+    const { addressId } = req.body;
 
-    if (!addressIds) {
+    if (!addressId) {
       res.status(400).json({ message: 'Address ID is required' });
       return;
     }
@@ -234,10 +234,9 @@ export const setPrimaryAddress = async (
     });
 
     await prisma.address.update({
-      where: { id: Number(addressIds) },
+      where: { id: Number(addressId) },
       data: { isPrimary: true },
     });
-    // PERTANYAAN - INI BENER ENGGA?
 
     res.status(200).json({
       ok: true,

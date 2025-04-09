@@ -28,7 +28,7 @@ router
 
 // Mengambil semua alamat pengguna
 router
-  .route('/user/:userId')
+  .route('/user-addresses')
   .get(verifyToken, roleGuard(['CUSTOMERS']), getAllAddresses);
 
 // Menetapkan alamat utama

@@ -56,6 +56,11 @@ enum typeOfChange {
     PEMBELIAN
 }
 
+enum VoucherCategory {
+    SHOPPING_RESULT
+    SHIPPING_COST
+}
+
 model User {
     id                  Int      @id @default(autoincrement())
     name                String
@@ -86,8 +91,13 @@ model User {
 }
 
 model Cart {
-    id        Int        @id @default(autoincrement())
-    userId    Int        @unique
+    id     Int @id @default(autoincrement())
+    userId Int @unique
+
+    totalAmount             Int @default(0)
+    totalAmountAfterVoucher Int @default(0)
+    valueVoucher            Int @default(0)
+
     createdAt DateTime   @default(now())
     updatedAt DateTime   @updatedAt
     cartItems CartItem[]
@@ -216,23 +226,24 @@ model Store {
 }
 
 model Voucher {
-    id                Int         @id @default(autoincrement())
+    id                Int             @id @default(autoincrement())
     userId            Int
     storeId           Int?
     name              String
     description       String
-    code              String      @unique
+    code              String          @unique
     voucherType       VoucherType
+    voucherCategory   VoucherCategory
     value             Int
     startDate         DateTime
     endDate           DateTime
     stock             Int
-    isActive          Boolean     @default(true)
+    isActive          Boolean         @default(true)
     minPurchase       Float?
     maxPriceReduction Float?
     voucherImage      String
-    createdAt         DateTime    @default(now())
-    updatedAt         DateTime    @updatedAt
+    createdAt         DateTime        @default(now())
+    updatedAt         DateTime        @updatedAt
 
     store          Store?           @relation(fields: [storeId], references: [id], onDelete: Cascade)
     VoucherProduct VoucherProduct[]

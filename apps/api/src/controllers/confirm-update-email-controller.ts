@@ -4,10 +4,6 @@ import Handlebars from 'handlebars';
 import fs from 'fs/promises';
 import { Resend } from 'resend';
 
-// import { useStoreContext } from '../../utility/StoreContext';
-
-// const { user } = useStoreContext();
-
 const resend = new Resend(process.env.RESEND_API_KEY);
 
 export async function confirmUpdateEmail(
@@ -60,7 +56,6 @@ export async function confirmUpdateEmail(
     );
     const compiledTemplate = Handlebars.compile(templateSource.toString());
 
-    // Generate the HTML content from the template
     const htmlTemplate = compiledTemplate({
       name: user.name,
       confirmationLink: `http://localhost:3000/customer/${user.username}/profile`,

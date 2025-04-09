@@ -134,7 +134,7 @@ export default function Navbar() {
               </Link>
             </div>
             <div>
-              <Link href="/my-order" className="text-white">
+              <Link href="/my-orders" className="text-white">
                 Order
               </Link>
             </div>

@@ -1,6 +1,12 @@
 import { hash, genSalt } from 'bcryptjs';
 
 import { prisma } from '../src/configs/prisma.js';
+import {
+  OrderStatus,
+  VoucherCategory,
+  VoucherType,
+  PaymentMethodType,
+} from '@prisma/client';
 
 async function main() {
   try {
@@ -1937,39 +1943,48 @@ async function main() {
     const customerAddress = await prisma.address.create({
       data: {
         userId: customer1.id,
-        street: 'Jl. Pelangi No. 456',
-        city: 'Jakarta',
+        street: 'Jl. Danukusuman Bremoro',
+        city: 'Solo',
         number: 123,
         postalCode: 12540,
         country: 'Indonesia',
         isPrimary: true,
         isActive: true,
+        latitude: -7.583492049994404,
+        longitude: 110.82192815522832,
+        // LOKASI DI RUMAH SOLO
       },
     });
 
     await prisma.address.create({
       data: {
         userId: customer1.id,
-        street: 'Jl. Merdeka No. 123',
+        street: 'Jl. Pondok Indah Mall',
         city: 'Jakarta',
         number: 456,
         postalCode: 12540,
         country: 'Indonesia',
         isPrimary: false,
         isActive: true,
+        latitude: -6.265331596523745,
+        longitude: 106.78302107893319,
+        // LOKASI DI PONDOK INDAH
       },
     });
 
     await prisma.address.create({
       data: {
         userId: customer1.id,
-        street: 'Jl. Raya No. 789',
-        city: 'Jakarta',
+        street: 'Jl. Zeni',
+        city: 'Jakarta Timur',
         number: 789,
-        postalCode: 12540,
+        postalCode: 12555,
         country: 'Indonesia',
         isPrimary: false,
         isActive: true,
+        latitude: -6.250244221295454,
+        longitude: 106.91423422703144,
+        // LOKASI DI KODAM
       },
     });
 
@@ -2047,18 +2062,18 @@ async function main() {
     const voucher1 = await prisma.voucher.create({
       data: {
         userId: customer1.id,
-        storeId: store1.id,
-        name: 'Diskon Sayuran',
-        description: 'Dapatkan diskon 10% pada semua sayuran',
-        code: 'DISKON10',
-        voucherType: 'PERCENTAGE',
-        value: 10,
+        name: 'Diskon 90%',
+        description: 'Dapatkan diskon 90% pada semua produk',
+        code: 'DISKON90',
+        voucherCategory: VoucherCategory.SHOPPING_RESULT,
+        voucherType: VoucherType.PERCENTAGE,
+        value: 90,
         startDate: new Date(),
         endDate: new Date(new Date().setDate(new Date().getDate() + 30)),
         stock: 100,
         isActive: true,
-        minPurchase: 50000,
-        maxPriceReduction: 10000,
+        minPurchase: 100,
+        maxPriceReduction: 1000000,
         voucherImage:
           'https://dummyimage.com/600x400/90ee90/fff&text=voucher+diskon+sayuran',
       },
@@ -2067,18 +2082,18 @@ async function main() {
     const voucher2 = await prisma.voucher.create({
       data: {
         userId: customer1.id,
-        storeId: store2.id,
-        name: 'Diskon Makanan Ringan',
-        description: 'Dapatkan diskon 5% pada semua makanan ringan',
-        code: 'DISKON5',
-        voucherType: 'PERCENTAGE',
-        value: 5,
+        name: 'Diskon 1000 rupiah',
+        description: 'Dapatkan diskon 1000 rupiah',
+        code: 'DISKONBELANJA1000',
+        voucherCategory: VoucherCategory.SHOPPING_RESULT,
+        voucherType: VoucherType.AMOUNT,
+        value: 1000,
         startDate: new Date(),
         endDate: new Date(new Date().setDate(new Date().getDate() + 30)),
         stock: 100,
         isActive: true,
-        minPurchase: 30000,
-        maxPriceReduction: 5000,
+        minPurchase: 100,
+        maxPriceReduction: 1000000,
         voucherImage:
           'https://dummyimage.com/600x400/90ee90/fff&text=voucher+diskon+makanan+ringan',
       },
@@ -2087,18 +2102,18 @@ async function main() {
     const voucher3 = await prisma.voucher.create({
       data: {
         userId: customer1.id,
-        storeId: store3.id,
-        name: 'Diskon Minuman',
-        description: 'Dapatkan diskon 15% pada semua minuman',
-        code: 'DISKON15',
-        voucherType: 'PERCENTAGE',
-        value: 15,
+        name: 'Diskon Ongkir 1000 rupiah',
+        description: 'Dapatkan diskon 1000 rupiah untuk ongkos kirim',
+        code: 'DISKON1000',
+        voucherCategory: VoucherCategory.SHIPPING_COST,
+        voucherType: VoucherType.AMOUNT,
+        value: 1000,
         startDate: new Date(),
         endDate: new Date(new Date().setDate(new Date().getDate() + 30)),
         stock: 100,
         isActive: true,
-        minPurchase: 50000,
-        maxPriceReduction: 10000,
+        minPurchase: 100,
+        maxPriceReduction: 1000000,
         voucherImage:
           'https://dummyimage.com/600x400/90ee90/fff&text=voucher+diskon+15',
       },
@@ -2128,16 +2143,20 @@ async function main() {
     /* -------------------------------------------------------------------------- */
     /*                                  Order Seed                                */
     /* -------------------------------------------------------------------------- */
-    const order = await prisma.order.create({
+
+    // ORDER PERTAMA FARREL
+
+    const orderSiCustomerFarrel_one = await prisma.order.create({
       data: {
         userId: customer1.id,
         slug: 'ORDER-123',
         storeId: store1.id,
         shippingAddressId: customerAddress.id,
-        totalAmount: 35000,
-        status: 'PENDING_PAYMENT',
-        paymentMethodType: 'UNSET',
-        paymentProof: 'https://example.com/payment-proof.jpg',
+        totalAmount: 15000 + 69000,
+        status: OrderStatus.PENDING_PAYMENT,
+        paymentMethodType: PaymentMethodType.BANK_TRANSFER,
+        paymentProof:
+          'https://dummyimage.com/600x400/90ee90/fff&text=bukti+transfer',
         paymentProofUploadedAt: new Date(),
         orderConfirmationAt: new Date(),
         shippingCost: {
@@ -2153,32 +2172,90 @@ async function main() {
       },
     });
 
-    /* -------------------------------------------------------------------------- */
-    /*                                  OrderItem Seed                            */
-    /* -------------------------------------------------------------------------- */
-    const orderItemsData = [
+    const orderItemsFarrel_one = [
       {
         product: tomat,
         storeProduct: tomatStoreProduct,
-        quantity: 2,
+        quantity: 20,
       },
       {
         product: sabunMandi,
         storeProduct: sabunStoreProduct,
-        quantity: 1,
+        quantity: 20,
       },
       {
         product: jeruk,
         storeProduct: jerukStoreProduct,
-        quantity: 3,
+        quantity: 20,
       },
     ];
 
-    for (const item of orderItemsData) {
+    for (const item of orderItemsFarrel_one) {
       if (item.storeProduct) {
         await prisma.orderItem.create({
           data: {
-            orderId: order.id,
+            orderId: orderSiCustomerFarrel_one.id,
+            productId: item.product.id,
+            storeProductId: item.storeProduct.id,
+            quantity: item.quantity,
+            price: +item.storeProduct.price,
+            total: Number(item.storeProduct.price) * item.quantity,
+          },
+        });
+      }
+    }
+
+    // ORDER KEDUA FARREL
+
+    const orderSiCustomerFarrel_two = await prisma.order.create({
+      data: {
+        userId: customer1.id,
+        slug: 'ORDER-456',
+        storeId: store1.id,
+        shippingAddressId: customerAddress.id,
+        totalAmount: 800000,
+        status: OrderStatus.PROCESSING,
+        paymentMethodType: PaymentMethodType.BANK_TRANSFER,
+        paymentProof:
+          'https://dummyimage.com/600x400/90ee90/fff&text=bukti+bayar',
+        paymentProofUploadedAt: new Date(),
+        orderConfirmationAt: new Date(),
+        shippingCost: {
+          create: {
+            courierName: 'JNE',
+            code: 'JNE123456',
+            serviceType: 'REGULER',
+            description: 'JNE Reguler',
+            shippingCost: 60000,
+            estimatedTime: 3,
+          },
+        },
+      },
+    });
+
+    const orderItemsFarrel_two = [
+      {
+        product: tomat,
+        storeProduct: tomatStoreProduct,
+        quantity: 10,
+      },
+      {
+        product: sabunMandi,
+        storeProduct: sabunStoreProduct,
+        quantity: 10,
+      },
+      {
+        product: jeruk,
+        storeProduct: jerukStoreProduct,
+        quantity: 10,
+      },
+    ];
+
+    for (const item of orderItemsFarrel_two) {
+      if (item.storeProduct) {
+        await prisma.orderItem.create({
+          data: {
+            orderId: orderSiCustomerFarrel_two.id,
             productId: item.product.id,
             storeProductId: item.storeProduct.id,
             quantity: item.quantity,

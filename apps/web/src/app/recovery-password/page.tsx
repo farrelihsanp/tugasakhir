@@ -1,12 +1,20 @@
 'use client';
 
 import React, { useState } from 'react';
+import { useSearchParams } from 'next/navigation';
+import { useRouter } from 'next/navigation';
+import { toast } from 'react-toastify';
 
 const ResetPasswordForm = () => {
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [error, setError] = useState('');
   const [successMessage, setSuccessMessage] = useState('');
+  const [loading, setLoading] = useState(false); // New loading state
+
+  const router = useRouter();
+  const searchParams = useSearchParams();
+  const token = searchParams.get('token');
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -23,29 +31,40 @@ const ResetPasswordForm = () => {
 
     const passwordData = { password };
 
+    setLoading(true);
+
     try {
       const response = await fetch(
-        'http://localhost:8000/api/v1/auth/submit-new-password',
+        `http://localhost:8000/api/v1/auth/submit-new-password?token=${token}`,
         {
           method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
           body: JSON.stringify(passwordData),
+          credentials: 'include',
         },
       );
 
-      if (response.ok) {
-        setSuccessMessage('Password reset successfully!');
-      } else {
-        const data = await response.json();
-        setError(data.error || 'Something went wrong');
+      if (!response.ok) {
+        const errorData = await response.json();
+        setError(errorData.message || 'Error resetting password');
+        setLoading(false); // Stop loading after the request is done
+        return;
       }
-    } catch (error: unknown) {
-      if (error instanceof Error) {
-        setError(
-          error.message || 'An error occurred while resetting the password',
-        );
-      } else {
-        setError('An unknown error occurred');
+
+      const data = await response.json();
+      setSuccessMessage(data.message || 'Password reset successfully.');
+      toast.success(data.message || 'Password reset successfully.');
+      setLoading(false);
+      setTimeout(() => {
+        router.push('http://localhost:3000/auth/login');
+      }, 3000);
+    } catch (err) {
+      if (err instanceof Error) {
+        setError(`Error resetting password: ${err.message}`);
       }
+      setLoading(false);
     }
   };
 
@@ -90,9 +109,12 @@ const ResetPasswordForm = () => {
           </div>
           <button
             type="submit"
-            className="w-full bg-blue-500 text-white py-2 px-4 rounded-md hover:bg-blue-600"
+            className={`w-full py-2 px-4 rounded-md ${
+              loading ? 'bg-gray-400' : 'bg-blue-500'
+            } text-white ${loading ? 'cursor-not-allowed' : 'hover:bg-blue-600'}`}
+            disabled={loading}
           >
-            Reset Password
+            {loading ? 'Resetting...' : 'Reset Password'}
           </button>
         </form>
       </div>

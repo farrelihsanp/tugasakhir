@@ -6,8 +6,8 @@ import {
   deleteVoucher,
   getVoucherById,
   getAllVouchersUser,
-  applyVoucherToCart,
-  manageVoucherStock,
+  applyVoucher,
+  // updateVoucherStock,
   claimVoucher,
 } from '../controllers/vouchers-controller.js';
 
@@ -58,21 +58,16 @@ router.delete(
   deleteVoucher,
 );
 
-// Apply a voucher to an order
-router.post(
-  '/apply',
-  verifyToken,
-  roleGuard(['CUSTOMERS']),
-  applyVoucherToCart,
-);
+// Apply a voucher
+router.post('/apply', verifyToken, roleGuard(['CUSTOMERS']), applyVoucher);
 
 // Manage voucher stock
-router.post(
-  '/manage-stock',
-  verifyToken,
-  roleGuard(['STOREADMIN']),
-  manageVoucherStock,
-);
+// router.post(
+//   '/manage-stock',
+//   verifyToken,
+//   roleGuard(['STOREADMIN']),
+//   updateVoucherStock,
+// );
 
 router.post(
   '/claim-voucher',

@@ -54,7 +54,6 @@ export const calculateShippingCost = async (
     },
     select: {
       postalCode: true,
-      isActive: true,
     },
   });
 
@@ -119,7 +118,8 @@ export const calculateShippingCost = async (
     }
 
     const data = await response.json();
-    if (!data || !data.rajaongkir || !data.rajaongkir.results) {
+
+    if (!data) {
       res.status(500).json({ error: 'Invalid response from shipping API' });
       return;
     }

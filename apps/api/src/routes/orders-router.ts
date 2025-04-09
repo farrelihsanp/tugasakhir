@@ -23,12 +23,12 @@ const router = express.Router();
 
 // Create a new order with bank transfer
 router
-  .route('/create-order-bank-transfer/:id')
+  .route('/create-order-bank-transfer/:storeSlug')
   .post(verifyToken, roleGuard(['CUSTOMERS']), payWithBankTransfer);
 
 // Create a new order with Midtrans
 router
-  .route('/create-order-midtrans/:id')
+  .route('/create-order-midtrans/:storeSlug')
   .post(verifyToken, roleGuard(['CUSTOMERS']), payWithMidTrans);
 
 // Upload payment proof for bank transfer
@@ -43,11 +43,11 @@ router
 
 // Cancel an order
 router
-  .route('/cancel-order/:orderSlug')
+  .route('/cancel-order')
   .post(verifyToken, roleGuard(['CUSTOMERS']), cancelOrder);
 
 // order confirmed
-router.route('/order-confirmed/:orderSlug').post(orderConfirmed);
+router.route('/order-confirmed').post(orderConfirmed);
 
 router.route('/order-customer').get(verifyToken, getAllOrderCustomer);
 

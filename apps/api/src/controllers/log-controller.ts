@@ -148,7 +148,7 @@ export const sendEmailresetPassword = async (
 
     await prisma.confirmToken.create({
       data: {
-        expiredDate: new Date(Date.now() + 1000 * 60 * 5),
+        expiredDate: new Date(Date.now() + 1000 * 60 * 60 * 24),
         token: confirmToken,
         userId: user.id,
       },
@@ -229,7 +229,7 @@ export const submitNewPassword = async (
       where: { id: confirmTokenRecord.id },
     });
 
-    res.status(200).json({ message: 'Password reset successfully' });
+    res.status(200).json({ ok: true, message: 'Password reset successfully' });
   } catch (error) {
     next(error);
   }

@@ -18,7 +18,7 @@ const AddressPage = () => {
       try {
         // Fetch all addresses
         const addressRes = await fetch(
-          `http://localhost:8000/api/v1/addresses/user/${user?.id}`,
+          'http://localhost:8000/api/v1/addresses/user-addresses',
           {
             method: 'GET',
             credentials: 'include',
