@@ -152,7 +152,7 @@ export default function Navbar() {
               </Link>
             </div>
             <div className="relative w-10 h-10">
-              <Link href={`/customer/${user.username}/profile`}>
+              <Link href={`/${user.username}/my-profile`}>
                 {user.profileImage && (
                   <Image
                     src={user.profileImage}
@@ -216,14 +216,14 @@ export default function Navbar() {
           <div className="RightContainer flex justify-center items-center mx-5 gap-3">
             <div>
               <Link
-                href={`/superadmin/${user?.username}`}
+                href={`/dashboard-superadmin/${user?.username}`}
                 className="text-white"
               >
                 Dashboard
               </Link>
             </div>
             <div className="relative w-10 h-10">
-              <Link href={`/superadmin/${user?.username}/profile`}>
+              <Link href={`/${user?.username}/my-profile`}>
                 {user.profileImage && (
                   <Image
                     src={user.profileImage}

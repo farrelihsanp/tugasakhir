@@ -1,8 +1,6 @@
-import cron from 'node-cron';
+// import cron from 'node-cron';
 import { prisma } from '../configs/prisma.js';
 import { OrderStatus } from '@prisma/client';
-
-const BUFFER_TIME = 15 * 60 * 1000;
 
 const updateOrderStatus = async () => {
   try {
@@ -11,38 +9,29 @@ const updateOrderStatus = async () => {
         status: OrderStatus.SHIPPED,
       },
       include: {
-        shippingCost: true,
+        shippingInformation: true,
       },
     });
 
     for (const order of shippedOrders) {
-      const shippingCost = order.shippingCost;
+      const estimatedTime = order.shippingInformation?.estimatedTime;
 
-      if (shippingCost && shippingCost.estimatedTime) {
-        if (
-          typeof shippingCost.estimatedTime !== 'number' ||
-          shippingCost.estimatedTime <= 0
-        ) {
+      if (estimatedTime) {
+        if (typeof estimatedTime !== 'number' || estimatedTime <= 0) {
           console.warn(
-            `Invalid estimatedTime for order ID ${order.id}: ${shippingCost.estimatedTime}`,
+            `Invalid estimatedTime for order ID ${order.id}: ${estimatedTime}`,
           );
           continue;
         }
 
         const shippingAt = order.shippingAt;
         const estimatedDeliveryTime = shippingAt
-          ? new Date(
-              shippingAt.getTime() +
-                shippingCost.estimatedTime * 24 * 60 * 60 * 1000,
-            )
+          ? new Date(shippingAt.getTime() + estimatedTime)
           : null;
         const currentTime = new Date();
 
         if (estimatedDeliveryTime) {
-          if (
-            currentTime >
-            new Date(estimatedDeliveryTime.getTime() + BUFFER_TIME)
-          ) {
+          if (currentTime > new Date(estimatedDeliveryTime.getTime())) {
             await prisma.order.update({
               where: { id: order.id },
               data: {
@@ -60,9 +49,13 @@ const updateOrderStatus = async () => {
   }
 };
 
-cron.schedule('* * * * *', updateOrderStatus, {
-  scheduled: true,
-  timezone: 'Asia/Jakarta',
-});
+// cron.schedule('* * * * *', updateOrderStatus, {
+//   scheduled: true,
+//   timezone: 'Asia/Jakarta',
+// });
+
+setInterval(updateOrderStatus, 5000); // 5000ms = 5 detik
+
+// new Date(shippingAt.getTime() + estimatedTime * 1000 * 60 * 60 * 24)
 
 console.log('Cron job scheduled to update order status every minute.');

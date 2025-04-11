@@ -1,8 +1,8 @@
 // pages/admin/products.tsx
 import Head from 'next/head';
-import Navbar from '../../../../components/common/navbar';
-import Footer from '../../../../components/common/footer';
-import ProductManagement from '../../../../components/dashboard/product-management';
+import Navbar from '../../../components/common/navbar';
+import Footer from '../../../components/common/footer';
+import ProductManagement from '../../../components/dashboard/product-management';
 
 const ProductManagementPage = () => {
   return (

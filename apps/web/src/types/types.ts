@@ -109,4 +109,7 @@ export interface User {
   email: string;
   username: string;
   profileImage: string;
+  role: string;
+  createdAt: string;
+  updatedAt: string;
 }

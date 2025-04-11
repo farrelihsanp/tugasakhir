@@ -1,8 +1,8 @@
 // pages/admin/discounts.tsx
 import Head from 'next/head';
-import Navbar from '../../../../components/common/navbar';
-import Footer from '../../../../components/common/footer';
-import DiscountManagement from '../../../../components/dashboard/discount-management';
+import Navbar from '../../../../../components/common/navbar';
+import Footer from '../../../../../components/common/footer';
+import DiscountManagement from '../../../../../components/dashboard/discount-management';
 
 const DiscountManagementPage = () => {
   return (

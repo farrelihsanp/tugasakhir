@@ -1,8 +1,8 @@
 // pages/admin/inventory.tsx
 import Head from 'next/head';
-import Navbar from '../../../../components/common/navbar';
-import Footer from '../../../../components/common/footer';
-import InventoryManagement from '../../../../components/dashboard/inventory-management';
+import Navbar from '../../../components/common/navbar';
+import Footer from '../../../components/common/footer';
+import InventoryManagement from '../../../components/dashboard/inventory-management';
 
 const InventoryManagementPage = () => {
   return (

@@ -6,7 +6,9 @@ import {
   deleteVoucher,
   getVoucherById,
   getAllVouchersUser,
-  applyVoucher,
+  applyVoucherToCart,
+  applyVoucherToShippingCost,
+  applyVoucherToProduct,
   // updateVoucherStock,
   claimVoucher,
 } from '../controllers/vouchers-controller.js';
@@ -18,7 +20,7 @@ const router = express.Router();
 
 // Create a new voucher
 router.post(
-  '/create-voucher/:id',
+  '/create-voucher',
   verifyToken,
   roleGuard(['STOREADMIN']),
   upload.single('voucherImage'),
@@ -37,9 +39,9 @@ router.put(
 // Get all vouchers
 router.get(
   '/my-voucher',
-  verifyToken, // Middleware to verify the token
-  roleGuard(['STOREADMIN', 'CUSTOMERS']), // Middleware to check user roles
-  getAllVouchersUser, // Controller to handle the request
+  verifyToken,
+  roleGuard(['STOREADMIN', 'CUSTOMERS']),
+  getAllVouchersUser,
 );
 
 // Get a voucher by ID
@@ -58,16 +60,32 @@ router.delete(
   deleteVoucher,
 );
 
-// Apply a voucher
-router.post('/apply', verifyToken, roleGuard(['CUSTOMERS']), applyVoucher);
+/* -------------------------------------------------------------------------- */
+/*                                APPLY VOUCHER                               */
+/* -------------------------------------------------------------------------- */
 
-// Manage voucher stock
-// router.post(
-//   '/manage-stock',
-//   verifyToken,
-//   roleGuard(['STOREADMIN']),
-//   updateVoucherStock,
-// );
+router.post(
+  '/apply-voucher-to-cart',
+  verifyToken,
+  roleGuard(['CUSTOMERS']),
+  applyVoucherToCart,
+);
+
+router.post(
+  '/apply-voucher-to-shipping-cost',
+  verifyToken,
+  roleGuard(['CUSTOMERS']),
+  applyVoucherToShippingCost,
+);
+
+router.post(
+  '/apply-voucher-to-product',
+  verifyToken,
+  roleGuard(['CUSTOMERS']),
+  applyVoucherToProduct,
+);
+
+// ------------------------------ CLAIM VOUCHER -------------------------------
 
 router.post(
   '/claim-voucher',

@@ -1,8 +1,8 @@
 // pages/admin/dashboard.tsx
 import Head from 'next/head';
-import Navbar from '../../../components/common/navbar';
-import Footer from '../../../components/common/footer';
-import AdminDashboard from '../../../components/dashboard/admin-dashboard';
+import Navbar from '../../components/common/navbar';
+import Footer from '../../components/common/footer';
+import AdminDashboard from '../../components/dashboard/admin-dashboard';
 
 const AdminDashboardPage = () => {
   return (
