@@ -124,17 +124,34 @@ export default function Navbar() {
           <LogoWebsite />
           <div className="RightContainer flex justify-center items-center mx-5 gap-3">
             <div>
-              <Link href="/my-cart" className="text-white">
+              <Link
+                href={`/dashboard/${user?.username}/my-cart`}
+                className="text-white"
+              >
                 Cart
               </Link>
             </div>
             <div>
-              <Link href="/my-vouchers" className="text-white">
+              <Link
+                href={`/dashboard/${user?.username}`}
+                className="text-white"
+              >
+                Dashboard
+              </Link>
+            </div>
+            <div>
+              <Link
+                href={`/dashboard/${user?.username}/my-vouchers`}
+                className="text-white"
+              >
                 My Voucher
               </Link>
             </div>
             <div>
-              <Link href="/my-orders" className="text-white">
+              <Link
+                href={`/dashboard/${user?.username}/my-orders`}
+                className="text-white"
+              >
                 Order
               </Link>
             </div>
@@ -216,7 +233,7 @@ export default function Navbar() {
           <div className="RightContainer flex justify-center items-center mx-5 gap-3">
             <div>
               <Link
-                href={`/dashboard-superadmin/${user?.username}`}
+                href={`/dashboard/superadmin/${user?.username}`}
                 className="text-white"
               >
                 Dashboard

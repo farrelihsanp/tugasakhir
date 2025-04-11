@@ -1,3 +1,5 @@
+import { Role } from '@prisma/client';
+
 export interface StoreData {
   id: number;
   name: string;
@@ -14,9 +16,12 @@ export interface StoreData {
 export interface Store {
   id: string;
   name: string;
-  slug: string; // ✅ Tambahkan ini
+  slug: string;
+  address: string;
+  city: string;
   latitude: number;
   longitude: number;
+  phoneNumber: string;
   maxServiceDistance: number;
   isPrimary: boolean;
   isActive: boolean;
@@ -27,18 +32,29 @@ export interface Category {
   name: string;
   image: string;
   slug: string;
+  excerpt: string;
 }
 
 export interface Product {
   id: number;
   storeId: number;
   name: string;
+  description: string;
   productId: number;
   stock: number;
   price: number;
   isCheap: boolean;
   createdAt: string;
   updatedAt: string;
+  CategoryProduct: {
+    Category: {
+      id: number;
+      name: string;
+      image: string;
+      slug: string;
+      excerpt: string;
+    };
+  };
   product: {
     id: number;
     name: string;
@@ -109,7 +125,29 @@ export interface User {
   email: string;
   username: string;
   profileImage: string;
-  role: string;
+  role: Role;
   createdAt: string;
   updatedAt: string;
 }
+
+export type Voucher = {
+  id: number;
+  name: string;
+  description: string;
+  code: string;
+  voucherType: 'PERCENTAGE' | 'AMOUNT';
+  value: number;
+  startDate: string;
+  endDate: string;
+  stock: number;
+  isActive: boolean;
+  voucherImage: string;
+  VoucherUser: {
+    id: number;
+    userId: number;
+    voucherId: number;
+    createdAt: string;
+    updatedAt: string;
+    stockCustomer: number;
+  }[];
+};

@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
-import { useStoreContext } from '../../utility/StoreContext';
+import { useStoreContext } from '@/utility/StoreContext';
 
 interface Product {
   id: number;

@@ -7,6 +7,60 @@ datasource db {
     url      = env("DATABASE_URL")
 }
 
+enum Role {
+    CUSTOMERS
+    SUPERADMIN
+    STOREADMIN
+    UNSET
+}
+
+enum DiscountType {
+    AMOUNT
+    PERCENTAGE
+    BUY_1_GET_1
+}
+
+enum VoucherType {
+    PERCENTAGE
+    AMOUNT
+}
+
+enum OrderStatus {
+    WAITING_FOR_PAYMENT
+    PENDING_PAYMENT
+    PAYMENT_DECLINED
+    PAID
+    PROCESSING
+    SHIPPED
+    DELIVERED
+    COMPLETED
+    CANCELLED
+}
+
+enum PaymentMethodType {
+    UNSET
+    MIDTRANS
+    BANK_TRANSFER
+}
+
+enum Provider {
+    GOOGLE
+    TWITTER
+    GITHUB
+    CREDENTIALS
+}
+
+enum typeOfChange {
+    PENAMBAHAN
+    PEMBELIAN
+}
+
+enum VoucherCategory {
+    SHOPPING_RESULT
+    SHIPPING_COST
+    PRODUCT
+}
+
 model User {
     id Int @id @default(autoincrement())
 
@@ -83,14 +137,15 @@ model Address {
 }
 
 model Product {
-    id                Int                 @id @default(autoincrement())
-    name              String
-    excerpt           String
-    description       String
-    slug              String
-    weight            Float
-    createdAt         DateTime            @default(now())
-    updatedAt         DateTime            @updatedAt
+    id          Int      @id @default(autoincrement())
+    name        String
+    excerpt     String
+    description String
+    slug        String
+    weight      Float
+    createdAt   DateTime @default(now())
+    updatedAt   DateTime @updatedAt
+
     CartItem          CartItem[]
     CategoryProduct   CategoryProduct[]
     DiscountProduct   DiscountProduct[]
@@ -139,7 +194,7 @@ model ConfirmToken {
 }
 
 model Store {
-    id                 Int            @id @default(autoincrement())
+    id                 Int    @id @default(autoincrement())
     name               String
     storeImage         String
     address            String
@@ -152,20 +207,24 @@ model Store {
     latitude           Float
     longitude          Float
     maxServiceDistance Float?
-    isPrimary          Boolean        @default(false)
-    isActive           Boolean        @default(true)
-    createdAt          DateTime       @default(now())
-    updatedAt          DateTime       @updatedAt
-    orders             Order[]
-    storeProducts      StoreProduct[]
-    StoreUser          StoreUser[]
-    Voucher            Voucher[]
+
+    isPrimary Boolean  @default(false)
+    isActive  Boolean  @default(true)
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+
+    orders        Order[]
+    storeProducts StoreProduct[]
+    StoreUser     StoreUser[]
+    Voucher       Voucher[]
 }
 
 model Voucher {
-    id                Int             @id @default(autoincrement())
+    id Int @id @default(autoincrement())
+
     storeId           Int?
-    stockVoucherAdmin Int             @default(0)
+    stockVoucherAdmin Int  @default(0)
+
     name              String
     description       String
     code              String          @unique
@@ -178,11 +237,12 @@ model Voucher {
     minPurchase       Float?
     maxPriceReduction Float?
     voucherImage      String
-    createdAt         DateTime        @default(now())
-    updatedAt         DateTime        @updatedAt
-    store             Store?          @relation(fields: [storeId], references: [id], onDelete: Cascade)
-    VoucherProduct    VoucherProduct?
-    VoucherUser       VoucherUser[]
+
+    createdAt      DateTime        @default(now())
+    updatedAt      DateTime        @updatedAt
+    store          Store?          @relation(fields: [storeId], references: [id], onDelete: Cascade)
+    VoucherProduct VoucherProduct?
+    VoucherUser    VoucherUser[]
 }
 
 model Order {
@@ -317,14 +377,17 @@ model VoucherProduct {
 }
 
 model StoreProduct {
-    id        Int         @id @default(autoincrement())
+    id Int @id @default(autoincrement())
+
     storeId   Int
     productId Int
-    stock     Int         @default(0)
+
+    stock     Int      @default(0)
     price     Decimal
-    isCheap   Boolean     @default(false)
-    createdAt DateTime    @default(now())
-    updatedAt DateTime    @updatedAt
+    isCheap   Boolean  @default(false)
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+
     CartItem  CartItem[]
     OrderItem OrderItem[]
     product   Product     @relation(fields: [productId], references: [id], onDelete: Cascade)
@@ -332,65 +395,13 @@ model StoreProduct {
 }
 
 model VoucherUser {
-    id            Int      @id @default(autoincrement())
-    voucherId     Int
-    userId        Int
+    id Int @id @default(autoincrement())
+
+    voucherId Int
+    userId    Int
+
     stockCustomer Int      @default(0)
     claimedAt     DateTime @default(now())
     user          User     @relation(fields: [userId], references: [id], onDelete: Cascade)
     voucher       Voucher  @relation(fields: [voucherId], references: [id], onDelete: Cascade)
-}
-
-enum Role {
-    CUSTOMERS
-    SUPERADMIN
-    STOREADMIN
-    UNSET
-}
-
-enum DiscountType {
-    AMOUNT
-    PERCENTAGE
-    BUY_1_GET_1
-}
-
-enum VoucherType {
-    PERCENTAGE
-    AMOUNT
-}
-
-enum OrderStatus {
-    WAITING_FOR_PAYMENT
-    PENDING_PAYMENT
-    PAYMENT_DECLINED
-    PAID
-    PROCESSING
-    SHIPPED
-    DELIVERED
-    COMPLETED
-    CANCELLED
-}
-
-enum PaymentMethodType {
-    UNSET
-    MIDTRANS
-    BANK_TRANSFER
-}
-
-enum Provider {
-    GOOGLE
-    TWITTER
-    GITHUB
-    CREDENTIALS
-}
-
-enum typeOfChange {
-    PENAMBAHAN
-    PEMBELIAN
-}
-
-enum VoucherCategory {
-    SHOPPING_RESULT
-    SHIPPING_COST
-    PRODUCT
 }

@@ -2075,7 +2075,7 @@ async function main() {
         minPurchase: 100,
         maxPriceReduction: 100000000,
         voucherImage:
-          'https://dummyimage.com/600x400/90ee90/fff&text=voucher+diskon+sayuran',
+          'https://res.cloudinary.com/dm1cnsldc/image/upload/v1739627191/tech_hrqpsd.jpg',
       },
     });
 
@@ -2094,7 +2094,7 @@ async function main() {
         minPurchase: 100,
         maxPriceReduction: 1000000,
         voucherImage:
-          'https://dummyimage.com/600x400/90ee90/fff&text=voucher+diskon+makanan+ringan',
+          'https://res.cloudinary.com/dm1cnsldc/image/upload/v1739627191/tech_hrqpsd.jpg',
       },
     });
 
@@ -2113,7 +2113,7 @@ async function main() {
         minPurchase: 100,
         maxPriceReduction: 1000000,
         voucherImage:
-          'https://dummyimage.com/600x400/90ee90/fff&text=voucher+diskon+15',
+          'https://res.cloudinary.com/dm1cnsldc/image/upload/v1739627191/tech_hrqpsd.jpg',
       },
     });
 
@@ -2132,7 +2132,7 @@ async function main() {
         minPurchase: 100,
         maxPriceReduction: 1000000,
         voucherImage:
-          'https://dummyimage.com/600x400/90ee90/fff&text=voucher+diskon+15',
+          'https://res.cloudinary.com/dm1cnsldc/image/upload/v1739627191/tech_hrqpsd.jpg',
       },
     });
 

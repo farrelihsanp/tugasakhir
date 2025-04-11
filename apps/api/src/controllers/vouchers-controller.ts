@@ -314,10 +314,16 @@ export const getAllVouchersUser = async (
       return;
     }
 
-    const vouchers = await prisma.voucherUser.findMany({
-      where: { userId: Number(userId) },
+    const vouchers = await prisma.voucher.findMany({
+      where: {
+        VoucherUser: {
+          some: {
+            userId: userId,
+          },
+        },
+      },
       include: {
-        voucher: true,
+        VoucherUser: true,
       },
     });
 
@@ -366,12 +372,12 @@ export const claimVoucher = async (
       return;
     }
 
-    if (
-      voucher.VoucherUser.some((voucherUser) => voucherUser.stockCustomer > 3)
-    ) {
-      res.status(400).json({ error: 'Voucher max 3 stock' });
-      return;
-    }
+    // if (
+    //   voucher.VoucherUser.some((voucherUser) => voucherUser.stockCustomer > 3)
+    // ) {
+    //   res.status(400).json({ error: 'Voucher max 3 stock' });
+    //   return;
+    // }
 
     // ---------------------------------------------------------------------- //
 
