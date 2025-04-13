@@ -94,6 +94,6 @@ router.route('/order-history').get(verifyToken, getAllOrderHistory);
 /* -------------------------------------------------------------------------- */
 /*                           FOR CUSTOMER AND ADMIN                           */
 /* -------------------------------------------------------------------------- */
-router.route('/order-history/:orderSlug').get(verifyToken, getOrderDetail);
+router.route('/order-detail/:orderSlug').get(verifyToken, getOrderDetail);
 
 export default router;

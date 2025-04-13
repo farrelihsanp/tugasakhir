@@ -5,10 +5,10 @@ import {
   Store,
   Category,
   Product,
-  cheapProducts,
+  CheapProducts,
   StoreContextType,
   User,
-} from '../types/types';
+} from '@/types/types';
 
 const StoreContext = createContext<StoreContextType | undefined>(undefined);
 
@@ -25,7 +25,7 @@ export const StoreProvider: React.FC<{ children: React.ReactNode }> = ({
 }) => {
   const [nearestStore, setNearestStore] = useState<Store | null>(null);
   const [products, setProducts] = useState<Product[]>([]);
-  const [cheapProducts, setCheapProducts] = useState<cheapProducts[]>([]);
+  const [cheapProducts, setCheapProducts] = useState<CheapProducts[]>([]);
   const [categories, setCategories] = useState<Category[]>([]);
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState<boolean>(false);
@@ -115,8 +115,8 @@ export const StoreProvider: React.FC<{ children: React.ReactNode }> = ({
         credentials: 'include',
       });
       if (response.ok) {
-        setUser(null); // Clear user data on logout
-        window.location.href = '/'; // Redirect to homepage or login page
+        setUser(null);
+        window.location.href = '/';
       } else {
         throw new Error('Logout failed');
       }

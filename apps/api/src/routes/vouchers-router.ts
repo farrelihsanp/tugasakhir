@@ -6,6 +6,7 @@ import {
   deleteVoucher,
   getVoucherById,
   getAllVouchersUser,
+  getAllVouchersAdmin,
   applyVoucherToCart,
   applyVoucherToShippingCost,
   applyVoucherToProduct,
@@ -36,7 +37,6 @@ router.put(
   updateVoucher,
 );
 
-// Get all vouchers
 router.get(
   '/my-voucher',
   verifyToken,
@@ -44,11 +44,13 @@ router.get(
   getAllVouchersUser,
 );
 
+router.get('/all-vouchers', getAllVouchersAdmin);
+
 // Get a voucher by ID
 router.get(
   '/my-voucher/:id',
   verifyToken,
-  roleGuard(['STOREADMIN, CUSTOMERS']),
+  roleGuard(['CUSTOMERS', 'STOREADMIN']),
   getVoucherById,
 );
 

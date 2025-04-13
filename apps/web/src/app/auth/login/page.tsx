@@ -31,23 +31,26 @@ export default function LoginPage() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(formData),
       });
-      const data = await response.json();
 
       if (!response.ok) {
-        throw new Error(data.message || 'Login failed');
+        throw new Error('Login failed');
       }
-
       toast.success('Login successful!');
-      const meRes = await fetch('http://localhost:8000/api/v1/auth/me', {
-        credentials: 'include',
-      });
-      const meData = await meRes.json();
-      if (!meRes.ok) {
-        router.push('/select-role');
+
+      // ----------------------------------------------------------------
+      const fetchUserLogin = await fetch(
+        'http://localhost:8000/api/v1/auth/me',
+        {
+          method: 'GET',
+          credentials: 'include',
+        },
+      );
+      if (!fetchUserLogin.ok) {
+        router.push('/auth/login');
         return;
       }
-
-      switch (meData.role) {
+      const dataUser = await fetchUserLogin.json();
+      switch (dataUser.role) {
         case 'CUSTOMERS':
           router.push('/');
           break;
@@ -57,11 +60,13 @@ export default function LoginPage() {
         case 'STOREADMIN':
           router.push('/');
           break;
-        case 'UNSET':
         default:
-          router.push('/select-role');
+          router.push('/');
           break;
       }
+      setTimeout(() => {
+        window.location.reload();
+      }, 500);
     } catch (error) {
       if (error instanceof ZodError) {
         const errors: Record<string, string> = {};

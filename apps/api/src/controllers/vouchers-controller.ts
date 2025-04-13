@@ -293,7 +293,9 @@ export const getVoucherById = async (
       return;
     }
 
-    res.status(200).json(voucher);
+    res
+      .status(200)
+      .json({ ok: true, message: 'Voucher found successfully', data: voucher });
   } catch (error) {
     console.error(error);
     next(error);
@@ -324,6 +326,34 @@ export const getAllVouchersUser = async (
       },
       include: {
         VoucherUser: true,
+      },
+    });
+
+    if (!vouchers) {
+      res.status(404).json({ error: 'Vouchers not found' });
+      return;
+    }
+    res.status(200).json({
+      ok: true,
+      message: 'Vouchers found successfully',
+      data: vouchers,
+    });
+  } catch (error) {
+    console.error(error);
+    next(error);
+  }
+};
+
+export const getAllVouchersAdmin = async (
+  _req: Request,
+  res: Response,
+  next: NextFunction,
+) => {
+  try {
+    const vouchers = await prisma.voucher.findMany({
+      where: {
+        isActive: true,
+        stockVoucherAdmin: { gt: 0 },
       },
     });
 
@@ -514,17 +544,17 @@ export const applyVoucherToCart = async (
         return;
       }
 
-      await prisma.voucherUser.update({
-        where: { id: voucherUser.id },
-        data: {
-          stockCustomer: voucherUser.stockCustomer - 1,
-        },
-      });
+      // await prisma.voucherUser.update({
+      //   where: { id: voucherUser.id },
+      //   data: {
+      //     stockCustomer: voucherUser.stockCustomer - 1,
+      //   },
+      // });
 
       await res.status(200).json({
         ok: true,
         message: 'Voucher applied to cart total successfully',
-        data: { finalCart },
+        data: finalCart,
       });
     } else if (
       (voucherSelectedToApply.voucherCategory as string) !==
@@ -623,17 +653,17 @@ export const applyVoucherToShippingCost = async (
         return;
       }
 
-      await prisma.voucherUser.update({
-        where: { id: voucherUser.id },
-        data: {
-          stockCustomer: voucherUser.stockCustomer - 1,
-        },
-      });
+      // await prisma.voucherUser.update({
+      //   where: { id: voucherUser.id },
+      //   data: {
+      //     stockCustomer: voucherUser.stockCustomer - 1,
+      //   },
+      // });
 
       res.status(200).json({
         ok: true,
         message: 'Voucher applied to shipping cost successfully',
-        data: { finalShippingCost },
+        data: finalShippingCost,
       });
     }
   } catch (error) {
@@ -744,12 +774,12 @@ export const applyVoucherToProduct = async (
         return;
       }
 
-      await prisma.voucherUser.update({
-        where: { id: voucherUser.id },
-        data: {
-          stockCustomer: voucherUser.stockCustomer - 1,
-        },
-      });
+      // await prisma.voucherUser.update({
+      //   where: { id: voucherUser.id },
+      //   data: {
+      //     stockCustomer: voucherUser.stockCustomer - 1,
+      //   },
+      // });
 
       const finalCartItem = await prisma.cartItem.findUnique({
         where: { id: cartItem.id },

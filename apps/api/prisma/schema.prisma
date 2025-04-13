@@ -92,30 +92,51 @@ model User {
 }
 
 model Cart {
-    id                      Int        @id @default(autoincrement())
-    userId                  Int        @unique
-    totalAmount             Int        @default(0)
-    totalAmountAfterVoucher Int        @default(0)
-    valueVoucher            Int        @default(0)
-    createdAt               DateTime   @default(now())
-    updatedAt               DateTime   @updatedAt
-    user                    User       @relation(fields: [userId], references: [id], onDelete: Cascade)
-    cartItems               CartItem[]
+    id Int @id @default(autoincrement())
+
+    userId Int @unique
+
+    createdAt            DateTime              @default(now())
+    updatedAt            DateTime              @updatedAt
+    user                 User                  @relation(fields: [userId], references: [id], onDelete: Cascade)
+    cartItems            CartItem[]
+    CartValueCalculation CartValueCalculation?
+}
+
+model CartValueCalculation {
+    id Int @id @default(autoincrement())
+
+    cartId Int @unique
+
+    totalAmount              Int @default(0)
+    totalAmountAfterVoucher  Int @default(0)
+    valueVoucherCart         Int @default(0)
+    shippingCost             Int @default(0)
+    shippingCostAfterVoucher Int @default(0)
+    valueVoucherShipping     Int @default(0)
+
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+
+    cart Cart @relation(fields: [cartId], references: [id], onDelete: Cascade)
 }
 
 model CartItem {
-    id             Int          @id @default(autoincrement())
+    id Int @id @default(autoincrement())
+
     cartId         Int
     storeProductId Int
     productId      Int?
-    quantity       Int
-    price          Decimal
-    total          Int
-    createdAt      DateTime     @default(now())
-    updatedAt      DateTime     @updatedAt
-    cart           Cart         @relation(fields: [cartId], references: [id], onDelete: Cascade)
-    Product        Product?     @relation(fields: [productId], references: [id])
-    storeProduct   StoreProduct @relation(fields: [storeProductId], references: [id], onDelete: Cascade)
+
+    quantity Int
+    price    Decimal
+    total    Int
+
+    createdAt    DateTime     @default(now())
+    updatedAt    DateTime     @updatedAt
+    cart         Cart         @relation(fields: [cartId], references: [id], onDelete: Cascade)
+    Product      Product?     @relation(fields: [productId], references: [id])
+    storeProduct StoreProduct @relation(fields: [storeProductId], references: [id], onDelete: Cascade)
 }
 
 model Address {
@@ -246,54 +267,63 @@ model Voucher {
 }
 
 model Order {
-    id                     Int                  @id @default(autoincrement())
-    userId                 Int
-    storeId                Int
-    shippingAddressId      Int
+    id Int @id @default(autoincrement())
+
+    userId            Int
+    storeId           Int
+    shippingAddressId Int
+
     slug                   String
     paymentMethodType      PaymentMethodType
     totalAmount            Float
-    status                 OrderStatus          @default(PENDING_PAYMENT)
-    paymentProof           String?              @unique
+    status                 OrderStatus       @default(PENDING_PAYMENT)
+    paymentProof           String?           @unique
     paymentProofUploadedAt DateTime?
     orderConfirmationAt    DateTime?
-    createdAt              DateTime             @default(now())
-    updatedAt              DateTime             @updatedAt
+    createdAt              DateTime          @default(now())
+    updatedAt              DateTime          @updatedAt
     shippingAt             DateTime?
     deliveredAt            DateTime?
-    shippingAddress        Address              @relation(fields: [shippingAddressId], references: [id], onDelete: Cascade)
-    store                  Store                @relation(fields: [storeId], references: [id], onDelete: Cascade)
-    user                   User                 @relation(fields: [userId], references: [id], onDelete: Cascade)
-    orderItems             OrderItem[]
-    ProductChangeData      ProductChangeData[]
-    shippingInformation    ShippingInformation?
+
+    shippingAddress     Address              @relation(fields: [shippingAddressId], references: [id], onDelete: Cascade)
+    store               Store                @relation(fields: [storeId], references: [id], onDelete: Cascade)
+    user                User                 @relation(fields: [userId], references: [id], onDelete: Cascade)
+    orderItems          OrderItem[]
+    ProductChangeData   ProductChangeData[]
+    shippingInformation ShippingInformation?
 }
 
 model OrderItem {
-    id             Int          @id @default(autoincrement())
+    id Int @id @default(autoincrement())
+
     orderId        Int
     storeProductId Int
-    quantity       Int
-    price          Float
-    total          Float
     productId      Int?
-    order          Order        @relation(fields: [orderId], references: [id], onDelete: Cascade)
-    Product        Product?     @relation(fields: [productId], references: [id])
-    storeProduct   StoreProduct @relation(fields: [storeProductId], references: [id], onDelete: Cascade)
+
+    quantity Int
+    price    Float
+    total    Float
+
+    order        Order        @relation(fields: [orderId], references: [id], onDelete: Cascade)
+    Product      Product?     @relation(fields: [productId], references: [id])
+    storeProduct StoreProduct @relation(fields: [storeProductId], references: [id], onDelete: Cascade)
 }
 
 model ShippingInformation {
-    id            Int      @id @default(autoincrement())
-    orderId       Int      @unique
+    id Int @id @default(autoincrement())
+
+    orderId Int @unique
+
     courierName   String
     code          String
     serviceType   String
     description   String
     shippingCost  Float
     estimatedTime Int
-    createdAt     DateTime @default(now())
-    updatedAt     DateTime @updatedAt
-    order         Order    @relation(fields: [orderId], references: [id], onDelete: Cascade)
+
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+    order     Order    @relation(fields: [orderId], references: [id], onDelete: Cascade)
 }
 
 model ProductChangeData {

@@ -2075,7 +2075,7 @@ async function main() {
         minPurchase: 100,
         maxPriceReduction: 100000000,
         voucherImage:
-          'https://res.cloudinary.com/dm1cnsldc/image/upload/v1739627191/tech_hrqpsd.jpg',
+          'https://res.cloudinary.com/dm1cnsldc/image/upload/v1739627187/film_event_mzciww.jpg',
       },
     });
 
@@ -2132,7 +2132,7 @@ async function main() {
         minPurchase: 100,
         maxPriceReduction: 1000000,
         voucherImage:
-          'https://res.cloudinary.com/dm1cnsldc/image/upload/v1739627191/tech_hrqpsd.jpg',
+          'https://res.cloudinary.com/dm1cnsldc/image/upload/v1739627189/health-workshop_zns6qb.jpg',
       },
     });
 
@@ -2257,7 +2257,7 @@ async function main() {
         storeId: store1.id,
         shippingAddressId: customerAddress.id,
         totalAmount: 800000,
-        status: OrderStatus.PROCESSING,
+        status: OrderStatus.WAITING_FOR_PAYMENT,
         paymentMethodType: PaymentMethodType.BANK_TRANSFER,
         paymentProof:
           'https://dummyimage.com/600x400/90ee90/fff&text=bukti+bayar',

@@ -852,13 +852,14 @@ export const getOrderDetail = async (
   next: NextFunction,
 ) => {
   try {
-    const { slug } = req.params;
+    const { orderSlug } = req.params;
 
     const order = await prisma.order.findFirst({
-      where: { slug },
+      where: { slug: orderSlug },
       include: {
         user: { select: { name: true } },
         store: { select: { name: true } },
+        shippingInformation: true,
         orderItems: {
           include: {
             storeProduct: {
@@ -880,7 +881,7 @@ export const getOrderDetail = async (
       return;
     }
 
-    const formattedItems = order.orderItems.map((item) => {
+    order.orderItems.map((item) => {
       const product = item.storeProduct.product;
       const image = product.ProductImages[0]?.imageUrl || null;
 
@@ -893,21 +894,18 @@ export const getOrderDetail = async (
       };
     });
 
-    const totalFromItems = order.orderItems.reduce((acc, item) => {
-      return acc + item.total;
-    }, 0);
-
-    res.status(200).json({
-      ok: true,
-      data: {
-        customerName: order.user.name,
-        storeName: order.store.name,
-        status: order.status,
-        totalAmount: order.totalAmount,
-        totalCalculated: totalFromItems,
-        items: formattedItems,
-      },
-    });
+    // res.status(200).json({
+    //   ok: true,
+    //   data: {
+    //     customerName: order.user.name,
+    //     storeName: order.store.name,
+    //     status: order.status,
+    //     totalAmount: order.totalAmount,
+    //     totalCalculated: totalFromItems,
+    //     items: formattedItems,
+    //   },
+    // });
+    res.status(200).json({ ok: true, message: 'Success', data: order });
   } catch (error) {
     console.error('Error getting order detail:', error);
     next(error);

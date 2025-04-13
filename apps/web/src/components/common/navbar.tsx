@@ -93,7 +93,7 @@ export default function Navbar() {
   if (!user) {
     return (
       <section>
-        <div className=" bg-blue-600 py-3 flex items-center justify-between ">
+        <div className=" bg-primary py-3 flex items-center justify-between ">
           <LogoWebsite />
           <div className="RightContainer flex justify-center items-center mx-5 gap-3">
             <div className="mr-5">
