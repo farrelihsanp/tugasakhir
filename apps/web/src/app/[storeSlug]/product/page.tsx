@@ -1,18 +1,39 @@
 'use client';
 
+// GAGAL DI FILTER CATEGORY
+
 import React, { useState } from 'react';
 import { useStoreContext } from '@/utility/StoreContext';
 import Image from 'next/image';
 import Link from 'next/link';
 
 const AllProductsPage = () => {
-  const { products, loading, error, nearestStore } = useStoreContext();
+  const { products, loading, error, nearestStore, categories } =
+    useStoreContext();
 
   // Pagination state
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 6;
 
-  const totalPages = Math.ceil(products.length / itemsPerPage);
+  // Search state
+  const [searchQuery, setSearchQuery] = useState('');
+  const [selectedCategory, setSelectedCategory] = useState('');
+
+  // Filter products based on search query and selected category
+  const filteredProducts = products.filter((product) => {
+    const matchesCategory = selectedCategory
+      ? product.product.CategoryProduct?.some(
+          (category) => category.Category.name === selectedCategory,
+        )
+      : true;
+    const matchesSearch = product.product.name
+      .toLowerCase()
+      .includes(searchQuery.toLowerCase());
+
+    return matchesCategory && matchesSearch;
+  });
+
+  const totalPages = Math.ceil(filteredProducts.length / itemsPerPage);
 
   const handlePrev = () => {
     setCurrentPage((prev) => Math.max(prev - 1, 1));
@@ -23,7 +44,10 @@ const AllProductsPage = () => {
   };
 
   const startIndex = (currentPage - 1) * itemsPerPage;
-  const currentProducts = products.slice(startIndex, startIndex + itemsPerPage);
+  const currentProducts = filteredProducts.slice(
+    startIndex,
+    startIndex + itemsPerPage,
+  );
 
   if (loading)
     return <p className="text-center text-gray-600">Loading products...</p>;
@@ -42,8 +66,35 @@ const AllProductsPage = () => {
         <span className="text-blue-600">{nearestStore.name}</span>
       </h1>
 
-      {products.length === 0 ? (
-        <p className="text-center text-gray-500">Belum ada produk tersedia.</p>
+      <div className="mb-8 w-full max-w-xl">
+        <input
+          type="text"
+          placeholder="Cari produk..."
+          value={searchQuery}
+          onChange={(e) => setSearchQuery(e.target.value)}
+          className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+        />
+      </div>
+
+      <div className="mb-8 w-full max-w-xl">
+        <select
+          value={selectedCategory}
+          onChange={(e) => setSelectedCategory(e.target.value)}
+          className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+        >
+          <option value="">Semua Kategori</option>
+          {categories.map((category) => (
+            <option key={category.id} value={category.name}>
+              {category.name}
+            </option>
+          ))}
+        </select>
+      </div>
+
+      {filteredProducts.length === 0 ? (
+        <p className="text-center text-gray-500">
+          Tidak ada produk yang ditemukan.
+        </p>
       ) : (
         <>
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-8 w-full max-w-7xl">

@@ -9,7 +9,7 @@ const CategoryPage: React.FC = () => {
   const { categories, loading, error, nearestStore } = useStoreContext();
 
   // console.log('nearestStore isinya :', nearestStore);
-  // console.log('categories isinya :', categories);
+  console.log('categories isinya :', categories);
 
   if (loading) return <p>Loading categories...</p>;
   if (error) return <p>Error: {error}</p>;

@@ -3,41 +3,15 @@
 import { useEffect, useState } from 'react';
 import { useParams } from 'next/navigation';
 import Image from 'next/image';
-import { Store, Category, ProductImage } from '@/types/types';
+import { Product } from '@/types/types';
 import { useStoreContext } from '@/utility/StoreContext';
 import { Role } from '@prisma/client';
 
-type Product = {
-  id: number;
-  name: string;
-  excerpt: string;
-  description: string;
-  slug: string;
-  weight: number;
-  ProductImages: ProductImage[];
-  CategoryProduct: {
-    Category: Category;
-  }[];
-};
-
-type StoreProduct = {
-  id: number;
-  price: number;
-  stock: number;
-  isCheap: boolean;
-  store: Store;
-  product: Product;
-};
-
 export default function ProductDetailPage() {
-  const { storeSlug, productSlug } = useParams() as {
-    storeSlug: string;
-    productSlug: string;
-  };
-
+  const { storeSlug, productSlug } = useParams();
   const { user } = useStoreContext();
 
-  const [productData, setProductData] = useState<StoreProduct | null>(null);
+  const [productData, setProductData] = useState<Product | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [qty, setQty] = useState<number>(1);
 
@@ -105,8 +79,8 @@ export default function ProductDetailPage() {
           />
         )}
 
-        <div className="grid grid-cols-3 gap-4">
-          {product.ProductImages.slice(1, 4).map((img) => (
+        <div className="grid grid-cols-4 gap-4">
+          {product.ProductImages.slice(1, 5).map((img) => (
             <Image
               key={img.id}
               src={img.imageUrl}
@@ -177,13 +151,15 @@ export default function ProductDetailPage() {
       <div className="mt-10 text-left">
         <h3 className="text-lg font-semibold mb-2">Kategori Produk</h3>
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-          {product.CategoryProduct.map((cp) => (
-            <div
-              key={cp.Category.id}
-              className="border rounded-lg p-4 bg-gray-50"
-            >
+          {product.CategoryProduct.map((cp, index: number) => (
+            <div key={index} className="border rounded-lg p-4 bg-gray-50">
               <p className="font-bold">{cp.Category.name}</p>
-              <p className="text-sm text-gray-700">{cp.Category.description}</p>
+              <p className="text-sm text-gray-700">
+                {
+                  (cp.Category as { name: string; description: string })
+                    .description
+                }
+              </p>
             </div>
           ))}
         </div>

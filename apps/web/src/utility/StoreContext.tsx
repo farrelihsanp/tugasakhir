@@ -32,7 +32,7 @@ export const StoreProvider: React.FC<{ children: React.ReactNode }> = ({
   const [error, setError] = useState<string | null>(null);
   const [storeStoreAdmin, setStoreStoreAdmin] = useState<Store | null>(null);
 
-  const storeIdStoreAdmin = user?.StoreUser[0]?.storeId; // Safe check for StoreUser and storeId
+  const storeIdStoreAdmin = user?.StoreUser[0]?.storeId;
 
   useEffect(() => {
     setLoading(true);
@@ -59,11 +59,6 @@ export const StoreProvider: React.FC<{ children: React.ReactNode }> = ({
   }, []);
 
   useEffect(() => {
-    if (!storeIdStoreAdmin) {
-      setError('Store ID is unavailable');
-      return;
-    }
-
     setLoading(true);
     setError(null);
 
@@ -79,7 +74,7 @@ export const StoreProvider: React.FC<{ children: React.ReactNode }> = ({
       .finally(() => {
         setLoading(false);
       });
-  }, [storeIdStoreAdmin]);
+  }, []);
 
   useEffect(() => {
     if (!nearestStore?.id) return;

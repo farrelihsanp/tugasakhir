@@ -8,11 +8,11 @@ import {
 
 export interface Category {
   id: number;
-  name: string;
-  image: string;
-  slug: string;
   excerpt: string;
   description: string;
+  Images: string;
+  slug: string;
+  CategoryProduct: CategoryProduct[];
 }
 
 export interface BankAccount {
@@ -45,7 +45,7 @@ export interface Product {
   isCheap: boolean;
   createdAt: string;
   updatedAt: string;
-  CategoryProduct: CategoryProduct;
+  CategoryProduct: CategoryProduct[];
   product: ProductDetails;
 }
 
@@ -63,6 +63,11 @@ export interface ProductDetails {
   createdAt: string;
   updatedAt: string;
   ProductImages: ProductImage[];
+  CategoryProduct: {
+    Category: {
+      name: string;
+    };
+  }[];
 }
 
 /* -------------------------------------------------------------------------- */
@@ -166,11 +171,15 @@ export interface OrderItem {
   storeProduct: StoreProduct;
 }
 
-export interface StoreProduct {
+export type StoreProduct = {
   id: number;
+  price: number;
   name: string;
-  product: ProductDetails;
-}
+  stock: number;
+  isCheap: boolean;
+  store: Store;
+  product: Product;
+};
 
 /* -------------------------------------------------------------------------- */
 /*                                 SHIPPING TYPES                           */

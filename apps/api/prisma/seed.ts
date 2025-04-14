@@ -446,7 +446,7 @@ async function main() {
     const semangka = await prisma.product.create({
       data: {
         name: 'Semangka',
-        excerpt: 'Semangka segar',
+        excerpt: 'Semangka dari pohon',
         description: 'Semangka segar berkualitas tinggi',
         slug: 'semangka',
         weight: 5.0,
@@ -500,7 +500,7 @@ async function main() {
     const chitato = await prisma.product.create({
       data: {
         name: 'Chitato',
-        excerpt: 'Chitato',
+        excerpt: 'Chitato ',
         description: 'Chitato segar',
         slug: 'chitato',
         weight: 0.2,
@@ -724,23 +724,23 @@ async function main() {
           create: [
             {
               imageUrl:
-                'https://dummyimage.com/600x400/90ee90/fff&text=Wortel+1',
+                'https://res.cloudinary.com/dm1cnsldc/image/upload/v1744622106/WORTEL-5_bvexyb.jpg',
             },
             {
               imageUrl:
-                'https://dummyimage.com/600x400/90ee90/fff&text=Wortel+2',
+                'https://res.cloudinary.com/dm1cnsldc/image/upload/v1744622106/WORTEL-3_vzybd4.jpg',
             },
             {
               imageUrl:
-                'https://dummyimage.com/600x400/90ee90/fff&text=Wortel+3',
+                'https://res.cloudinary.com/dm1cnsldc/image/upload/v1744622106/WORTEL-1_eatwp2.jpg',
             },
             {
               imageUrl:
-                'https://dummyimage.com/600x400/90ee90/fff&text=Wortel+4',
+                'https://res.cloudinary.com/dm1cnsldc/image/upload/v1744622106/WORTEL-4_f5rb6w.jpg',
             },
             {
               imageUrl:
-                'https://dummyimage.com/600x400/90ee90/fff&text=Wortel+5',
+                'https://res.cloudinary.com/dm1cnsldc/image/upload/v1744622106/WORTEL-2_xrkmju.jpg',
             },
           ],
         },
@@ -776,23 +776,23 @@ async function main() {
           create: [
             {
               imageUrl:
-                'https://dummyimage.com/600x400/90ee90/fff&text=Bayam+1',
+                'https://res.cloudinary.com/dm1cnsldc/image/upload/v1744622153/BAYAM-4_qzomd8.jpg',
             },
             {
               imageUrl:
-                'https://dummyimage.com/600x400/90ee90/fff&text=Bayam+2',
+                'https://res.cloudinary.com/dm1cnsldc/image/upload/v1744622153/BAYAM-2_pbjbgh.jpg',
             },
             {
               imageUrl:
-                'https://dummyimage.com/600x400/90ee90/fff&text=Bayam+3',
+                'https://res.cloudinary.com/dm1cnsldc/image/upload/v1744622152/BAYAM-3_o0rdge.jpg',
             },
             {
               imageUrl:
-                'https://dummyimage.com/600x400/90ee90/fff&text=Bayam+4',
+                'https://res.cloudinary.com/dm1cnsldc/image/upload/v1744622152/BAYAM-5_dp1a4e.jpg',
             },
             {
               imageUrl:
-                'https://dummyimage.com/600x400/90ee90/fff&text=Bayam+5',
+                'https://res.cloudinary.com/dm1cnsldc/image/upload/v1744622151/BAYAM-1_x7eav6.jpg',
             },
           ],
         },
@@ -827,19 +827,24 @@ async function main() {
         ProductImages: {
           create: [
             {
-              imageUrl: 'https://dummyimage.com/600x400/90ee90/fff&text=Kol+1',
+              imageUrl:
+                'https://res.cloudinary.com/dm1cnsldc/image/upload/v1744622195/KOL-2_y1me6q.jpg',
             },
             {
-              imageUrl: 'https://dummyimage.com/600x400/90ee90/fff&text=Kol+2',
+              imageUrl:
+                'https://res.cloudinary.com/dm1cnsldc/image/upload/v1744622195/KOL-5_x8hkam.jpg',
             },
             {
-              imageUrl: 'https://dummyimage.com/600x400/90ee90/fff&text=Kol+3',
+              imageUrl:
+                'https://res.cloudinary.com/dm1cnsldc/image/upload/v1744622194/KOL-3_al25f7.jpg',
             },
             {
-              imageUrl: 'https://dummyimage.com/600x400/90ee90/fff&text=Kol+4',
+              imageUrl:
+                'https://res.cloudinary.com/dm1cnsldc/image/upload/v1744622195/KOL-4_bna5tk.jpg',
             },
             {
-              imageUrl: 'https://dummyimage.com/600x400/90ee90/fff&text=Kol+5',
+              imageUrl:
+                'https://res.cloudinary.com/dm1cnsldc/image/upload/v1744622194/KOL-1_hvu4lz.jpg',
             },
           ],
         },
@@ -875,23 +880,23 @@ async function main() {
           create: [
             {
               imageUrl:
-                'https://dummyimage.com/600x400/90ee90/fff&text=Kangkung+1',
+                'https://res.cloudinary.com/dm1cnsldc/image/upload/v1744622317/KANGKUNG-2_rntu5x.jpg',
             },
             {
               imageUrl:
-                'https://dummyimage.com/600x400/90ee90/fff&text=Kangkung+2',
+                'https://res.cloudinary.com/dm1cnsldc/image/upload/v1744622317/KANGKUNG-4_ezjze8.jpg',
             },
             {
               imageUrl:
-                'https://dummyimage.com/600x400/90ee90/fff&text=Kangkung+3',
+                'https://res.cloudinary.com/dm1cnsldc/image/upload/v1744622317/KANGKUNG-3_nx6jza.jpg',
             },
             {
               imageUrl:
-                'https://dummyimage.com/600x400/90ee90/fff&text=Kangkung+4',
+                'https://res.cloudinary.com/dm1cnsldc/image/upload/v1744622316/KANGKUNG-1_txjfkv.jpg',
             },
             {
               imageUrl:
-                'https://dummyimage.com/600x400/90ee90/fff&text=Kangkung+5',
+                'https://res.cloudinary.com/dm1cnsldc/image/upload/v1744622318/KANGKUNG-5_dokkby.jpg',
             },
           ],
         },
@@ -927,23 +932,23 @@ async function main() {
           create: [
             {
               imageUrl:
-                'https://dummyimage.com/600x400/ffa07a/fff&text=Jeruk+1',
+                'https://res.cloudinary.com/dm1cnsldc/image/upload/v1744622505/JERUK-2_jfo4hf.jpg',
             },
             {
               imageUrl:
-                'https://dummyimage.com/600x400/ffa07a/fff&text=Jeruk+2',
+                'https://res.cloudinary.com/dm1cnsldc/image/upload/v1744622505/JERUK-5_uxd1yy.jpg',
             },
             {
               imageUrl:
-                'https://dummyimage.com/600x400/ffa07a/fff&text=Jeruk+3',
+                'https://res.cloudinary.com/dm1cnsldc/image/upload/v1744622505/JERUK-4_fwhraw.jpg',
             },
             {
               imageUrl:
-                'https://dummyimage.com/600x400/ffa07a/fff&text=Jeruk+4',
+                'https://res.cloudinary.com/dm1cnsldc/image/upload/v1744622505/JERUK-1_hvpw3d.jpg',
             },
             {
               imageUrl:
-                'https://dummyimage.com/600x400/ffa07a/fff&text=Jeruk+5',
+                'https://res.cloudinary.com/dm1cnsldc/image/upload/v1744622505/JERUK-3_egiko3.jpg',
             },
           ],
         },
@@ -979,23 +984,23 @@ async function main() {
           create: [
             {
               imageUrl:
-                'https://dummyimage.com/600x400/ffa07a/fff&text=Pisang+1',
+                'https://res.cloudinary.com/dm1cnsldc/image/upload/v1744622600/PISANG-4_i78bqi.jpg',
             },
             {
               imageUrl:
-                'https://dummyimage.com/600x400/ffa07a/fff&text=Pisang+2',
+                'https://res.cloudinary.com/dm1cnsldc/image/upload/v1744622600/PISANG-5_ubdyt0.jpg',
             },
             {
               imageUrl:
-                'https://dummyimage.com/600x400/ffa07a/fff&text=Pisang+3',
+                'https://res.cloudinary.com/dm1cnsldc/image/upload/v1744622599/PISANG-1_xfgkb5.jpg',
             },
             {
               imageUrl:
-                'https://dummyimage.com/600x400/ffa07a/fff&text=Pisang+4',
+                'https://res.cloudinary.com/dm1cnsldc/image/upload/v1744622599/PISANG-3_ecdy1w.jpg',
             },
             {
               imageUrl:
-                'https://dummyimage.com/600x400/ffa07a/fff&text=Pisang+5',
+                'https://res.cloudinary.com/dm1cnsldc/image/upload/v1744622599/PISANG-2_ypfquf.jpg',
             },
           ],
         },
@@ -1031,23 +1036,23 @@ async function main() {
           create: [
             {
               imageUrl:
-                'https://dummyimage.com/600x400/ffa07a/fff&text=Anggur+1',
+                'https://res.cloudinary.com/dm1cnsldc/image/upload/v1744622720/ANGGUR-5_csyf1d.jpg',
             },
             {
               imageUrl:
-                'https://dummyimage.com/600x400/ffa07a/fff&text=Anggur+2',
+                'https://res.cloudinary.com/dm1cnsldc/image/upload/v1744622719/ANGGUR-4_neay8u.jpg',
             },
             {
               imageUrl:
-                'https://dummyimage.com/600x400/ffa07a/fff&text=Anggur+3',
+                'https://res.cloudinary.com/dm1cnsldc/image/upload/v1744622720/ANGGUR-2_injuon.jpg',
             },
             {
               imageUrl:
-                'https://dummyimage.com/600x400/ffa07a/fff&text=Anggur+4',
+                'https://res.cloudinary.com/dm1cnsldc/image/upload/v1744622719/ANGGUR-3_cgobd9.jpg',
             },
             {
               imageUrl:
-                'https://dummyimage.com/600x400/ffa07a/fff&text=Anggur+5',
+                'https://res.cloudinary.com/dm1cnsldc/image/upload/v1744622719/ANGGUR-1_ugrzjm.jpg',
             },
           ],
         },
@@ -1082,19 +1087,24 @@ async function main() {
         ProductImages: {
           create: [
             {
-              imageUrl: 'https://dummyimage.com/600x400/ffa07a/fff&text=Apel+1',
+              imageUrl:
+                'https://res.cloudinary.com/dm1cnsldc/image/upload/v1744622803/APEL-4_eexeqf.jpg',
             },
             {
-              imageUrl: 'https://dummyimage.com/600x400/ffa07a/fff&text=Apel+2',
+              imageUrl:
+                'https://res.cloudinary.com/dm1cnsldc/image/upload/v1744622804/APEL-5_rmxora.jpg',
             },
             {
-              imageUrl: 'https://dummyimage.com/600x400/ffa07a/fff&text=Apel+3',
+              imageUrl:
+                'https://res.cloudinary.com/dm1cnsldc/image/upload/v1744622802/APEL-2_ymjjkv.jpg',
             },
             {
-              imageUrl: 'https://dummyimage.com/600x400/ffa07a/fff&text=Apel+4',
+              imageUrl:
+                'https://res.cloudinary.com/dm1cnsldc/image/upload/v1744622802/APEL-3_tx7u9k.jpg',
             },
             {
-              imageUrl: 'https://dummyimage.com/600x400/ffa07a/fff&text=Apel+5',
+              imageUrl:
+                'https://res.cloudinary.com/dm1cnsldc/image/upload/v1744622801/APEL-1_gtiokg.jpg',
             },
           ],
         },
@@ -1129,19 +1139,24 @@ async function main() {
         ProductImages: {
           create: [
             {
-              imageUrl: 'https://dummyimage.com/600x400/ffb6c1/fff&text=Taro+1',
+              imageUrl:
+                'https://res.cloudinary.com/dm1cnsldc/image/upload/v1744622948/TARO-5_zo5qko.jpg',
             },
             {
-              imageUrl: 'https://dummyimage.com/600x400/ffb6c1/fff&text=Taro+2',
+              imageUrl:
+                'https://res.cloudinary.com/dm1cnsldc/image/upload/v1744622946/TARO-4_qyyvdo.jpg',
             },
             {
-              imageUrl: 'https://dummyimage.com/600x400/ffb6c1/fff&text=Taro+3',
+              imageUrl:
+                'https://res.cloudinary.com/dm1cnsldc/image/upload/v1744622945/TARO-1_rydbf1.jpg',
             },
             {
-              imageUrl: 'https://dummyimage.com/600x400/ffb6c1/fff&text=Taro+4',
+              imageUrl:
+                'https://res.cloudinary.com/dm1cnsldc/image/upload/v1744622945/TARO-3_mgn6f4.jpg',
             },
             {
-              imageUrl: 'https://dummyimage.com/600x400/ffb6c1/fff&text=Taro+5',
+              imageUrl:
+                'https://res.cloudinary.com/dm1cnsldc/image/upload/v1744622945/TARO-2_qpo7eb.jpg',
             },
           ],
         },
@@ -1177,23 +1192,23 @@ async function main() {
           create: [
             {
               imageUrl:
-                'https://dummyimage.com/600x400/ffb6c1/fff&text=Qtela+1',
+                'https://res.cloudinary.com/dm1cnsldc/image/upload/v1744623090/QTELA-5_m40vhv.png',
             },
             {
               imageUrl:
-                'https://dummyimage.com/600x400/ffb6c1/fff&text=Qtela+2',
+                'https://res.cloudinary.com/dm1cnsldc/image/upload/v1744623086/QTELA-4_drssed.jpg',
             },
             {
               imageUrl:
-                'https://dummyimage.com/600x400/ffb6c1/fff&text=Qtela+3',
+                'https://res.cloudinary.com/dm1cnsldc/image/upload/v1744623085/QTELA-3_ubu638.jpg',
             },
             {
               imageUrl:
-                'https://dummyimage.com/600x400/ffb6c1/fff&text=Qtela+4',
+                'https://res.cloudinary.com/dm1cnsldc/image/upload/v1744623085/QTELA-2_z2moqi.jpg',
             },
             {
               imageUrl:
-                'https://dummyimage.com/600x400/ffb6c1/fff&text=Qtela+5',
+                'https://res.cloudinary.com/dm1cnsldc/image/upload/v1744623084/QTELA-1_puo9uy.jpg',
             },
           ],
         },
@@ -1229,23 +1244,23 @@ async function main() {
           create: [
             {
               imageUrl:
-                'https://dummyimage.com/600x400/ffb6c1/fff&text=Nabati+1',
+                'https://res.cloudinary.com/dm1cnsldc/image/upload/v1744623203/NABATI-5_f0ondo.jpg',
             },
             {
               imageUrl:
-                'https://dummyimage.com/600x400/ffb6c1/fff&text=Nabati+2',
+                'https://res.cloudinary.com/dm1cnsldc/image/upload/v1744623202/NABATI-4_u9no55.webp',
             },
             {
               imageUrl:
-                'https://dummyimage.com/600x400/ffb6c1/fff&text=Nabati+3',
+                'https://res.cloudinary.com/dm1cnsldc/image/upload/v1744623202/NABATI-2_bhq2wh.png',
             },
             {
               imageUrl:
-                'https://dummyimage.com/600x400/ffb6c1/fff&text=Nabati+4',
+                'https://res.cloudinary.com/dm1cnsldc/image/upload/v1744623202/NABATI-1_mlcn4l.jpg',
             },
             {
               imageUrl:
-                'https://dummyimage.com/600x400/ffb6c1/fff&text=Nabati+5',
+                'https://res.cloudinary.com/dm1cnsldc/image/upload/v1744623202/NABATI-3_aus6ei.jpg',
             },
           ],
         },
@@ -1280,19 +1295,24 @@ async function main() {
         ProductImages: {
           create: [
             {
-              imageUrl: 'https://dummyimage.com/600x400/ffb6c1/fff&text=Oreo+1',
+              imageUrl:
+                'https://res.cloudinary.com/dm1cnsldc/image/upload/v1744623321/OREO-4_wjpphg.png',
             },
             {
-              imageUrl: 'https://dummyimage.com/600x400/ffb6c1/fff&text=Oreo+2',
+              imageUrl:
+                'https://res.cloudinary.com/dm1cnsldc/image/upload/v1744623319/OREO-3_df17gk.jpg',
             },
             {
-              imageUrl: 'https://dummyimage.com/600x400/ffb6c1/fff&text=Oreo+3',
+              imageUrl:
+                'https://res.cloudinary.com/dm1cnsldc/image/upload/v1744623317/OREO-2_k0upy7.jpg',
             },
             {
-              imageUrl: 'https://dummyimage.com/600x400/ffb6c1/fff&text=Oreo+4',
+              imageUrl:
+                'https://res.cloudinary.com/dm1cnsldc/image/upload/v1744623316/OREO-1_qpvivt.jpg',
             },
             {
-              imageUrl: 'https://dummyimage.com/600x400/ffb6c1/fff&text=Oreo+5',
+              imageUrl:
+                'https://res.cloudinary.com/dm1cnsldc/image/upload/v1744623384/OREO-5_bmbise.jpg',
             },
           ],
         },
@@ -1328,23 +1348,23 @@ async function main() {
           create: [
             {
               imageUrl:
-                'https://dummyimage.com/600x400/add8e6/fff&text=Teh+Botol+1',
+                'https://res.cloudinary.com/dm1cnsldc/image/upload/v1744623496/TEH-BOTOL-5_qitoq0.jpg',
             },
             {
               imageUrl:
-                'https://dummyimage.com/600x400/add8e6/fff&text=Teh+Botol+2',
+                'https://res.cloudinary.com/dm1cnsldc/image/upload/v1744623495/TEH-BOTOL-4_aibb0m.jpg',
             },
             {
               imageUrl:
-                'https://dummyimage.com/600x400/add8e6/fff&text=Teh+Botol+3',
+                'https://res.cloudinary.com/dm1cnsldc/image/upload/v1744623495/TEH-BOTOL-2_q3mlsv.jpg',
             },
             {
               imageUrl:
-                'https://dummyimage.com/600x400/add8e6/fff&text=Teh+Botol+4',
+                'https://res.cloudinary.com/dm1cnsldc/image/upload/v1744623495/TEH-BOTOL-3_rb3qa4.jpg',
             },
             {
               imageUrl:
-                'https://dummyimage.com/600x400/add8e6/fff&text=Teh+Botol+5',
+                'https://res.cloudinary.com/dm1cnsldc/image/upload/v1744623494/TEH-BOTOL-1_yemy8l.jpg',
             },
           ],
         },
@@ -1380,23 +1400,23 @@ async function main() {
           create: [
             {
               imageUrl:
-                'https://dummyimage.com/600x400/add8e6/fff&text=Jus+Mangga+1',
+                'https://res.cloudinary.com/dm1cnsldc/image/upload/v1744623639/JUS-MANGGA-5_vyfs8v.png',
             },
             {
               imageUrl:
-                'https://dummyimage.com/600x400/add8e6/fff&text=Jus+Mangga+2',
+                'https://res.cloudinary.com/dm1cnsldc/image/upload/v1744623636/JUS-MANGGA-2_n8uewd.png',
             },
             {
               imageUrl:
-                'https://dummyimage.com/600x400/add8e6/fff&text=Jus+Mangga+3',
+                'https://res.cloudinary.com/dm1cnsldc/image/upload/v1744623636/JUS-MANGGA-4_psmonj.jpg',
             },
             {
               imageUrl:
-                'https://dummyimage.com/600x400/add8e6/fff&text=Jus+Mangga+4',
+                'https://res.cloudinary.com/dm1cnsldc/image/upload/v1744623636/JUS-MANGGA-3_owab7g.jpg',
             },
             {
               imageUrl:
-                'https://dummyimage.com/600x400/add8e6/fff&text=Jus+Mangga+5',
+                'https://res.cloudinary.com/dm1cnsldc/image/upload/v1744623636/JUS-MANGGA-1_p3r6jb.jpg',
             },
           ],
         },
@@ -1432,23 +1452,23 @@ async function main() {
           create: [
             {
               imageUrl:
-                'https://dummyimage.com/600x400/add8e6/fff&text=Susu+UHT+1',
+                'https://res.cloudinary.com/dm1cnsldc/image/upload/v1744623851/SUSU-UHT-5_wuobmi.jpg',
             },
             {
               imageUrl:
-                'https://dummyimage.com/600x400/add8e6/fff&text=Susu+UHT+2',
+                'https://res.cloudinary.com/dm1cnsldc/image/upload/v1744623851/SUSU-UHT-1_n20bk6.png',
             },
             {
               imageUrl:
-                'https://dummyimage.com/600x400/add8e6/fff&text=Susu+UHT+3',
+                'https://res.cloudinary.com/dm1cnsldc/image/upload/v1744623851/SUSU-UHT-4_d0naui.webp',
             },
             {
               imageUrl:
-                'https://dummyimage.com/600x400/add8e6/fff&text=Susu+UHT+4',
+                'https://res.cloudinary.com/dm1cnsldc/image/upload/v1744623851/SUSU-UHT-3_kosom9.jpg',
             },
             {
               imageUrl:
-                'https://dummyimage.com/600x400/add8e6/fff&text=Susu+UHT+5',
+                'https://res.cloudinary.com/dm1cnsldc/image/upload/v1744623850/SUSU-UHT-2_l63shx.png',
             },
           ],
         },
@@ -1484,23 +1504,23 @@ async function main() {
           create: [
             {
               imageUrl:
-                'https://dummyimage.com/600x400/add8e6/fff&text=Kopi+Instan+1',
+                'https://res.cloudinary.com/dm1cnsldc/image/upload/v1744624116/NESCAFE-2_cwhhlo.png',
             },
             {
               imageUrl:
-                'https://dummyimage.com/600x400/add8e6/fff&text=Kopi+Instan+2',
+                'https://res.cloudinary.com/dm1cnsldc/image/upload/v1744624116/NESCAFE-4_pesqsh.png',
             },
             {
               imageUrl:
-                'https://dummyimage.com/600x400/add8e6/fff&text=Kopi+Instan+3',
+                'https://res.cloudinary.com/dm1cnsldc/image/upload/v1744624116/NESCAFE-5_v7ewov.png',
             },
             {
               imageUrl:
-                'https://dummyimage.com/600x400/add8e6/fff&text=Kopi+Instan+4',
+                'https://res.cloudinary.com/dm1cnsldc/image/upload/v1744624116/NESCAFE-1_c4lmtw.jpg',
             },
             {
               imageUrl:
-                'https://dummyimage.com/600x400/add8e6/fff&text=Kopi+Instan+5',
+                'https://res.cloudinary.com/dm1cnsldc/image/upload/v1744624116/NESCAFE-3_k5jgo4.jpg',
             },
           ],
         },
@@ -1536,23 +1556,23 @@ async function main() {
           create: [
             {
               imageUrl:
-                'https://res.cloudinary.com/dm1cnsldc/image/upload/v1743658365/PASTA_GIGI_nv48uh.jpg',
+                'https://res.cloudinary.com/dm1cnsldc/image/upload/v1744624298/PEPSODENT-1_hcfm1w.jpg',
             },
             {
               imageUrl:
-                'https://res.cloudinary.com/dm1cnsldc/image/upload/v1743658365/PASTA_GIGI_nv48uh.jpg',
+                'https://res.cloudinary.com/dm1cnsldc/image/upload/v1744624298/PEPSODENT-4_yvhkiq.jpg',
             },
             {
               imageUrl:
-                'https://res.cloudinary.com/dm1cnsldc/image/upload/v1743658365/PASTA_GIGI_nv48uh.jpg',
+                'https://res.cloudinary.com/dm1cnsldc/image/upload/v1744624298/PEPSODENT-5_m3jx6q.jpg',
             },
             {
               imageUrl:
-                'https://res.cloudinary.com/dm1cnsldc/image/upload/v1743658365/PASTA_GIGI_nv48uh.jpg',
+                'https://res.cloudinary.com/dm1cnsldc/image/upload/v1744624298/PEPSODENT-2_qeqw00.jpg',
             },
             {
               imageUrl:
-                'https://res.cloudinary.com/dm1cnsldc/image/upload/v1743658365/PASTA_GIGI_nv48uh.jpg',
+                'https://res.cloudinary.com/dm1cnsldc/image/upload/v1744624298/PEPSODENT-2_ev1keg.jpg',
             },
           ],
         },
@@ -1588,23 +1608,23 @@ async function main() {
           create: [
             {
               imageUrl:
-                'https://res.cloudinary.com/dm1cnsldc/image/upload/v1743658339/PANTENE_tu0vp0.jpg',
+                'https://res.cloudinary.com/dm1cnsldc/image/upload/v1744624437/PANTENE-2_x5w2rg.jpg',
             },
             {
               imageUrl:
-                'https://res.cloudinary.com/dm1cnsldc/image/upload/v1743658339/PANTENE_tu0vp0.jpg',
+                'https://res.cloudinary.com/dm1cnsldc/image/upload/v1744624437/PANTENE-1_viqntu.jpg',
             },
             {
               imageUrl:
-                'https://res.cloudinary.com/dm1cnsldc/image/upload/v1743658339/PANTENE_tu0vp0.jpg',
+                'https://res.cloudinary.com/dm1cnsldc/image/upload/v1744624436/PANTENE-5_ai9pwd.png',
             },
             {
               imageUrl:
-                'https://res.cloudinary.com/dm1cnsldc/image/upload/v1743658339/PANTENE_tu0vp0.jpg',
+                'https://res.cloudinary.com/dm1cnsldc/image/upload/v1744624436/PANTENE-4_iz3usk.jpg',
             },
             {
               imageUrl:
-                'https://res.cloudinary.com/dm1cnsldc/image/upload/v1743658339/PANTENE_tu0vp0.jpg',
+                'https://res.cloudinary.com/dm1cnsldc/image/upload/v1744624436/PANTENE-3_agnsc1.jpg',
             },
           ],
         },
@@ -1640,23 +1660,23 @@ async function main() {
           create: [
             {
               imageUrl:
-                'https://res.cloudinary.com/dm1cnsldc/image/upload/v1743658307/TISU_BASAH_boaasm.jpg',
+                'https://res.cloudinary.com/dm1cnsldc/image/upload/v1744624592/MITU-5_i6atxf.jpg',
             },
             {
               imageUrl:
-                'https://res.cloudinary.com/dm1cnsldc/image/upload/v1743658307/TISU_BASAH_boaasm.jpg',
+                'https://res.cloudinary.com/dm1cnsldc/image/upload/v1744624591/MITU-4_fmvypq.jpg',
             },
             {
               imageUrl:
-                'https://res.cloudinary.com/dm1cnsldc/image/upload/v1743658307/TISU_BASAH_boaasm.jpg',
+                'https://res.cloudinary.com/dm1cnsldc/image/upload/v1744624591/MITU-3_iyklb5.jpg',
             },
             {
               imageUrl:
-                'https://res.cloudinary.com/dm1cnsldc/image/upload/v1743658307/TISU_BASAH_boaasm.jpg',
+                'https://res.cloudinary.com/dm1cnsldc/image/upload/v1744624591/MITU-1_dzruj7.png',
             },
             {
               imageUrl:
-                'https://res.cloudinary.com/dm1cnsldc/image/upload/v1743658307/TISU_BASAH_boaasm.jpg',
+                'https://res.cloudinary.com/dm1cnsldc/image/upload/v1744624591/MITU-2_fj1jzq.jpg',
             },
           ],
         },
@@ -1683,7 +1703,7 @@ async function main() {
     /* -------------------------------------------------------------------------- */
     const sabun_cuci_muka = await prisma.product.create({
       data: {
-        name: 'Sabun Cuci Muka',
+        name: 'KAHF Cuci Muka',
         excerpt: 'Sabun Cuci Muka',
         description: 'Sabun Cuci Muka berkualitas tinggi',
         slug: 'sabun-cuci-muka',
@@ -1692,23 +1712,23 @@ async function main() {
           create: [
             {
               imageUrl:
-                'https://res.cloudinary.com/dm1cnsldc/image/upload/v1743658269/SABUN_CUCI_MUKA_kfnl9s.jpg',
+                'https://res.cloudinary.com/dm1cnsldc/image/upload/v1744625607/KAHF-1_aij2nk.jpg',
             },
             {
               imageUrl:
-                'https://res.cloudinary.com/dm1cnsldc/image/upload/v1743658269/SABUN_CUCI_MUKA_kfnl9s.jpg',
+                'https://res.cloudinary.com/dm1cnsldc/image/upload/v1744625607/KAHF-4_kn0rn2.jpg',
             },
             {
               imageUrl:
-                'https://res.cloudinary.com/dm1cnsldc/image/upload/v1743658269/SABUN_CUCI_MUKA_kfnl9s.jpg',
+                'https://res.cloudinary.com/dm1cnsldc/image/upload/v1744625606/KAHF-5_f3v2so.jpg',
             },
             {
               imageUrl:
-                'https://res.cloudinary.com/dm1cnsldc/image/upload/v1743658269/SABUN_CUCI_MUKA_kfnl9s.jpg',
+                'https://res.cloudinary.com/dm1cnsldc/image/upload/v1744625606/KAHF-3_vu8amb.jpg',
             },
             {
               imageUrl:
-                'https://res.cloudinary.com/dm1cnsldc/image/upload/v1743658269/SABUN_CUCI_MUKA_kfnl9s.jpg',
+                'https://res.cloudinary.com/dm1cnsldc/image/upload/v1744625606/KAHF-2_rekrue.jpg',
             },
           ],
         },
@@ -1744,23 +1764,23 @@ async function main() {
           create: [
             {
               imageUrl:
-                'https://res.cloudinary.com/dm1cnsldc/image/upload/v1743658246/WAJAN_p4cusi.jpg',
+                'https://res.cloudinary.com/dm1cnsldc/image/upload/v1744625765/WAJAN-4_tpj16t.jpg',
             },
             {
               imageUrl:
-                'https://res.cloudinary.com/dm1cnsldc/image/upload/v1743658246/WAJAN_p4cusi.jpg',
+                'https://res.cloudinary.com/dm1cnsldc/image/upload/v1744625765/WAJAN-5_c1esnk.jpg',
             },
             {
               imageUrl:
-                'https://res.cloudinary.com/dm1cnsldc/image/upload/v1743658246/WAJAN_p4cusi.jpg',
+                'https://res.cloudinary.com/dm1cnsldc/image/upload/v1744625765/WAJAN-2_qm1kaf.jpg',
             },
             {
               imageUrl:
-                'https://res.cloudinary.com/dm1cnsldc/image/upload/v1743658246/WAJAN_p4cusi.jpg',
+                'https://res.cloudinary.com/dm1cnsldc/image/upload/v1744625765/WAJAN-3_dpenou.jpg',
             },
             {
               imageUrl:
-                'https://res.cloudinary.com/dm1cnsldc/image/upload/v1743658246/WAJAN_p4cusi.jpg',
+                'https://res.cloudinary.com/dm1cnsldc/image/upload/v1744625765/WAJAN-1_m6bqad.jpg',
             },
           ],
         },
@@ -1796,23 +1816,23 @@ async function main() {
           create: [
             {
               imageUrl:
-                'https://res.cloudinary.com/dm1cnsldc/image/upload/v1743658190/SPATULA_czbdy8.jpg',
+                'https://res.cloudinary.com/dm1cnsldc/image/upload/v1744625869/SPATULA-1_fyhsua.jpg',
             },
             {
               imageUrl:
-                'https://res.cloudinary.com/dm1cnsldc/image/upload/v1743658190/SPATULA_czbdy8.jpg',
+                'https://res.cloudinary.com/dm1cnsldc/image/upload/v1744625869/SPATULA-5_hwxbnw.jpg',
             },
             {
               imageUrl:
-                'https://res.cloudinary.com/dm1cnsldc/image/upload/v1743658190/SPATULA_czbdy8.jpg',
+                'https://res.cloudinary.com/dm1cnsldc/image/upload/v1744625869/SPATULA-5_hwxbnw.jpg',
             },
             {
               imageUrl:
-                'https://res.cloudinary.com/dm1cnsldc/image/upload/v1743658190/SPATULA_czbdy8.jpg',
+                'https://res.cloudinary.com/dm1cnsldc/image/upload/v1744625869/SPATULA-5_hwxbnw.jpg',
             },
             {
               imageUrl:
-                'https://res.cloudinary.com/dm1cnsldc/image/upload/v1743658190/SPATULA_czbdy8.jpg',
+                'https://res.cloudinary.com/dm1cnsldc/image/upload/v1744625869/SPATULA-5_hwxbnw.jpg',
             },
           ],
         },
@@ -1848,23 +1868,23 @@ async function main() {
           create: [
             {
               imageUrl:
-                'https://res.cloudinary.com/dm1cnsldc/image/upload/v1743658163/SARINGAN_DAPUR_mnwarc.jpg',
+                'https://res.cloudinary.com/dm1cnsldc/image/upload/v1744627235/SARINGAN-DAPUR-4_ojv06h.jpg',
             },
             {
               imageUrl:
-                'https://res.cloudinary.com/dm1cnsldc/image/upload/v1743658163/SARINGAN_DAPUR_mnwarc.jpg',
+                'https://res.cloudinary.com/dm1cnsldc/image/upload/v1744627235/SARINGAN-DAPUR-5_rzk1zf.jpg',
             },
             {
               imageUrl:
-                'https://res.cloudinary.com/dm1cnsldc/image/upload/v1743658163/SARINGAN_DAPUR_mnwarc.jpg',
+                'https://res.cloudinary.com/dm1cnsldc/image/upload/v1744627235/SARINGAN-DAPUR-3_vrmt41.jpg',
             },
             {
               imageUrl:
-                'https://res.cloudinary.com/dm1cnsldc/image/upload/v1743658163/SARINGAN_DAPUR_mnwarc.jpg',
+                'https://res.cloudinary.com/dm1cnsldc/image/upload/v1744627235/SARINGAN-DAPUR-2_oddcjx.jpg',
             },
             {
               imageUrl:
-                'https://res.cloudinary.com/dm1cnsldc/image/upload/v1743658163/SARINGAN_DAPUR_mnwarc.jpg',
+                'https://res.cloudinary.com/dm1cnsldc/image/upload/v1744627234/SARINGAN-DAPUR-1_b4uuyr.jpg',
             },
           ],
         },
@@ -1900,23 +1920,23 @@ async function main() {
           create: [
             {
               imageUrl:
-                'https://res.cloudinary.com/dm1cnsldc/image/upload/v1743658134/KOMPOR_PORTABLE_ll75gi.jpg',
+                'https://res.cloudinary.com/dm1cnsldc/image/upload/v1744627407/KOMPOR-2_cqtf8a.jpg',
             },
             {
               imageUrl:
-                'https://res.cloudinary.com/dm1cnsldc/image/upload/v1743658134/KOMPOR_PORTABLE_ll75gi.jpg',
+                'https://res.cloudinary.com/dm1cnsldc/image/upload/v1744627406/KOMPOR-1_c8hyoj.png',
             },
             {
               imageUrl:
-                'https://res.cloudinary.com/dm1cnsldc/image/upload/v1743658134/KOMPOR_PORTABLE_ll75gi.jpg',
+                'https://res.cloudinary.com/dm1cnsldc/image/upload/v1744627406/KOMPOR-3_jmezjf.jpg',
             },
             {
               imageUrl:
-                'https://res.cloudinary.com/dm1cnsldc/image/upload/v1743658134/KOMPOR_PORTABLE_ll75gi.jpg',
+                'https://res.cloudinary.com/dm1cnsldc/image/upload/v1744627406/KOMPOR-5_f3ugf2.jpg',
             },
             {
               imageUrl:
-                'https://res.cloudinary.com/dm1cnsldc/image/upload/v1743658134/KOMPOR_PORTABLE_ll75gi.jpg',
+                'https://res.cloudinary.com/dm1cnsldc/image/upload/v1744627405/KOMPOR-4_s5kuuh.jpg',
             },
           ],
         },
