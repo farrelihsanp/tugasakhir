@@ -6,23 +6,20 @@ import { useStoreContext } from '@/utility/StoreContext';
 import { ShippingCost, Voucher, Address } from '@/types/types';
 import { VoucherCategory } from '@prisma/client';
 import { useRouter } from 'next/navigation';
-
-interface Cart {
-  id: number;
-  productId: number;
-  quantity: number;
-  totalAmount: number;
-  valueVoucher: number;
-  totalAmountAfterVoucher: number;
-}
+import { Cart } from '@/types/types';
 
 const OrderForm = () => {
   const router = useRouter();
   const { user } = useStoreContext();
   const { nearestStore } = useStoreContext();
   const storeSlug = nearestStore?.slug;
+
+  // ---------------------------------------------------------------------------------
+
   // fetch data raja ongkir untuk pilihan pengiriman
-  const [shippingCost, setShippingCost] = useState<ShippingCost[] | null>(null);
+  const [shippingCostRajaOngkir, setShippingCostRajaOngkir] = useState<
+    ShippingCost[] | null
+  >(null);
   // voucher user
   const [vouchers, setVouchers] = useState<Voucher[]>([]);
   // alamat user
@@ -40,10 +37,11 @@ const OrderForm = () => {
   // isinya id address terpilih
   const [selectedAddress, setSelectedAddress] = useState<string | null>(null);
 
-  // isinya shipping cost setelah diapply voucher
-  const [shippingCostAfterVoucher, setShippingCostAfterVoucher] = useState<
+  const [savedSelectedVoucher, setSavedSelectedVoucher] = useState<
     number | null
   >(null);
+
+  // ------------------------------------------------------------------------------
 
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
@@ -52,32 +50,55 @@ const OrderForm = () => {
     return voucher.id === Number(selectedVoucher);
   });
 
-  const totalAmount = cart?.totalAmount;
-  const totalAmountAfterVoucher = cart?.totalAmountAfterVoucher;
+  /* -------------------------------------------------------------------------- */
+  /*                                MENGOLAH CART                               */
+  /* -------------------------------------------------------------------------- */
+  // console.log('isi cart', cart);
+  const value = cart?.CartValueCalculation;
+
+  const totalAmountCart = value?.totalAmountCart;
+  const totalAmountCartAfterVoucher = value?.totalAmountCartAfterVoucher;
+  const valueVoucherCart = value?.valueVoucherCart;
+
+  const shippingCost = value?.shippingCost;
+  const shippingCostAfterVoucher = value?.shippingCostAfterVoucher;
+  const valueVoucherShipping = value?.valueVoucherShipping;
+
+  // --------------------------------------------------------------------------------
   const addressPrimary = addresses.find((address) => address.isPrimary);
-
-  // ---
+  // --------------------------------------------------------------------------------
   useEffect(() => {
-    const storedShippingCost = localStorage.getItem('shippingCostAfterVoucher');
-    if (storedShippingCost) {
-      setShippingCostAfterVoucher(JSON.parse(storedShippingCost));
+    if (selectedVoucher) {
+      localStorage.setItem('selectedVoucher', selectedVoucher);
+    } else {
+      const savedVoucher = localStorage.getItem('selectedVoucher');
+      if (savedVoucher !== null) {
+        setSavedSelectedVoucher(Number(savedVoucher));
+      } else {
+        setSavedSelectedVoucher(null);
+      }
     }
+  }, [selectedVoucher]);
 
-    const savedSelectedVoucher = localStorage.getItem('selectedVoucher');
-    if (savedSelectedVoucher) {
-      setSelectedVoucher(savedSelectedVoucher);
-    }
-  }, [shippingCostAfterVoucher, selectedVoucher]);
+  console.log('isinya selectedVoucher', selectedVoucher);
+  console.log('isinya savedSelectedVoucher', savedSelectedVoucher);
 
   useEffect(() => {
-    const storedSelectedShipping = localStorage.getItem('selectedShipping');
-    if (storedSelectedShipping) {
-      const parsedShipping = JSON.parse(storedSelectedShipping);
-      setSelectedShipping(parsedShipping); // Menyimpan ke state
+    if (selectedShipping) {
+      localStorage.setItem(
+        'selectedShipping',
+        JSON.stringify(selectedShipping),
+      );
+    } else {
+      const savedShipping = localStorage.getItem('selectedShipping');
+      if (savedShipping !== null) {
+        setSelectedShipping(JSON.parse(savedShipping));
+      } else {
+        setSelectedShipping(null);
+      }
     }
-  }, []);
+  }, [selectedShipping]);
 
-  // --- Fetch logic
   useEffect(() => {
     const fetchShippingCost = async () => {
       setLoading(true);
@@ -90,7 +111,7 @@ const OrderForm = () => {
         if (!response.ok) throw new Error('Failed to fetch shipping cost');
         const data = await response.json();
         if (data.ok) {
-          setShippingCost(data.data.data);
+          setShippingCostRajaOngkir(data.data.data);
         } else {
           throw new Error('Could not calculate shipping cost');
         }
@@ -155,11 +176,6 @@ const OrderForm = () => {
       }
     };
 
-    // const savedSelectedVoucher = localStorage.getItem('selectedVoucher');
-    // if (savedSelectedVoucher) {
-    //   setSelectedVoucher(savedSelectedVoucher);
-    // }
-
     fetchShippingCost();
     fetchVouchers();
     fetchAddresses();
@@ -177,7 +193,7 @@ const OrderForm = () => {
     }
 
     if (selectedVoucherFulldata.voucherCategory === VoucherCategory.PRODUCT) {
-      toast.error('Product voucher cannot be applied');
+      toast.error('Product voucher cannot be applied in this page');
       setLoading(false);
       return;
     }
@@ -194,7 +210,7 @@ const OrderForm = () => {
             headers: { 'Content-Type': 'application/json' },
             credentials: 'include',
             body: JSON.stringify({
-              voucherId: selectedVoucherFulldata.id,
+              voucherId: selectedVoucher,
             }),
           },
         );
@@ -220,7 +236,7 @@ const OrderForm = () => {
             headers: { 'Content-Type': 'application/json' },
             credentials: 'include',
             body: JSON.stringify({
-              voucherId: selectedVoucherFulldata.id,
+              voucherId: selectedVoucher,
               shippingCostSelected: selectedShipping?.cost,
             }),
           },
@@ -228,15 +244,10 @@ const OrderForm = () => {
 
         const data = await response.json();
         if (data.ok) {
-          setShippingCostAfterVoucher(data.data);
-          localStorage.setItem(
-            'shippingCostAfterVoucher',
-            JSON.stringify(data.data),
-          );
+          toast.success('Voucher applied successfully');
           setTimeout(() => {
             window.location.reload();
           }, 1500);
-          toast.success('Voucher applied successfully');
         } else {
           throw new Error(data.message);
         }
@@ -258,7 +269,6 @@ const OrderForm = () => {
     } else {
       const selectedOption = JSON.parse(value);
       setSelectedShipping(selectedOption);
-      localStorage.setItem('selectedShipping', value);
     }
   };
 
@@ -290,7 +300,40 @@ const OrderForm = () => {
       setLoading(false);
       setTimeout(() => {
         window.location.reload();
-      }, 5000);
+      }, 3000);
+    }
+  };
+
+  const handleRemoveVoucher = async () => {
+    setLoading(true);
+    setError(null);
+
+    try {
+      const response = await fetch(
+        'http://localhost:8000/api/v1/remove-voucher',
+        {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          credentials: 'include',
+          body: JSON.stringify({ voucherId: savedSelectedVoucher }),
+        },
+      );
+
+      const data = await response.json();
+      if (data.ok) {
+        toast.success('Voucher removed successfully');
+        setSavedSelectedVoucher(null);
+        setTimeout(() => {
+          window.location.reload();
+        }, 1500);
+      } else {
+        throw new Error(data.message);
+      }
+    } catch (error: unknown) {
+      setError((error as Error).message);
+      toast.error((error as Error).message);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -305,14 +348,12 @@ const OrderForm = () => {
     }
 
     const orderData = {
-      // voucherId: selectedVoucher,
-      // addressId: addressPrimary?.id,
-      // ----
       courierName: selectedShipping?.name || '',
       code: selectedShipping?.code || '',
       serviceType: selectedShipping?.service || '',
       description: selectedShipping?.description || '',
-      shippingCost: shippingCostAfterVoucher || selectedShipping?.cost || '',
+      shippingCostFinal:
+        shippingCostAfterVoucher || shippingCost || selectedShipping?.cost || 0,
       estimatedTime: selectedShipping?.etd || '',
     };
 
@@ -330,8 +371,11 @@ const OrderForm = () => {
       const data = await response.json();
       if (data.ok) {
         toast.success('Order created successfully');
-        localStorage.removeItem('shippingCostAfterVoucher');
-        router.push(`http://localhost:3000/dashboard/${user?.username}/orders`);
+        router.push(
+          `http://localhost:3000/dashboard/${user?.username}/${data.data.id}/payment`,
+        );
+        localStorage.removeItem('selectedVoucher');
+        localStorage.removeItem('selectedShipping');
       } else {
         throw new Error('Failed to create order');
       }
@@ -342,6 +386,34 @@ const OrderForm = () => {
       setLoading(false);
     }
   };
+
+  let removeVoucherCart = null;
+
+  if (totalAmountCartAfterVoucher && valueVoucherCart) {
+    removeVoucherCart = (
+      <button
+        onClick={() => handleRemoveVoucher()}
+        className="w-full bg-red-600 text-white py-3 rounded-md hover:bg-red-700 transition duration-300"
+        disabled={loading}
+      >
+        {loading ? 'Removing Voucher...' : 'Remove Voucher'}
+      </button>
+    );
+  }
+
+  let removeVoucherShipping = null;
+
+  if (shippingCostAfterVoucher && valueVoucherShipping) {
+    removeVoucherShipping = (
+      <button
+        onClick={() => handleRemoveVoucher()}
+        className="w-full bg-red-600 text-white py-3 rounded-md hover:bg-red-700 transition duration-300"
+        disabled={loading || !savedSelectedVoucher}
+      >
+        {loading ? 'Removing Voucher...' : 'Remove Voucher'}
+      </button>
+    );
+  }
 
   return (
     <section className="min-h-screen flex flex-col items-center justify-center bg-gray-50">
@@ -361,9 +433,7 @@ const OrderForm = () => {
             className="w-full border rounded-md p-3 bg-gray-50 text-gray-700"
             value={selectedVoucher || ''}
             onChange={(e) => {
-              const voucherId = e.target.value;
-              setSelectedVoucher(voucherId);
-              localStorage.setItem('selectedVoucher', voucherId);
+              setSelectedVoucher(e.target.value);
             }}
           >
             <option value="">Select Voucher</option>
@@ -379,10 +449,22 @@ const OrderForm = () => {
         <div className="mb-6">
           <button
             onClick={handleVoucherApply}
-            className="w-full bg-blue-600 text-white py-3 rounded-md hover:bg-blue-700 transition duration-300"
-            disabled={loading}
+            className={`w-full py-3 rounded-md transition duration-300 ${
+              loading || totalAmountCartAfterVoucher || shippingCostAfterVoucher
+                ? 'bg-gray-400 cursor-not-allowed'
+                : 'bg-blue-600 hover:bg-blue-700 text-white'
+            }`}
+            disabled={Boolean(
+              loading ||
+                totalAmountCartAfterVoucher ||
+                shippingCostAfterVoucher,
+            )}
           >
-            {loading ? 'Applying Voucher...' : 'Apply Voucher'}
+            {loading
+              ? 'Applying Voucher...'
+              : totalAmountCartAfterVoucher || shippingCostAfterVoucher
+                ? 'Voucher sudah diaplikasikan'
+                : 'Apply Voucher'}
           </button>
         </div>
 
@@ -427,7 +509,7 @@ const OrderForm = () => {
             onChange={handleShippingSelect}
           >
             <option value="">Select Courier</option>
-            {shippingCost?.map((map, index) => (
+            {shippingCostRajaOngkir?.map((map, index) => (
               <option
                 key={index}
                 value={JSON.stringify({
@@ -464,32 +546,47 @@ const OrderForm = () => {
           Hasil Akhir
         </h3>
         <div className="bg-gray-50 p-4 rounded-md">
-          <p className="text-lg font-medium text-gray-800">
-            Hasil Belanjaan:{' '}
-            {totalAmountAfterVoucher ? (
-              <span>
-                <span className="line-through text-gray-500">
-                  {totalAmount}
-                </span>{' '}
-                {totalAmountAfterVoucher}
-              </span>
-            ) : (
-              totalAmount
-            )}
-          </p>
-          <p className="text-lg font-medium text-gray-800">
-            Shipping Cost:{' '}
-            {shippingCostAfterVoucher ? (
-              <span>
-                <span className="line-through text-gray-500">
-                  {selectedShipping?.cost || 0}
-                </span>{' '}
-                {shippingCostAfterVoucher}
-              </span>
-            ) : (
-              selectedShipping?.cost || 0
-            )}
-          </p>
+          <div>
+            <p className="text-lg font-medium text-gray-800">
+              Hasil Belanjaan:{' '}
+              {totalAmountCartAfterVoucher ? (
+                <span>
+                  <span className="line-through text-gray-500">
+                    {totalAmountCart}
+                  </span>{' '}
+                  {totalAmountCartAfterVoucher}
+                  <span className="text-sm text-gray-500">
+                    {' '}
+                    (Kamu untung: {valueVoucherCart})
+                  </span>
+                </span>
+              ) : (
+                totalAmountCart
+              )}
+            </p>
+          </div>
+          <div>{removeVoucherCart}</div>
+          <div>
+            {' '}
+            <p className="text-lg font-medium text-gray-800">
+              Shipping Cost:
+              {shippingCostAfterVoucher ? (
+                <span>
+                  <span className="line-through text-gray-500">
+                    {shippingCost || 0}
+                  </span>{' '}
+                  {shippingCostAfterVoucher}
+                  <span className="text-sm text-gray-500">
+                    {' '}
+                    (Kamu untung: {valueVoucherShipping})
+                  </span>
+                </span>
+              ) : (
+                <span>{selectedShipping?.cost || 0}</span>
+              )}
+            </p>
+          </div>
+          <div>{removeVoucherShipping}</div>
         </div>
 
         <div>

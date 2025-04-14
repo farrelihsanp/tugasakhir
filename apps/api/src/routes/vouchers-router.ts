@@ -12,6 +12,7 @@ import {
   applyVoucherToProduct,
   // updateVoucherStock,
   claimVoucher,
+  removeVoucher,
 } from '../controllers/vouchers-controller.js';
 
 import { upload } from '../middlewares/upload-middleware.js';
@@ -62,6 +63,13 @@ router.delete(
   deleteVoucher,
 );
 
+router.post(
+  '/claim-voucher',
+  verifyToken,
+  roleGuard(['CUSTOMERS']),
+  claimVoucher,
+);
+
 /* -------------------------------------------------------------------------- */
 /*                                APPLY VOUCHER                               */
 /* -------------------------------------------------------------------------- */
@@ -87,13 +95,13 @@ router.post(
   applyVoucherToProduct,
 );
 
-// ------------------------------ CLAIM VOUCHER -------------------------------
-
 router.post(
-  '/claim-voucher',
+  '/remove-voucher',
   verifyToken,
   roleGuard(['CUSTOMERS']),
-  claimVoucher,
+  removeVoucher,
 );
+
+// ------------------------------ CLAIM VOUCHER -------------------------------
 
 export default router;

@@ -50,6 +50,15 @@ export async function login(req: Request, res: Response, next: NextFunction) {
       return;
     }
 
+    const storeStoreAdmin = await prisma.storeUser.findFirst({
+      where: {
+        userId: existingUser.id,
+      },
+      select: {
+        storeId: true,
+      },
+    });
+
     const jwtPayload = {
       id: existingUser.id,
       name: existingUser.name,
@@ -57,6 +66,7 @@ export async function login(req: Request, res: Response, next: NextFunction) {
       profileImage: existingUser.profileImage,
       email: existingUser.email,
       role: existingUser.role,
+      storeId: storeStoreAdmin?.storeId,
     };
     const token = jwt.sign(jwtPayload, process.env.JWT_SECRET_KEY as string, {
       expiresIn: '24h',
@@ -72,7 +82,12 @@ export async function login(req: Request, res: Response, next: NextFunction) {
         secure: process.env.NODE_ENV === 'production',
       })
       .status(200)
-      .json({ ok: true, message: 'Login succeded!', role: existingUser.role });
+      .json({
+        ok: true,
+        message: 'Login succeded!',
+        role: existingUser.role,
+        storeId: storeStoreAdmin?.storeId,
+      });
   } catch (error) {
     next(error);
   }
@@ -105,6 +120,7 @@ export async function getCurrentUser(
 
     const user = await prisma.user.findUnique({
       where: { id: userId },
+      include: { StoreUser: true },
     });
 
     if (!user) {
@@ -112,17 +128,7 @@ export async function getCurrentUser(
       return;
     }
 
-    res.status(200).json({
-      id: user.id,
-      name: user.name,
-      username: user.username,
-      email: user.email,
-      role: user.role,
-      profileImage: user.profileImage,
-      referralNumber: user.referralNumber,
-      emailConfirmed: user.emailConfirmed,
-      createdAt: user.createdAt,
-    });
+    res.status(200).json(user);
   } catch (error) {
     next(error);
   }

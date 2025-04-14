@@ -30,6 +30,9 @@ export const StoreProvider: React.FC<{ children: React.ReactNode }> = ({
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
+  const [storeStoreAdmin, setStoreStoreAdmin] = useState<Store | null>(null);
+
+  const storeIdStoreAdmin = user?.StoreUser[0]?.storeId; // Safe check for StoreUser and storeId
 
   useEffect(() => {
     setLoading(true);
@@ -56,6 +59,11 @@ export const StoreProvider: React.FC<{ children: React.ReactNode }> = ({
   }, []);
 
   useEffect(() => {
+    if (!storeIdStoreAdmin) {
+      setError('Store ID is unavailable');
+      return;
+    }
+
     setLoading(true);
     setError(null);
 
@@ -71,7 +79,7 @@ export const StoreProvider: React.FC<{ children: React.ReactNode }> = ({
       .finally(() => {
         setLoading(false);
       });
-  }, []);
+  }, [storeIdStoreAdmin]);
 
   useEffect(() => {
     if (!nearestStore?.id) return;
@@ -87,8 +95,13 @@ export const StoreProvider: React.FC<{ children: React.ReactNode }> = ({
       `http://localhost:8000/api/v1/cheap-products-store/${nearestStore.id}`,
     ).then((res) => res.json());
 
-    Promise.all([fetchProducts, fetchCheapProducts])
-      .then(([productData, cheapProductsData]) => {
+    const fetchStore = fetch(
+      `http://localhost:8000/api/v1/stores/someStore/${storeIdStoreAdmin}`,
+    ).then((res) => res.json());
+
+    Promise.all([fetchProducts, fetchCheapProducts, fetchStore])
+      .then(([productData, cheapProductsData, storeData]) => {
+        setStoreStoreAdmin(storeData.data);
         setProducts(productData.data);
         if (cheapProductsData?.data) {
           setCheapProducts(cheapProductsData.data);
@@ -105,7 +118,7 @@ export const StoreProvider: React.FC<{ children: React.ReactNode }> = ({
       .finally(() => {
         setLoading(false);
       });
-  }, [nearestStore]);
+  }, [nearestStore, storeIdStoreAdmin]);
 
   // Handle logout within the context
   const handleLogout = async () => {
@@ -129,6 +142,7 @@ export const StoreProvider: React.FC<{ children: React.ReactNode }> = ({
     <StoreContext.Provider
       value={{
         nearestStore,
+        storeStoreAdmin,
         setNearestStore,
         cheapProducts,
         products,

@@ -255,7 +255,7 @@ export const getStoreById = async (
       res.status(404).json({ error: 'Store not found' });
       return;
     }
-    res.status(200).json(store);
+    res.status(200).json({ ok: true, data: store });
   } catch (error) {
     console.error(error);
     next(error);

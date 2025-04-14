@@ -3,32 +3,9 @@
 import { useEffect, useState } from 'react';
 import { useParams } from 'next/navigation';
 import Image from 'next/image';
-
-type ProductImage = {
-  id: number;
-  imageUrl: string;
-};
-
-type Category = {
-  id: number;
-  name: string;
-  description: string;
-  slug: string;
-  image: string;
-};
-
-type Store = {
-  id: number;
-  name: string;
-  address: string;
-  city: string;
-  province: string;
-  country: string;
-  postalCode: string;
-  storeImage: string;
-  latitude: number;
-  longitude: number;
-};
+import { Store, Category, ProductImage } from '@/types/types';
+import { useStoreContext } from '@/utility/StoreContext';
+import { Role } from '@prisma/client';
 
 type Product = {
   id: number;
@@ -57,6 +34,8 @@ export default function ProductDetailPage() {
     storeSlug: string;
     productSlug: string;
   };
+
+  const { user } = useStoreContext();
 
   const [productData, setProductData] = useState<StoreProduct | null>(null);
   const [error, setError] = useState<string | null>(null);
@@ -163,32 +142,36 @@ export default function ProductDetailPage() {
       </div>
 
       {/* Quantity Selector & Total */}
-      <div className="flex items-center justify-center mt-6 gap-8">
-        <div className="flex items-center gap-4 text-lg font-semibold">
-          <button
-            onClick={() => setQty((prev) => Math.max(1, prev - 1))}
-            className="w-10 h-10 rounded-full border text-xl"
-          >
-            -
-          </button>
-          <span>{qty}</span>
-          <button
-            onClick={() => setQty((prev) => prev + 1)}
-            className="w-10 h-10 rounded-full border text-xl"
-          >
-            +
-          </button>
-        </div>
+      {user?.role === Role.CUSTOMERS && (
+        <div className="flex items-center justify-center mt-6 gap-8">
+          <div className="flex items-center gap-4 text-lg font-semibold">
+            <button
+              onClick={() => setQty((prev) => Math.max(1, prev - 1))}
+              className="w-10 h-10 rounded-full border text-xl"
+            >
+              -
+            </button>
+            <span>{qty}</span>
+            <button
+              onClick={() => setQty((prev) => prev + 1)}
+              className="w-10 h-10 rounded-full border text-xl"
+            >
+              +
+            </button>
+          </div>
 
-        <div className="text-xl font-bold">
-          Rp. {total.toLocaleString('id-ID')}
+          <div className="text-xl font-bold">
+            Rp. {total.toLocaleString('id-ID')}
+          </div>
         </div>
-      </div>
+      )}
 
       {/* Add to Cart */}
-      <button className="mt-6 border border-black px-6 py-3 font-semibold hover:bg-black hover:text-white transition">
-        MASUKAN KE KERANJANG
-      </button>
+      {user?.role === Role.CUSTOMERS && (
+        <button className="mt-6 border border-black px-6 py-3 font-semibold hover:bg-black hover:text-white transition">
+          MASUKAN KE KERANJANG
+        </button>
+      )}
 
       {/* Category Info */}
       <div className="mt-10 text-left">

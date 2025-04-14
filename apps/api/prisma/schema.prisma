@@ -108,12 +108,12 @@ model CartValueCalculation {
 
     cartId Int @unique
 
-    totalAmount              Int @default(0)
-    totalAmountAfterVoucher  Int @default(0)
-    valueVoucherCart         Int @default(0)
-    shippingCost             Int @default(0)
-    shippingCostAfterVoucher Int @default(0)
-    valueVoucherShipping     Int @default(0)
+    totalAmountCart             Int @default(0)
+    totalAmountCartAfterVoucher Int @default(0)
+    valueVoucherCart            Int @default(0)
+    shippingCost                Int @default(0)
+    shippingCostAfterVoucher    Int @default(0)
+    valueVoucherShipping        Int @default(0)
 
     createdAt DateTime @default(now())
     updatedAt DateTime @updatedAt

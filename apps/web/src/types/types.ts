@@ -12,6 +12,12 @@ export interface Category {
   image: string;
   slug: string;
   excerpt: string;
+  description: string;
+}
+
+export interface BankAccount {
+  name: string;
+  number: string;
 }
 
 export interface Address {
@@ -64,7 +70,7 @@ export interface ProductDetails {
 /* -------------------------------------------------------------------------- */
 
 export interface Store {
-  id: string;
+  id: number;
   name: string;
   slug: string;
   address: string;
@@ -90,6 +96,9 @@ export interface User {
   role: Role;
   createdAt: string;
   updatedAt: string;
+  StoreUser: {
+    storeId: number;
+  }[];
 }
 
 /* -------------------------------------------------------------------------- */
@@ -143,6 +152,7 @@ export interface Order {
   deliveredAt?: Date;
   shippingInformation?: ShippingInformation;
   orderItems: OrderItem[];
+  user: User;
 }
 
 export interface OrderItem {
@@ -188,6 +198,17 @@ export interface Cart {
   userId: number;
   storeId: number;
   cartItems: CartItem[];
+  CartValueCalculation: CartValueCalculation;
+}
+
+export interface CartValueCalculation {
+  id: number;
+  totalAmountCart: number;
+  totalAmountCartAfterVoucher: number;
+  valueVoucherCart: number;
+  shippingCost: number;
+  shippingCostAfterVoucher: number;
+  valueVoucherShipping: number;
 }
 
 export interface CartItem {
@@ -252,6 +273,7 @@ export interface StoreContextType {
   loading: boolean;
   error: string | null;
   user: User | null;
+  storeStoreAdmin: Store | null;
   handleLogout: () => void;
 }
 

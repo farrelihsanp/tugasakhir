@@ -11,8 +11,7 @@ import {
 } from 'react-icons/fa';
 
 export default function DashboardPage() {
-  const { user } = useStoreContext();
-  console.log(user);
+  const { user, storeStoreAdmin } = useStoreContext();
 
   const roleComponents = {
     CUSTOMERS: (
@@ -59,29 +58,38 @@ export default function DashboardPage() {
         <div className="space-y-6 w-full max-w-lg">
           <div>
             <Link
-              href={`/storeadmin/${user?.username}/manage-store`}
+              href={`/dashboard/${user?.username}/view-orders`}
               className="flex items-center px-8 py-4 bg-white text-blue-600 rounded-lg shadow-lg hover:bg-blue-700 hover:text-white transition duration-300 text-lg font-semibold"
             >
               <FaStore className="mr-4" />
-              <span>Manage Store</span>
+              <span>View Orders</span>
             </Link>
           </div>
           <div>
             <Link
-              href={`/storeadmin/${user?.username}/manage-products`}
+              href={`/${storeStoreAdmin?.slug}/product`}
               className="flex items-center px-8 py-4 bg-white text-blue-600 rounded-lg shadow-lg hover:bg-blue-700 hover:text-white transition duration-300 text-lg font-semibold"
             >
               <FaBoxOpen className="mr-4" />
-              <span>Manage Products</span>
+              <span>View Products</span>
             </Link>
           </div>
           <div>
             <Link
-              href={`/storeadmin/${user?.username}/view-order`}
+              href={`/dashboard/${user?.username}/reports-analysis`}
               className="flex items-center px-8 py-4 bg-white text-blue-600 rounded-lg shadow-lg hover:bg-blue-700 hover:text-white transition duration-300 text-lg font-semibold"
             >
               <FaShoppingCart className="mr-4" />
-              <span>View Orders</span>
+              <span>Report Analysis</span>
+            </Link>
+          </div>
+          <div>
+            <Link
+              href={`/dashboard/${user?.username}/vouchers`}
+              className="flex items-center px-8 py-4 bg-white text-blue-600 rounded-lg shadow-lg hover:bg-blue-700 hover:text-white transition duration-300 text-lg font-semibold"
+            >
+              <FaShoppingCart className="mr-4" />
+              <span>Voucher</span>
             </Link>
           </div>
         </div>
@@ -95,7 +103,7 @@ export default function DashboardPage() {
         <div className="space-y-6 w-full max-w-lg">
           <div>
             <Link
-              href={`/superadmin/${user?.username}/manage-store-admin`}
+              href={`/dashboard/superadmin/${user?.username}/manage-store-admin`}
               className="flex items-center px-8 py-4 bg-white text-blue-600 rounded-lg shadow-lg hover:bg-blue-700 hover:text-white transition duration-300 text-lg font-semibold"
             >
               <FaStore className="mr-4" />
@@ -104,7 +112,7 @@ export default function DashboardPage() {
           </div>
           <div>
             <Link
-              href={`/superadmin/${user?.username}/view-user`}
+              href={`/dashboard/superadmin/${user?.username}/view-user`}
               className="flex items-center px-8 py-4 bg-white text-blue-600 rounded-lg shadow-lg hover:bg-blue-700 hover:text-white transition duration-300 text-lg font-semibold"
             >
               <FaUsers className="mr-4" />
@@ -113,7 +121,7 @@ export default function DashboardPage() {
           </div>
           <div>
             <Link
-              href={`/superadmin/${user?.username}/manage-store`}
+              href={`/dashboard/superadmin/${user?.username}/manage-store`}
               className="flex items-center px-8 py-4 bg-white text-blue-600 rounded-lg shadow-lg hover:bg-blue-700 hover:text-white transition duration-300 text-lg font-semibold"
             >
               <FaStore className="mr-4" />
@@ -122,7 +130,7 @@ export default function DashboardPage() {
           </div>
           <div>
             <Link
-              href={`/superadmin/${user?.username}/report-analysis`}
+              href={`/dashboard/superadmin/${user?.username}/report-analysis`}
               className="flex items-center px-8 py-4 bg-white text-blue-600 rounded-lg shadow-lg hover:bg-blue-700 hover:text-white transition duration-300 text-lg font-semibold"
             >
               <FaChartLine className="mr-4" />

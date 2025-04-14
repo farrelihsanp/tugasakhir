@@ -242,42 +242,6 @@ export const deleteCartItem = async (
   }
 };
 
-// export const setShippingAddress = async (
-//   req: Request,
-//   res: Response,
-//   next: NextFunction,
-// ) => {
-//   try {
-//     const userId = req.user?.id;
-//     const { addressIds } = req.body;
-
-//     if (!userId) {
-//       res.status(401).json({ error: 'Unauthorized' });
-//       return;
-//     }
-//     if (!addressIds) {
-//       res.status(400).json({ error: 'Address ID is required' });
-//       return;
-//     }
-
-//     await prisma.address.updateMany({
-//       where: { userId: userId, isActive: true },
-//       data: { isActive: false },
-//     });
-
-//     await prisma.address.update({
-//       where: { id: Number(addressIds), userId: userId },
-//       data: { isActive: true },
-//     });
-
-//     res.status(200).json({ message: 'Set shipping address successfully' });
-//     return;
-//   } catch (error) {
-//     console.error('Error setting shipping address:', error);
-//     next(error);
-//   }
-// };
-
 export const getTotalAmountCart = async (
   req: Request,
   res: Response,
@@ -332,6 +296,7 @@ export const getCart = async (
     const cart = await prisma.cart.findUnique({
       where: { userId: userId },
       include: {
+        CartValueCalculation: true,
         cartItems: {
           include: {
             storeProduct: {
@@ -386,15 +351,26 @@ export const checkout = async (
       0,
     );
 
-    const totalAmountCart = await prisma.cart.update({
+    await prisma.cartValueCalculation.upsert({
+      where: { cartId: cart.id },
+      create: {
+        cart: { connect: { id: cart.id } },
+        totalAmountCart: totalAmount,
+      },
+      update: { totalAmountCart: totalAmount },
+    });
+
+    const finalData = await prisma.cart.findUnique({
       where: { userId: userId },
-      data: { totalAmount: totalAmount },
+      include: {
+        CartValueCalculation: true,
+      },
     });
 
     res.status(200).json({
       ok: true,
       message: 'Total amount retrieved successfully',
-      data: { totalAmountCart },
+      data: finalData,
     });
     return;
   } catch (error) {

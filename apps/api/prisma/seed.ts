@@ -2259,8 +2259,7 @@ async function main() {
         totalAmount: 800000,
         status: OrderStatus.WAITING_FOR_PAYMENT,
         paymentMethodType: PaymentMethodType.BANK_TRANSFER,
-        paymentProof:
-          'https://dummyimage.com/600x400/90ee90/fff&text=bukti+bayar',
+        paymentProof: '',
         paymentProofUploadedAt: new Date(),
         orderConfirmationAt: new Date(),
         shippingInformation: {

@@ -45,6 +45,7 @@ export const createOrder = async (
 
     const cartBuyerCustomer = await prisma.cart.findUnique({
       where: { userId: userId },
+      include: { CartValueCalculation: true },
     });
 
     if (!cartBuyerCustomer) {
@@ -71,21 +72,22 @@ export const createOrder = async (
       code,
       serviceType,
       description,
-      shippingCostAfterVoucher,
+      shippingCostFinal,
       estimatedTime,
     } = req.body;
 
     if (
       !courierName ||
       !serviceType ||
-      !shippingCostAfterVoucher ||
+      !shippingCostFinal ||
       !code ||
       !description ||
       !estimatedTime
     ) {
-      res
-        .status(400)
-        .json({ error: 'Courier name, service, and cost are required' });
+      res.status(400).json({
+        error:
+          'Courier name, service type, shipping cost, code, description, and estimated time are required',
+      });
       return;
     }
 
@@ -108,12 +110,18 @@ export const createOrder = async (
 
     // const orderId = uuid();
 
+    const totalAmount =
+      cartBuyerCustomer.CartValueCalculation?.totalAmountCart || 0;
+    const totalAmountAfterVoucher =
+      cartBuyerCustomer.CartValueCalculation?.totalAmountCartAfterVoucher || 0;
+
     const newOrder = await prisma.order.create({
       data: {
         userId: userId,
         storeId: store.id,
         shippingAddressId: shippingAddress.id,
-        totalAmount: cartBuyerCustomer.totalAmount + shippingCostAfterVoucher,
+        totalAmount:
+          (totalAmount || totalAmountAfterVoucher) + shippingCostFinal,
         slug: createSlug('ORDER'),
         paymentMethodType: PaymentMethodType.UNSET,
         status: OrderStatus.WAITING_FOR_PAYMENT,
@@ -168,7 +176,7 @@ export const createOrder = async (
         code: code,
         serviceType: serviceType,
         description: description,
-        shippingCost: shippingCostAfterVoucher,
+        shippingCost: shippingCostFinal,
         estimatedTime: firstNumberEstimatedTime,
       },
     });
@@ -516,21 +524,34 @@ export const getAllOrderCustomer = async (
 /*                                 STOREADMIN & SUPERADMIN                                */
 /* -------------------------------------------------------------------------- */
 
-export const getAllOrdersStatusPending = async (
-  _req: Request,
+export const getAllOrdersStore = async (
+  req: Request,
   res: Response,
   next: NextFunction,
 ) => {
   try {
-    const orders = await prisma.order.findMany({
+    const { storeId } = req.params;
+
+    const allOrder = await prisma.order.findMany({
       where: {
-        status: OrderStatus.PENDING_PAYMENT,
+        storeId: Number(storeId),
       },
       include: {
         user: true,
+        orderItems: {
+          include: {
+            Product: true,
+          },
+        },
       },
     });
-    res.status(200).json(orders);
+
+    if (!allOrder) {
+      res.status(404).json({ error: 'Order not found' });
+      return;
+    }
+
+    res.status(200).json(allOrder);
   } catch (error) {
     console.error(error);
     next(error);
@@ -846,16 +867,16 @@ export const getAllOrderHistory = async (
 /* -------------------------------------------------------------------------- */
 /*                            FOR CUSTOMER & ADMIN                            */
 /* -------------------------------------------------------------------------- */
-export const getOrderDetail = async (
+export const getOrderById = async (
   req: Request,
   res: Response,
   next: NextFunction,
 ) => {
   try {
-    const { orderSlug } = req.params;
+    const { orderId } = req.params;
 
     const order = await prisma.order.findFirst({
-      where: { slug: orderSlug },
+      where: { id: Number(orderId) },
       include: {
         user: { select: { name: true } },
         store: { select: { name: true } },

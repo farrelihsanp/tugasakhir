@@ -4,7 +4,7 @@ import {
   payWithManualTransfer,
   // payWithMidTrans,
   uploadPaymentProof,
-  getAllOrdersStatusPending,
+  getAllOrdersStore,
   cancelOrder,
   orderConfirmed,
   getAllOrderCustomer,
@@ -14,7 +14,7 @@ import {
   processOrder,
   sentOrder,
   getAllOrderHistory,
-  getOrderDetail,
+  getOrderById,
 } from '../controllers/orders-controller.js';
 
 import { upload } from '../middlewares/upload-middleware.js';
@@ -62,7 +62,7 @@ router.route('/order-customer').get(verifyToken, getAllOrderCustomer);
 
 // ---------------- ADMIN --------------
 // Get all orders with pending payment
-router.route('/orders').get(verifyToken, getAllOrdersStatusPending);
+router.route('/orders-store/:storeId').get(verifyToken, getAllOrdersStore);
 
 // See payment proof for an order
 router
@@ -94,6 +94,6 @@ router.route('/order-history').get(verifyToken, getAllOrderHistory);
 /* -------------------------------------------------------------------------- */
 /*                           FOR CUSTOMER AND ADMIN                           */
 /* -------------------------------------------------------------------------- */
-router.route('/order-detail/:orderSlug').get(verifyToken, getOrderDetail);
+router.route('/order-detail/:orderId').get(verifyToken, getOrderById);
 
 export default router;

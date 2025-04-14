@@ -93,7 +93,7 @@ export default function Navbar() {
   if (!user) {
     return (
       <section>
-        <div className=" bg-primary py-3 flex items-center justify-between ">
+        <div className=" bg-blue-600 py-3 flex items-center justify-between ">
           <LogoWebsite />
           <div className="RightContainer flex justify-center items-center mx-5 gap-3">
             <div className="mr-5">
@@ -200,6 +200,14 @@ export default function Navbar() {
         <div className=" bg-blue-600 py-3 flex items-center justify-between ">
           <LogoWebsite />
           <div className="RightContainer flex justify-center items-center mx-5 gap-3">
+            <div>
+              <Link
+                href={`/dashboard/${user?.username}`}
+                className="text-white"
+              >
+                Dashboard
+              </Link>
+            </div>
             <div className="relative w-10 h-10">
               <Link href="#">
                 {user.profileImage && (
