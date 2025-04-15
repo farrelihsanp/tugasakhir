@@ -23,7 +23,17 @@ export interface User {
   isVerified: boolean;
   passwordConfirmed: boolean;
   proofOfPaymentImage?: string;
-  StoreUser: { storeId: number }[];
+  StoreUser: StoreUser[];
+}
+
+export interface StoreUser {
+  id: number;
+  userId: number;
+  storeId: number;
+  createdAt: string;
+  updatedAt: string;
+  store: Store;
+  user: User;
 }
 
 export interface Category {
@@ -104,6 +114,7 @@ export interface Store {
   maxServiceDistance: number;
   isPrimary: boolean;
   isActive: boolean;
+  StoreUser: StoreUser[];
 }
 
 export interface Voucher {
@@ -226,10 +237,6 @@ export interface CartItem {
   storeProduct: StoreProduct;
   Product: Product;
 }
-
-/* -------------------------------------------------------------------------- */
-/*                                 SHIPPING COST TYPES                      */
-/* -------------------------------------------------------------------------- */
 
 export interface ShippingCost {
   name: string;

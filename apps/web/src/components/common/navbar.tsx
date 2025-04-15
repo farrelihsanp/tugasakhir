@@ -5,7 +5,7 @@ import Link from 'next/link';
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import LogoutModal from './logout';
-import { useStoreContext } from '../../utility/StoreContext';
+import { useStoreContext } from '@/utility/StoreContext';
 
 interface UserInfo {
   id: number;
@@ -24,32 +24,34 @@ export default function Navbar() {
   const { nearestStore } = useStoreContext();
 
   useEffect(() => {
+    setLoadingUser(true);
+    const fetchUser = async () => {
+      try {
+        const res = await fetch('http://localhost:8000/api/v1/auth/me', {
+          method: 'GET',
+          credentials: 'include',
+        });
+        if (!res.ok) {
+          setLoadingUser(false);
+          return;
+        }
+        const data = await res.json();
+        setUser({
+          id: data.id,
+          name: data.name,
+          username: data.username,
+          role: data.role,
+          profileImage: data.profileImage,
+        });
+      } catch (error) {
+        console.error('Error fetching user:', error);
+      } finally {
+        setLoadingUser(false);
+      }
+    };
+
     fetchUser();
   }, []);
-
-  async function fetchUser() {
-    try {
-      const res = await fetch('http://localhost:8000/api/v1/auth/me', {
-        credentials: 'include',
-      });
-      if (!res.ok) {
-        setLoadingUser(false);
-        return;
-      }
-      const data = await res.json();
-      setUser({
-        id: data.id,
-        name: data.name,
-        username: data.username,
-        role: data.role,
-        profileImage: data.profileImage,
-      });
-    } catch (error) {
-      console.error('Error fetching user info:', error);
-    } finally {
-      setLoadingUser(false);
-    }
-  }
 
   function handleLogoutSuccess() {
     setUser(null);

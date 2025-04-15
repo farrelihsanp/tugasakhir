@@ -118,7 +118,7 @@ export async function getCurrentUser(
       return;
     }
 
-    const user = await prisma.user.findUnique({
+    const user = await prisma.user.findFirst({
       where: { id: userId },
       include: { StoreUser: true },
     });

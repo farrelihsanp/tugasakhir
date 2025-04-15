@@ -33,6 +33,7 @@ export const StoreProvider: React.FC<{ children: React.ReactNode }> = ({
   const [storeStoreAdmin, setStoreStoreAdmin] = useState<Store | null>(null);
 
   const storeIdStoreAdmin = user?.StoreUser[0]?.storeId;
+  console.log('isinya storeIdStoreAdmin', storeIdStoreAdmin);
   console.log('isinya user', user);
 
   /* -------------------------------------------------------------------------- */
@@ -45,10 +46,8 @@ export const StoreProvider: React.FC<{ children: React.ReactNode }> = ({
     const fetchAuthMe = async () => {
       try {
         const res = await fetch('http://localhost:8000/api/v1/auth/me', {
+          method: 'GET',
           credentials: 'include',
-          headers: {
-            'Content-Type': 'application/json',
-          },
         });
         const data = await res.json();
         setUser(data);
