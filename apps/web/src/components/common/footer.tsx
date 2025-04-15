@@ -9,7 +9,7 @@ export default function Footer() {
           <div>
             <Link href="#">
               <Image
-                src="https://res.cloudinary.com/dm1cnsldc/image/upload/v1741129248/LOGO-NEW_ylnnp9.png"
+                src="https://dummyimage.com/600x400/90ee90/fff&text=voucher+ongkir"
                 width={200}
                 height={200}
                 alt="Landing Page Photo"

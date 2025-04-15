@@ -83,9 +83,9 @@ const AllProductsPage = () => {
           className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
         >
           <option value="">Semua Kategori</option>
-          {categories.map((category) => (
-            <option key={category.id} value={category.name}>
-              {category.name}
+          {categories.map((category, index: number) => (
+            <option key={index} value={category.id}>
+              {category.id}
             </option>
           ))}
         </select>

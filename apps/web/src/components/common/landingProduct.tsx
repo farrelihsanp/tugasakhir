@@ -1,6 +1,6 @@
 'use client';
 
-import { useStoreContext } from '../../utility/StoreContext';
+import { useStoreContext } from '@/utility/StoreContext';
 import Image from 'next/image';
 import Link from 'next/link';
 

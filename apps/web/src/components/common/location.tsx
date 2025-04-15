@@ -37,7 +37,8 @@ const StoreForm: React.FC = () => {
 
       const data = await response.json();
       setStore(data);
-    } catch (err) {
+    } catch (error: unknown) {
+      console.error(error);
       setError('An error occurred while fetching the nearest store.');
     }
   };

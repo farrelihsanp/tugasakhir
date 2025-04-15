@@ -20,29 +20,18 @@ const OrderForm = () => {
   const [shippingCostRajaOngkir, setShippingCostRajaOngkir] = useState<
     ShippingCost[] | null
   >(null);
-  // voucher user
-  const [vouchers, setVouchers] = useState<Voucher[]>([]);
-  // alamat user
-  const [addresses, setAddresses] = useState<Address[]>([]);
-  // cart user (menampilkan informasi total belanjaan setelah diapply voucher)
-  const [cart, setCart] = useState<Cart | null>(null);
 
-  // kurir terpilih
+  const [vouchers, setVouchers] = useState<Voucher[]>([]); // voucher user
+  const [addresses, setAddresses] = useState<Address[]>([]); // alamat user
+  const [cart, setCart] = useState<Cart | null>(null); // cart user (menampilkan informasi total belanjaan setelah diapply voucher)
   const [selectedShipping, setSelectedShipping] = useState<ShippingCost | null>(
     null,
-  );
-
-  // isinya Id voucher terpilih
-  const [selectedVoucher, setSelectedVoucher] = useState<string | null>(null);
-  // isinya id address terpilih
-  const [selectedAddress, setSelectedAddress] = useState<string | null>(null);
-
+  ); // kurir terpilih
+  const [selectedVoucher, setSelectedVoucher] = useState<string | null>(null); // isinya Id voucher terpilih
+  const [selectedAddress, setSelectedAddress] = useState<string | null>(null); // isinya id address terpilih
   const [savedSelectedVoucher, setSavedSelectedVoucher] = useState<
     number | null
   >(null);
-
-  // ------------------------------------------------------------------------------
-
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -53,7 +42,7 @@ const OrderForm = () => {
   /* -------------------------------------------------------------------------- */
   /*                                MENGOLAH CART                               */
   /* -------------------------------------------------------------------------- */
-  // console.log('isi cart', cart);
+
   const value = cart?.CartValueCalculation;
 
   const totalAmountCart = value?.totalAmountCart;

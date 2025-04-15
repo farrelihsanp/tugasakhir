@@ -4,13 +4,34 @@ import {
   OrderStatus,
   VoucherType,
   VoucherCategory,
+  Provider,
 } from '@prisma/client';
+
+export interface User {
+  id: number;
+  name: string;
+  username: string;
+  password: string;
+  email: string;
+  profileImage: string;
+  referralNumber: string;
+  role: Role;
+  createdAt: string;
+  updatedAt: string;
+  referralCount: number;
+  provider: Provider;
+  isVerified: boolean;
+  passwordConfirmed: boolean;
+  proofOfPaymentImage?: string;
+  StoreUser: { storeId: number }[];
+}
 
 export interface Category {
   id: number;
   excerpt: string;
+  name: string;
   description: string;
-  Images: string;
+  Image: string;
   slug: string;
   CategoryProduct: CategoryProduct[];
 }
@@ -46,6 +67,7 @@ export interface Product {
   createdAt: string;
   updatedAt: string;
   CategoryProduct: CategoryProduct[];
+  ProductImages: ProductImage[];
   product: ProductDetails;
 }
 
@@ -70,10 +92,6 @@ export interface ProductDetails {
   }[];
 }
 
-/* -------------------------------------------------------------------------- */
-/*                                 STORE TYPES                              */
-/* -------------------------------------------------------------------------- */
-
 export interface Store {
   id: number;
   name: string;
@@ -87,28 +105,6 @@ export interface Store {
   isPrimary: boolean;
   isActive: boolean;
 }
-
-/* -------------------------------------------------------------------------- */
-/*                                 USER TYPES                               */
-/* -------------------------------------------------------------------------- */
-
-export interface User {
-  id: number;
-  name: string;
-  email: string;
-  username: string;
-  profileImage: string;
-  role: Role;
-  createdAt: string;
-  updatedAt: string;
-  StoreUser: {
-    storeId: number;
-  }[];
-}
-
-/* -------------------------------------------------------------------------- */
-/*                                 VOUCHER TYPES                            */
-/* -------------------------------------------------------------------------- */
 
 export interface Voucher {
   id: number;
@@ -228,6 +224,7 @@ export interface CartItem {
   price: number;
   total: number;
   storeProduct: StoreProduct;
+  Product: Product;
 }
 
 /* -------------------------------------------------------------------------- */

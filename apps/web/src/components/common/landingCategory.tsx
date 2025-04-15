@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import Image from 'next/image';
-import { useStoreContext } from '../../utility/StoreContext';
+import { useStoreContext } from '@/utility/StoreContext';
 
 export default function LandingCategory() {
   const { categories } = useStoreContext();
@@ -22,7 +22,7 @@ export default function LandingCategory() {
               <Link href="#">
                 <div className="relative h-16 w-16">
                   <Image
-                    src={category.image}
+                    src={category.Image}
                     alt={category.name}
                     layout="fill"
                     objectFit="cover"
