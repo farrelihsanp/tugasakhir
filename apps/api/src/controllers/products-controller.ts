@@ -130,15 +130,8 @@ export const updateProductGlobal = async (
   next: NextFunction,
 ): Promise<void> => {
   try {
-    const {
-      productId,
-      name,
-      excerpt,
-      description,
-      price,
-      categoryIds,
-      weight,
-    } = req.body;
+    const { productId, name, excerpt, description, price, categoryId, weight } =
+      req.body;
 
     if (
       !productId ||
@@ -146,7 +139,7 @@ export const updateProductGlobal = async (
       !excerpt ||
       !description ||
       !price ||
-      !categoryIds ||
+      !categoryId ||
       !weight
     ) {
       res.status(400).json({ error: 'All required fields must be filled' });
@@ -177,7 +170,7 @@ export const updateProductGlobal = async (
       return;
     }
 
-    if (!Array.isArray(categoryIds) || categoryIds.length === 0) {
+    if (!Array.isArray(categoryId) || categoryId.length === 0) {
       res.status(400).json({ error: 'categoryIds must be a non-empty array' });
       return;
     }
@@ -187,7 +180,7 @@ export const updateProductGlobal = async (
     });
 
     const validCategorySet = new Set(validCategoryIds.map((cat) => cat.id));
-    const invalidIds = categoryIds.filter(
+    const invalidIds = categoryId.filter(
       (id: number) => !validCategorySet.has(Number(id)),
     );
 
@@ -225,8 +218,6 @@ export const updateProductGlobal = async (
     }
 
     const slug = name.toLowerCase().replace(/[^a-z0-9]+/g, '-');
-
-    // Optional: Remove old category-product relationships and product images if needed
     await prisma.categoryProduct.deleteMany({
       where: { productId: Number(productId) },
     });
@@ -244,7 +235,7 @@ export const updateProductGlobal = async (
         slug,
         weight: parseFloat(weight),
         CategoryProduct: {
-          create: categoryIds.map((id: number) => ({ categoryId: Number(id) })),
+          create: categoryId.map((id: number) => ({ categoryId: Number(id) })),
         },
         ProductImages: {
           create: productImages,
@@ -277,7 +268,7 @@ export const updateProductInSomeStore = async (
   res: Response,
   next: NextFunction,
 ) => {
-  const { storeId } = req.params;
+  const { storeSlug } = req.params;
   const { stock, price, productId } = req.body;
 
   const userId = req.user?.id;
@@ -287,10 +278,21 @@ export const updateProductInSomeStore = async (
     return;
   }
 
+  const store = await prisma.store.findFirst({
+    where: {
+      slug: storeSlug,
+    },
+  });
+
+  if (!store) {
+    res.status(404).json({ error: 'Store not found' });
+    return;
+  }
+
   try {
     const storeProduct = await prisma.storeProduct.findFirst({
       where: {
-        storeId: Number(storeId),
+        storeId: store.id,
         productId: Number(productId),
       },
     });
@@ -364,8 +366,30 @@ export const deleteProduct = async (
   }
 };
 
+export const getAllProducts = async (
+  _req: Request,
+  res: Response,
+  next: NextFunction,
+) => {
+  try {
+    const products = await prisma.product.findMany({
+      include: {
+        ProductImages: true,
+        CategoryProduct: {
+          include: { Category: true },
+        },
+      },
+    });
+    res
+      .status(200)
+      .json({ ok: true, message: 'Products found', data: products });
+  } catch (error) {
+    next(error);
+  }
+};
+
 // Get a product by ID
-export const getDetailProductByIdByStoreId = async (
+export const getDetailProductBySlugByStoreSlug = async (
   req: Request,
   res: Response,
   next: NextFunction,
@@ -438,14 +462,20 @@ export const getAllProductsByStoreId = async (
   const { storeId } = req.params;
 
   try {
-    const storeProducts = await prisma.storeProduct.findMany({
-      where: { storeId: Number(storeId) },
-      include: {
-        product: {
-          include: {
-            ProductImages: true,
+    const storeProducts = await prisma.product.findMany({
+      where: {
+        storeProducts: {
+          some: {
+            storeId: Number(storeId),
           },
         },
+      },
+      include: {
+        ProductImages: true,
+        CategoryProduct: {
+          include: { Category: true },
+        },
+        storeProducts: true,
       },
     });
 
@@ -465,7 +495,59 @@ export const getAllProductsByStoreId = async (
   }
 };
 
-export const getAllProductsByCategoryByStoreId = async (
+export const getAllProductsByStoreSlug = async (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) => {
+  const { storeSlug } = req.params;
+
+  try {
+    const store = await prisma.store.findFirst({
+      where: {
+        slug: storeSlug,
+      },
+    });
+
+    if (!store) {
+      res.status(404).json({ error: 'Store not found' });
+      return;
+    }
+
+    const storeProducts = await prisma.product.findMany({
+      where: {
+        storeProducts: {
+          some: {
+            storeId: store.id,
+          },
+        },
+      },
+      include: {
+        ProductImages: true,
+        CategoryProduct: {
+          include: { Category: true },
+        },
+        storeProducts: true,
+      },
+    });
+
+    if (storeProducts.length === 0) {
+      res.status(404).json({ error: 'No products found for this store' });
+      return;
+    }
+
+    res.status(200).json({
+      ok: true,
+      message: 'Products retrieved successfully',
+      data: storeProducts,
+    });
+  } catch (error) {
+    console.error(error);
+    next(error);
+  }
+};
+
+export const getAllProductsByCategoryByStoreSlug = async (
   req: Request,
   res: Response,
   next: NextFunction,
@@ -543,6 +625,9 @@ export const getCheapProductsByStoreId = async (
       include: {
         product: {
           include: {
+            CategoryProduct: {
+              include: { Category: true },
+            },
             ProductImages: true,
           },
         },

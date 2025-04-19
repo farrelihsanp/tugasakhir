@@ -1,7 +1,8 @@
 'use client';
 
-import React, { useState } from 'react';
+import Image from 'next/image';
 import Link from 'next/link';
+import React, { useState } from 'react';
 import { ZodError } from 'zod';
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
@@ -37,7 +38,6 @@ export default function LoginPage() {
       }
       toast.success('Login successful!');
 
-      // ----------------------------------------------------------------
       const fetchUserLogin = await fetch(
         'http://localhost:8000/api/v1/auth/me',
         {
@@ -45,25 +45,23 @@ export default function LoginPage() {
           credentials: 'include',
         },
       );
+
       if (!fetchUserLogin.ok) {
         router.push('/auth/login');
         return;
       }
+
       const dataUser = await fetchUserLogin.json();
       switch (dataUser.role) {
         case 'CUSTOMERS':
-          router.push('/');
-          break;
         case 'SUPERADMIN':
-          router.push('/');
-          break;
         case 'STOREADMIN':
           router.push('/');
           break;
         default:
           router.push('/');
-          break;
       }
+
       setTimeout(() => {
         window.location.reload();
       }, 500);
@@ -85,71 +83,92 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="flex items-center justify-center min-h-screen bg-gray-50">
-      <div className="bg-white rounded shadow p-6 w-full max-w-md">
-        <h1 className="text-2xl font-bold mb-4 text-center">Login</h1>
-        <form onSubmit={handleLogin} className="space-y-4">
-          <div>
-            <label className="block mb-1 font-semibold">
-              Email or Username
-            </label>
-            <input
-              type="text"
-              className={`border border-gray-300 rounded w-full p-2 ${fieldErrors.emailOrUsername ? 'border-red-500' : ''}`}
-              value={emailOrUsername}
-              onChange={(e) => setEmailOrUsername(e.target.value)}
-              required
-            />
-            {fieldErrors.emailOrUsername && (
-              <p className="text-red-500 text-sm mt-1">
-                {fieldErrors.emailOrUsername}
-              </p>
-            )}
-          </div>
+    <div className="flex min-h-screen">
+      {/* Left Background Image */}
+      <div className="w-1/2 relative">
+        <Image
+          src="https://images.unsplash.com/photo-1628102491629-778571d893a3?q=80&w=1760&auto=format&fit=crop"
+          alt="Login Illustration"
+          layout="fill"
+          objectFit="cover"
+          className="z-0"
+        />
+      </div>
 
-          <div>
-            <label className="block mb-1 font-semibold">Password</label>
-            <input
-              type="password"
-              className={`border border-gray-300 rounded w-full p-2 ${fieldErrors.password ? 'border-red-500' : ''}`}
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              required
-            />
-            {fieldErrors.password && (
-              <p className="text-red-500 text-sm mt-1">
-                {fieldErrors.password}
-              </p>
-            )}
-          </div>
+      {/* Right Form */}
+      <div className="w-1/2 flex items-center justify-center bg-white px-10">
+        <div className="max-w-md w-full">
+          <h1 className="text-4xl font-bold mb-6 text-center">Welcome Back</h1>
+          <form onSubmit={handleLogin} className="space-y-4">
+            <div>
+              <input
+                type="text"
+                placeholder="Email or Username"
+                value={emailOrUsername}
+                onChange={(e) => setEmailOrUsername(e.target.value)}
+                className={`w-full px-4 py-3 border rounded-md focus:outline-none ${
+                  fieldErrors.emailOrUsername
+                    ? 'border-red-500'
+                    : 'border-gray-300'
+                }`}
+              />
+              {fieldErrors.emailOrUsername && (
+                <p className="text-red-500 text-sm mt-1">
+                  {fieldErrors.emailOrUsername}
+                </p>
+              )}
+            </div>
+            <div>
+              <input
+                type="password"
+                placeholder="Password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                className={`w-full px-4 py-3 border rounded-md focus:outline-none ${
+                  fieldErrors.password ? 'border-red-500' : 'border-gray-300'
+                }`}
+              />
+              {fieldErrors.password && (
+                <p className="text-red-500 text-sm mt-1">
+                  {fieldErrors.password}
+                </p>
+              )}
+            </div>
+            <button
+              type="submit"
+              disabled={loading}
+              className="w-full bg-green-500 text-white py-3 rounded-md font-semibold hover:bg-green-600 disabled:opacity-50"
+            >
+              {loading ? 'Logging in...' : 'Login'}
+            </button>
+          </form>
 
-          <button
-            type="submit"
-            className="bg-green-600 text-white py-2 px-4 rounded hover:bg-green-700 w-full disabled:opacity-50"
-            disabled={loading}
-          >
-            {loading ? 'Logging in...' : 'Login'}
-          </button>
-        </form>
-        <form action={googleSignIn}>
-          <button type="submit">Signin with Google</button>
-        </form>
+          <form action={googleSignIn} className="mt-4">
+            <button
+              type="submit"
+              className="w-full py-2 border rounded-md text-sm hover:bg-gray-50"
+            >
+              Sign in with Google
+            </button>
+          </form>
 
-        <p className="mt-6 text-sm text-center text-gray-600">
-          Haven’t made an account yet?
-          <Link href="/register" className="text-green-600 hover:underline">
-            Please sign up
-          </Link>
-        </p>
-        <p className="mt-1 text-sm text-center text-gray-600">
-          forgot your password?
-          <Link
-            href="/reset-password"
-            className="text-green-600 hover:underline"
-          >
-            click here
-          </Link>
-        </p>
+          <p className="text-xs text-center mt-6">
+            Forgot your password?{' '}
+            <Link href="/reset-password" className="text-green-600 font-medium">
+              Click here
+            </Link>
+          </p>
+
+          <p className="text-center mt-4 text-sm">
+            Haven’t made an account yet?{' '}
+            <Link
+              href="/auth/register"
+              className="text-green-600 font-semibold"
+            >
+              Please sign up
+            </Link>
+          </p>
+        </div>
       </div>
     </div>
   );

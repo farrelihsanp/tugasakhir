@@ -34,7 +34,6 @@ export const createVoucher = async (
       storeId,
     } = req.body;
 
-    // Validate required fields
     if (
       !name ||
       !code ||
@@ -83,18 +82,16 @@ export const createVoucher = async (
         minPurchase: Number(minPurchase) || null,
         maxPriceReduction: Number(maxPriceReduction) || null,
         voucherImage: cloudinaryData.secure_url,
-        ...(productId
+        VoucherProduct: productId
           ? {
-              VoucherProduct: {
-                create: {
-                  productId: Number(productId),
-                },
+              create: {
+                productId: Number(productId),
               },
             }
-          : {}),
+          : undefined,
         VoucherUser: {
           create: {
-            userId: userId,
+            userId: Number(userId),
           },
         },
       },
@@ -119,7 +116,7 @@ export const updateVoucher = async (
 ) => {
   try {
     const userId = req.user?.id;
-    const voucherId = Number(req.params.id);
+    const { voucherCode } = req.params;
 
     if (!userId) {
       res.status(400).json({ error: 'User ID is required' });
@@ -127,7 +124,7 @@ export const updateVoucher = async (
     }
 
     const voucher = await prisma.voucher.findUnique({
-      where: { id: voucherId },
+      where: { code: voucherCode },
       include: { VoucherProduct: true },
     });
 
@@ -139,33 +136,25 @@ export const updateVoucher = async (
     const {
       name,
       description,
-      code,
       voucherCategory,
       voucherType,
       value,
-      discountRate,
       startDate,
       endDate,
       stock,
       isActive,
       minPurchase,
       maxPriceReduction,
-      productId,
-      storeId,
     } = req.body;
 
-    // Validate required fields
     if (
       !name ||
-      !code ||
       !voucherCategory ||
       !voucherType ||
-      !discountRate ||
+      !value ||
       !startDate ||
       !endDate ||
-      !productId ||
-      !stock ||
-      !storeId
+      !stock
     ) {
       res.status(400).json({ error: 'All required fields are required' });
       return;
@@ -183,39 +172,28 @@ export const updateVoucher = async (
         await fs.unlink(req.file.path);
       } catch (uploadError) {
         console.error('Error uploading image to Cloudinary:', uploadError);
-        cloudinaryData = { secure_url: defaultImageUrl }; // Use default image on error
+        cloudinaryData = { secure_url: defaultImageUrl };
       }
     } else {
-      cloudinaryData = { secure_url: voucher.voucherImage }; // Use existing image if no file
+      cloudinaryData = { secure_url: voucher.voucherImage };
     }
 
-    const updateData = {
-      name,
-      storeId: Number(storeId),
-      description,
-      code,
-      voucherCategory: voucherCategory as VoucherCategory,
-      voucherType: voucherType as VoucherType,
-      value: Number(value),
-      startDate: new Date(startDate),
-      endDate: new Date(endDate),
-      stock: Number(stock),
-      isActive,
-      minPurchase: Number(minPurchase) || null,
-      maxPriceReduction: Number(maxPriceReduction) || null,
-      voucherImage: cloudinaryData.secure_url,
-      VoucherProduct: {
-        update: {
-          where: { id: voucherId },
-          data: { productId: Number(productId) },
-        },
-      },
-    };
-
-    // Update the voucher
     const updatedVoucher = await prisma.voucher.update({
-      where: { id: voucherId },
-      data: updateData,
+      where: { code: voucherCode },
+      data: {
+        name,
+        description,
+        voucherCategory: voucherCategory as VoucherCategory,
+        voucherType: voucherType as VoucherType,
+        value: Number(value),
+        startDate: new Date(startDate),
+        endDate: new Date(endDate),
+        stockVoucherAdmin: Number(stock),
+        isActive,
+        minPurchase: minPurchase ? Number(minPurchase) : null,
+        maxPriceReduction: maxPriceReduction ? Number(maxPriceReduction) : null,
+        voucherImage: cloudinaryData.secure_url,
+      },
     });
 
     res.status(200).json({
@@ -443,6 +421,33 @@ export const claimVoucher = async (
   }
 };
 
+export const getVoucherByCode = async (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) => {
+  try {
+    const { voucherCode } = req.params;
+    const voucher = await prisma.voucher.findUnique({
+      where: { code: voucherCode },
+    });
+
+    if (!voucher) {
+      res.status(404).json({ error: 'Voucher not found' });
+      return;
+    }
+
+    res.status(200).json({
+      ok: true,
+      message: 'Voucher found successfully',
+      data: voucher,
+    });
+  } catch (error) {
+    console.error('Error getting voucher by code:', error);
+    next(error);
+  }
+};
+
 /* -------------------------------------------------------------------------- */
 /*                                APPLY VOUCHER                               */
 /* -------------------------------------------------------------------------- */
@@ -551,6 +556,31 @@ export const applyVoucherToCart = async (
           totalAmountCartAfterVoucher: finalAmountAfterVoucher,
           valueVoucherCart:
             dataForUpdate.totalAmountCart - finalAmountAfterVoucher,
+        },
+      });
+
+      const finalVoucher = await prisma.voucher.findFirst({
+        where: {
+          id: Number(voucherId),
+          VoucherUser: {
+            some: {
+              userId: userId,
+            },
+          },
+        },
+      });
+
+      if (!finalVoucher) {
+        res.status(404).json({ error: 'Voucher not found' });
+        return;
+      }
+
+      await prisma.voucherUser.updateMany({
+        where: { voucherId: finalVoucher.id, userId },
+        data: {
+          stockCustomer: {
+            decrement: 1,
+          },
         },
       });
 
@@ -675,6 +705,31 @@ export const applyVoucherToShippingCost = async (
         },
       });
 
+      const finalVoucher = await prisma.voucher.findFirst({
+        where: {
+          id: Number(voucherId),
+          VoucherUser: {
+            some: {
+              userId: userId,
+            },
+          },
+        },
+      });
+
+      if (!finalVoucher) {
+        res.status(404).json({ error: 'Voucher not found' });
+        return;
+      }
+
+      await prisma.voucherUser.updateMany({
+        where: { voucherId: finalVoucher.id, userId },
+        data: {
+          stockCustomer: {
+            decrement: 1,
+          },
+        },
+      });
+
       res.status(200).json({
         ok: true,
         message: 'Voucher applied to shipping cost successfully',
@@ -778,6 +833,31 @@ export const applyVoucherToProduct = async (
         },
       });
 
+      const finalVoucher = await prisma.voucher.findFirst({
+        where: {
+          id: Number(voucherId),
+          VoucherUser: {
+            some: {
+              userId: userId,
+            },
+          },
+        },
+      });
+
+      if (!finalVoucher) {
+        res.status(404).json({ error: 'Voucher not found' });
+        return;
+      }
+
+      await prisma.voucherUser.updateMany({
+        where: { voucherId: finalVoucher.id, userId },
+        data: {
+          stockCustomer: {
+            decrement: 1,
+          },
+        },
+      });
+
       const finalCartItem = await prisma.cartItem.findUnique({
         where: { id: cartItem.id },
       });
@@ -846,6 +926,31 @@ export const removeVoucher = async (
         },
       });
     }
+
+    const finalVoucher = await prisma.voucher.findFirst({
+      where: {
+        id: Number(voucherId),
+        VoucherUser: {
+          some: {
+            userId: userId,
+          },
+        },
+      },
+    });
+
+    if (!finalVoucher) {
+      res.status(404).json({ error: 'Voucher not found' });
+      return;
+    }
+
+    await prisma.voucherUser.updateMany({
+      where: { voucherId: finalVoucher.id, userId },
+      data: {
+        stockCustomer: {
+          increment: 1,
+        },
+      },
+    });
 
     res.status(200).json({ ok: true, message: 'Voucher removed successfully' });
   } catch (error) {

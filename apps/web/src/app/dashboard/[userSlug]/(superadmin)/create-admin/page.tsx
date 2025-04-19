@@ -1,11 +1,8 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-
-type Store = {
-  id: number;
-  name: string;
-};
+import { Store } from '@/types/types';
+import { toast } from 'react-toastify'; // Import Toastify
 
 const CreateAdminForm: React.FC = () => {
   const [stores, setStores] = useState<Store[]>([]);
@@ -15,11 +12,12 @@ const CreateAdminForm: React.FC = () => {
     password: '',
     username: '',
     storeId: '',
+    adminImage: null as File | null,
   });
 
   const [error, setError] = useState<string | null>(null);
+  const [loading, setLoading] = useState(false); // Loading state
 
-  // Fetch stores from backend when the page is loaded
   useEffect(() => {
     const fetchStores = async () => {
       try {
@@ -41,17 +39,23 @@ const CreateAdminForm: React.FC = () => {
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>,
   ) => {
-    setFormData({
-      ...formData,
-      [e.target.name]: e.target.value,
-    });
+    const target = e.target as HTMLInputElement | HTMLSelectElement;
+    const { name, value } = target;
+    if (name === 'adminImage' && 'files' in target && target.files) {
+      setFormData({
+        ...formData,
+        adminImage: target.files[0],
+      });
+    } else {
+      setFormData({
+        ...formData,
+        [name]: value,
+      });
+    }
   };
 
-  // Submit form to create a new admin
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-
-    // Form validation
     if (
       !formData.name ||
       !formData.email ||
@@ -63,34 +67,48 @@ const CreateAdminForm: React.FC = () => {
       return;
     }
 
+    const form = new FormData();
+    form.append('name', formData.name);
+    form.append('email', formData.email);
+    form.append('password', formData.password);
+    form.append('username', formData.username);
+    form.append('storeId', formData.storeId);
+
+    if (formData.adminImage) {
+      form.append('adminImage', formData.adminImage);
+    }
+
+    setLoading(true);
+
     try {
       const response = await fetch(
         'http://localhost:8000/api/v1/admins/create',
         {
           method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify(formData),
           credentials: 'include',
+          body: form,
         },
       );
       if (response.ok) {
-        alert('Admin created successfully!');
+        toast.success('Admin created successfully!');
+        setError(null);
         setFormData({
           name: '',
           email: '',
           password: '',
           username: '',
           storeId: '',
+          adminImage: null,
         });
-        setError(null);
       } else {
-        throw new Error('Failed to create admin');
+        const errorData = await response.json();
+        setError(errorData.message);
       }
-    } catch (err) {
-      setError('Failed to create admin');
-      console.error('Error creating admin:', err);
+    } catch (error) {
+      console.error('Error creating admin:', error);
+      toast.error('An error occurred while creating the admin');
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -167,13 +185,25 @@ const CreateAdminForm: React.FC = () => {
             </select>
           </div>
 
+          <div className="mb-4">
+            <label className="block text-gray-700">Profile Image:</label>
+            <input
+              type="file"
+              name="adminImage"
+              onChange={handleChange}
+              className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500"
+            />
+          </div>
+
           {error && <p className="text-red-500 text-sm text-center">{error}</p>}
 
           <button
             type="submit"
             className="w-full py-2 mt-4 bg-indigo-500 text-white font-semibold rounded-md shadow-md hover:bg-indigo-600"
+            disabled={loading} // Disable button while loading
           >
-            Create Admin
+            {loading ? 'Creating Admin...' : 'Create Admin'}{' '}
+            {/* Show loading text */}
           </button>
         </form>
       </div>

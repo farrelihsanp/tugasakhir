@@ -63,7 +63,17 @@ export default function Profile() {
               height={20}
               className="mr-4"
             />
-            <span className="text-gray-700">{user?.createdAt}</span>
+            <span className="text-gray-700">
+              {user?.createdAt && (
+                <span className="text-gray-700">
+                  {new Date(user.createdAt).toLocaleDateString('id-ID', {
+                    day: 'numeric',
+                    month: 'long',
+                    year: 'numeric',
+                  })}
+                </span>
+              )}
+            </span>
           </div>
           <div className="flex items-center">
             <Image
@@ -79,7 +89,7 @@ export default function Profile() {
       </div>
       <div id="container-2" className="mt-8 flex justify-center space-x-6">
         <div>
-          <Link href={`/${user?.username}/edit-profile`}>
+          <Link href={`/profile/${user?.username}/edit-profile`}>
             <button className="text-blue-600 border-2 border-blue-600 py-2 px-6 rounded-lg transition-colors duration-300 hover:bg-blue-600 hover:text-white">
               Edit Profile
             </button>
@@ -87,7 +97,7 @@ export default function Profile() {
         </div>
         {user?.role === 'CUSTOMERS' && (
           <div>
-            <Link href={`/${user?.username}/my-addresses`}>
+            <Link href={`/profile/${user?.username}/my-addresses`}>
               <button className="text-green-600 border-2 border-green-600 py-2 px-6 rounded-lg transition-colors duration-300 hover:bg-green-600 hover:text-white">
                 My Addresses
               </button>

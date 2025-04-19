@@ -1,4 +1,4 @@
-// import cron from 'node-cron';
+import cron from 'node-cron';
 import { prisma } from '../configs/prisma.js';
 import { OrderStatus } from '@prisma/client';
 
@@ -26,7 +26,7 @@ const updateOrderStatus = async () => {
 
         const shippingAt = order.shippingAt;
         const estimatedDeliveryTime = shippingAt
-          ? new Date(shippingAt.getTime() + estimatedTime)
+          ? new Date(shippingAt.getTime() + estimatedTime * 1000 * 60 * 60 * 24)
           : null;
         const currentTime = new Date();
 
@@ -49,13 +49,11 @@ const updateOrderStatus = async () => {
   }
 };
 
-// cron.schedule('* * * * *', updateOrderStatus, {
-//   scheduled: true,
-//   timezone: 'Asia/Jakarta',
-// });
-
-setInterval(updateOrderStatus, 5000); // 5000ms = 5 detik
-
-// new Date(shippingAt.getTime() + estimatedTime * 1000 * 60 * 60 * 24)
-
+cron.schedule('* * * * *', updateOrderStatus, {
+  scheduled: true,
+  timezone: 'Asia/Jakarta',
+});
 console.log('Cron job scheduled to update order status every minute.');
+
+// setInterval(updateOrderStatus, 5000); // 5000ms = 5 detik
+// new Date(shippingAt.getTime() + estimatedTime * 1000 * 60 * 60 * 24);

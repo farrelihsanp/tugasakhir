@@ -14,9 +14,7 @@ export const createAdmin = async (
   next: NextFunction,
 ) => {
   try {
-    const { name, email, password, username, storeId } = StoreAdminSchema.parse(
-      req.body,
-    );
+    const { name, email, password, username, storeId } = req.body;
 
     if (!name || !email || !password || !username || !storeId) {
       res.status(400).json({ message: 'Missing required fields!' });
@@ -221,7 +219,7 @@ export const getAdminById = async (
       return;
     }
 
-    res.status(200).json(admin);
+    res.status(200).json({ ok: true, message: 'Admin found', data: admin });
   } catch (error) {
     next(error);
   }

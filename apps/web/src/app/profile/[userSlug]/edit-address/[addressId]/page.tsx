@@ -3,8 +3,12 @@
 import React, { useState, useEffect } from 'react';
 import { useParams } from 'next/navigation';
 import { useStoreContext } from '@/utility/StoreContext';
+import { useRouter } from 'next/navigation';
+import { toast } from 'react-toastify'; // Import Toastify
+import 'react-toastify/dist/ReactToastify.css'; // Import Toastify CSS
 
 const EditAddressForm = () => {
+  const router = useRouter();
   const { user } = useStoreContext();
   const [street, setStreet] = useState('');
   const [city, setCity] = useState('');
@@ -13,21 +17,19 @@ const EditAddressForm = () => {
   const [country, setCountry] = useState('');
   const [isPrimary, setIsPrimary] = useState(false);
   const [error, setError] = useState('');
+  const [loading, setLoading] = useState(false); // Loading state
 
-  // Use useParams to get dynamic route parameters
   const { addressId } = useParams();
 
   useEffect(() => {
     if (addressId) {
       const fetchAddress = async () => {
         try {
+          setLoading(true); // Start loading
           const response = await fetch(
             `http://localhost:8000/api/v1/addresses/${addressId}`,
             {
               method: 'GET',
-              headers: {
-                'Content-Type': 'application/json',
-              },
               credentials: 'include',
             },
           );
@@ -44,11 +46,13 @@ const EditAddressForm = () => {
             setIsPrimary(isPrimary);
           } else {
             setError('Failed to fetch address details.');
+            toast.error('Failed to fetch address details.'); // Show error toast
           }
         } catch (error) {
           setError((error as Error).message);
+          toast.error('An error occurred while fetching address.'); // Show error toast
         } finally {
-          setError('Failed to fetch address details. Please try again later.');
+          setLoading(false); // End loading
         }
       };
 
@@ -61,6 +65,7 @@ const EditAddressForm = () => {
 
     if (!street || !city || !postalCode || !number || !country) {
       setError('Please fill all fields');
+      toast.error('Please fill all fields'); // Show error toast
       return;
     }
 
@@ -74,6 +79,7 @@ const EditAddressForm = () => {
     };
 
     try {
+      setLoading(true); // Start loading
       const response = await fetch(
         `http://localhost:8000/api/v1/addresses/${addressId}`,
         {
@@ -87,20 +93,29 @@ const EditAddressForm = () => {
       );
 
       if (response.ok) {
-        // Assuming you are handling the user object correctly elsewhere
-        window.location.href = `/customer/${user?.username}/my-addresses`; // You may want to adjust this if you're using a different navigation method
+        toast.success('Address updated successfully!'); // Show success toast
+        router.push(
+          `http://localhost:3000/profile/${user?.username}/my-addresses`,
+        );
       } else {
         const data = await response.json();
         setError(data.error || 'Something went wrong');
+        toast.error(data.error || 'Something went wrong'); // Show error toast
       }
     } catch (error: unknown) {
       if (error instanceof Error) {
         setError(
           error.message || 'An error occurred while updating the address',
         );
+        toast.error(
+          error.message || 'An error occurred while updating the address',
+        ); // Show error toast
       } else {
         setError('An unknown error occurred');
+        toast.error('An unknown error occurred'); // Show error toast
       }
+    } finally {
+      setLoading(false); // End loading
     }
   };
 
@@ -109,6 +124,8 @@ const EditAddressForm = () => {
       <div className="mx-auto w-96 p-6 border rounded-lg shadow-lg">
         <h2 className="text-2xl font-bold text-center mb-4">Edit Address</h2>
         {error && <p className="text-red-500 text-center mb-4">{error}</p>}
+        {loading && <div className="text-center mb-4">Loading...</div>}{' '}
+        {/* Display loading message */}
         <form onSubmit={handleSubmit}>
           <div className="mb-4">
             <label
@@ -199,8 +216,9 @@ const EditAddressForm = () => {
           <button
             type="submit"
             className="w-full bg-blue-500 text-white py-2 px-4 rounded-md hover:bg-blue-600"
+            disabled={loading} // Disable button while loading
           >
-            Update Address
+            {loading ? 'Updating Address...' : 'Update Address'}
           </button>
         </form>
       </div>

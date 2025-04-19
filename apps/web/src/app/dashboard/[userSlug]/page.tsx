@@ -103,7 +103,7 @@ export default function DashboardPage() {
         <div className="space-y-6 w-full max-w-lg">
           <div>
             <Link
-              href={`/dashboard/superadmin/${user?.username}/manage-store-admin`}
+              href={`/dashboard/${user?.username}/manage-store-admin`}
               className="flex items-center px-8 py-4 bg-white text-blue-600 rounded-lg shadow-lg hover:bg-blue-700 hover:text-white transition duration-300 text-lg font-semibold"
             >
               <FaStore className="mr-4" />
@@ -112,7 +112,7 @@ export default function DashboardPage() {
           </div>
           <div>
             <Link
-              href={`/dashboard/superadmin/${user?.username}/view-user`}
+              href={`/dashboard/${user?.username}/view-user`}
               className="flex items-center px-8 py-4 bg-white text-blue-600 rounded-lg shadow-lg hover:bg-blue-700 hover:text-white transition duration-300 text-lg font-semibold"
             >
               <FaUsers className="mr-4" />
@@ -121,7 +121,7 @@ export default function DashboardPage() {
           </div>
           <div>
             <Link
-              href={`/dashboard/superadmin/${user?.username}/manage-store`}
+              href={`/dashboard/${user?.username}/manage-store`}
               className="flex items-center px-8 py-4 bg-white text-blue-600 rounded-lg shadow-lg hover:bg-blue-700 hover:text-white transition duration-300 text-lg font-semibold"
             >
               <FaStore className="mr-4" />
@@ -130,11 +130,29 @@ export default function DashboardPage() {
           </div>
           <div>
             <Link
-              href={`/dashboard/superadmin/${user?.username}/report-analysis`}
+              href={`/dashboard/${user?.username}/manage-products`}
+              className="flex items-center px-8 py-4 bg-white text-blue-600 rounded-lg shadow-lg hover:bg-blue-700 hover:text-white transition duration-300 text-lg font-semibold"
+            >
+              <FaStore className="mr-4" />
+              <span>Manage Products</span>
+            </Link>
+          </div>
+          <div>
+            <Link
+              href={`/dashboard/${user?.username}/report-analysis`}
               className="flex items-center px-8 py-4 bg-white text-blue-600 rounded-lg shadow-lg hover:bg-blue-700 hover:text-white transition duration-300 text-lg font-semibold"
             >
               <FaChartLine className="mr-4" />
               <span>Reports & Analysis</span>
+            </Link>
+          </div>
+          <div>
+            <Link
+              href={`/dashboard/${user?.username}/discount-manager`}
+              className="flex items-center px-8 py-4 bg-white text-blue-600 rounded-lg shadow-lg hover:bg-blue-700 hover:text-white transition duration-300 text-lg font-semibold"
+            >
+              <FaChartLine className="mr-4" />
+              <span>Discount Manager</span>
             </Link>
           </div>
         </div>

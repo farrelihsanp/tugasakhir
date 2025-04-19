@@ -3,9 +3,13 @@ import { Geist, Geist_Mono } from 'next/font/google';
 import './globals.css';
 import { ToastContainer } from 'react-toastify';
 import { StoreProvider } from '../utility/StoreContext';
-import { Geolocation } from '../components/location-request';
-import Navbar from '@/components/common/navbar';
-import Footer from '@/components/common/footer';
+import { SessionProvider } from 'next-auth/react';
+import LayoutWrapper from '@/components/layout/layoutWrapper';
+
+export const metadata: Metadata = {
+  title: 'Quickmart',
+  description: 'Best Online Grocery in the World!',
+};
 
 const geistSans = Geist({
   variable: '--font-geist-sans',
@@ -16,11 +20,6 @@ const geistMono = Geist_Mono({
   variable: '--font-geist-mono',
   subsets: ['latin'],
 });
-
-export const metadata: Metadata = {
-  title: 'Quickmart',
-  description: 'Best Online Grocery in the World!',
-};
 
 export default function RootLayout({
   children,
@@ -33,15 +32,14 @@ export default function RootLayout({
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
         <StoreProvider>
-          <Navbar />
-          <Geolocation />
-          <ToastContainer
-            position="top-center"
-            autoClose={3000}
-            hideProgressBar={false}
-          />
-          {children}
-          <Footer />
+          <SessionProvider>
+            <ToastContainer
+              position="top-center"
+              autoClose={3000}
+              hideProgressBar={false}
+            />
+            <LayoutWrapper>{children}</LayoutWrapper>
+          </SessionProvider>
         </StoreProvider>
       </body>
     </html>

@@ -1,3 +1,5 @@
+// DONE
+
 'use client';
 
 import Head from 'next/head';
@@ -8,7 +10,7 @@ import Image from 'next/image';
 
 // DONE
 const OrderDetail = () => {
-  const { orderSlug } = useParams();
+  const { orderId } = useParams();
   const [order, setOrder] = useState<Order | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -18,7 +20,7 @@ const OrderDetail = () => {
       setLoading(true);
       try {
         const response = await fetch(
-          `http://localhost:8000/api/v1/order-detail/${orderSlug}`,
+          `http://localhost:8000/api/v1/order-detail/${orderId}`,
           {
             method: 'GET',
             credentials: 'include',
@@ -45,7 +47,7 @@ const OrderDetail = () => {
     };
 
     fetchOrder();
-  }, [orderSlug]);
+  }, [orderId]);
 
   if (loading)
     return <p className="text-center text-lg text-gray-700">Loading...</p>;

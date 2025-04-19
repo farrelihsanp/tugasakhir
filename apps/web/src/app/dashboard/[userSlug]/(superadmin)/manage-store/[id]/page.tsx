@@ -4,28 +4,7 @@ import React, { useState, useEffect } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { useParams } from 'next/navigation';
-
-// Define the Store interface
-interface Store {
-  id: number;
-  name: string;
-  storeImage: string;
-  address: string;
-  city: string;
-  province: string;
-  country: string;
-  postalCode: string;
-  phoneNumber: string;
-  slug: string;
-  latitude: number;
-  longitude: number;
-  maxServiceDistance: number | null;
-  isPrimary: boolean;
-  isActive: boolean;
-  createdAt: string;
-  updatedAt: string;
-  // Add any other fields that might be required based on the schema
-}
+import { Store } from '@/types/types';
 
 const StoreDetail = () => {
   const { id } = useParams();
@@ -43,7 +22,7 @@ const StoreDetail = () => {
           throw new Error(`HTTP error! Status: ${response.status}`);
         }
         const data = await response.json();
-        setStore(data); // Set the full store data
+        setStore(data.data);
       } catch (err: unknown) {
         if (err instanceof Error) {
           setError(err.message);

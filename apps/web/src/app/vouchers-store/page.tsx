@@ -68,7 +68,7 @@ export default function VouchersStore() {
                   <Link href={`/vouchers-store/${voucher.id}`}>
                     {voucher.voucherImage && (
                       <Image
-                        src={voucher.voucherImage}
+                        src={voucher.voucherImage.trim()}
                         alt={voucher.name}
                         width={1000}
                         height={1000}

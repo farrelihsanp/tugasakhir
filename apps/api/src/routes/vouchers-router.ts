@@ -12,6 +12,7 @@ import {
   applyVoucherToProduct,
   // updateVoucherStock,
   claimVoucher,
+  getVoucherByCode,
   removeVoucher,
 } from '../controllers/vouchers-controller.js';
 
@@ -31,7 +32,7 @@ router.post(
 
 // Update an existing voucher
 router.put(
-  '/update-voucher/:id',
+  '/update-voucher/:voucherCode',
   verifyToken,
   roleGuard(['STOREADMIN']),
   upload.single('voucherImage'),
@@ -68,6 +69,13 @@ router.post(
   verifyToken,
   roleGuard(['CUSTOMERS']),
   claimVoucher,
+);
+
+router.get(
+  '/get-voucher-by-code/:voucherCode',
+  verifyToken,
+  roleGuard(['STOREADMIN', 'CUSTOMERS']),
+  getVoucherByCode,
 );
 
 /* -------------------------------------------------------------------------- */

@@ -7,6 +7,7 @@ import {
   activateDiscount,
   getAllDiscounts,
   getDiscountById,
+  getDiscountForProduct,
 } from '../controllers/discounts-controller.js';
 
 import { verifyToken } from '../middlewares/auth-middleware.js';
@@ -20,13 +21,6 @@ router.post(
   verifyToken,
   roleGuard(['SUPERADMIN']),
   createDiscount,
-);
-
-router.get(
-  '/report',
-  verifyToken,
-  roleGuard(['SUPERADMIN']),
-  getDiscountReport,
 );
 
 router.put(
@@ -55,6 +49,15 @@ router.get(
   verifyToken,
   roleGuard(['SUPERADMIN']),
   getDiscountById,
+);
+
+router.post('/discount-for-product', verifyToken, getDiscountForProduct);
+
+router.get(
+  '/report',
+  verifyToken,
+  roleGuard(['SUPERADMIN']),
+  getDiscountReport,
 );
 
 export default router;

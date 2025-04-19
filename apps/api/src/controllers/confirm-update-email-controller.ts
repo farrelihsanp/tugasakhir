@@ -58,7 +58,7 @@ export async function confirmUpdateEmail(
 
     const htmlTemplate = compiledTemplate({
       name: user.name,
-      confirmationLink: `http://localhost:3000/customer/${user.username}/profile`,
+      confirmationLink: `http://localhost:3000/auth/login`,
     });
 
     // Send the email via Resend

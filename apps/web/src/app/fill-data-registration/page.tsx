@@ -1,9 +1,9 @@
 'use client';
 
-import React, { useState } from 'react';
-import { useRouter } from 'next/navigation'; // Use Next.js useRouter hook
-import { toast } from 'react-toastify'; // Import Toastify
-import 'react-toastify/dist/ReactToastify.css'; // Import Toastify CSS
+import React, { useState, useEffect } from 'react';
+import { useRouter } from 'next/navigation';
+import { toast } from 'react-toastify';
+import { Role } from '@prisma/client';
 
 const CompleteRegisterForm = () => {
   const [formData, setFormData] = useState({
@@ -12,14 +12,26 @@ const CompleteRegisterForm = () => {
     username: '',
     password: '',
     reTypePassword: '',
-    role: '',
+    role: Role.CUSTOMERS,
     profileImage: null as File | null,
   });
 
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
 
-  const router = useRouter(); // Initialize useRouter hook for Next.js routing
+  const router = useRouter();
+
+  // Ambil email dari query string di URL
+  useEffect(() => {
+    const queryParams = new URLSearchParams(window.location.search);
+    const emailFromUrl = queryParams.get('email');
+    if (emailFromUrl) {
+      setFormData((prevState) => ({
+        ...prevState,
+        email: emailFromUrl,
+      }));
+    }
+  }, []);
 
   const handleInputChange = (
     e:
@@ -97,21 +109,6 @@ const CompleteRegisterForm = () => {
 
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
-            <label htmlFor="email" className="block text-sm font-medium">
-              Email
-            </label>
-            <input
-              type="email"
-              id="email"
-              name="email"
-              value={formData.email}
-              onChange={handleInputChange}
-              className="w-full p-2 border border-gray-300 rounded-md"
-              required
-            />
-          </div>
-
-          <div>
             <label htmlFor="name" className="block text-sm font-medium">
               Name
             </label>
@@ -174,7 +171,7 @@ const CompleteRegisterForm = () => {
             />
           </div>
 
-          <div>
+          {/* <div>
             <label htmlFor="role" className="block text-sm font-medium">
               Role
             </label>
@@ -190,7 +187,7 @@ const CompleteRegisterForm = () => {
               <option value="STOREADMIN">Store Admin</option>
               <option value="CUSTOMERS">Customers</option>
             </select>
-          </div>
+          </div> */}
 
           <div>
             <label htmlFor="profileImage" className="block text-sm font-medium">

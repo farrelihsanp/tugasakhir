@@ -16,17 +16,17 @@ const AllProductsPage = () => {
   const itemsPerPage = 6;
 
   // Search state
-  const [searchQuery, setSearchQuery] = useState('');
-  const [selectedCategory, setSelectedCategory] = useState('');
+  const [searchQuery, setSearchQuery] = useState<string>('');
+  const [selectedCategory, setSelectedCategory] = useState<string>('');
 
-  // Filter products based on search query and selected category
   const filteredProducts = products.filter((product) => {
     const matchesCategory = selectedCategory
-      ? product.product.CategoryProduct?.some(
-          (category) => category.Category.name === selectedCategory,
+      ? product.CategoryProduct.some(
+          (categoryProduct) =>
+            categoryProduct.Category.id.toString() === selectedCategory,
         )
       : true;
-    const matchesSearch = product.product.name
+    const matchesSearch = product.name
       .toLowerCase()
       .includes(searchQuery.toLowerCase());
 
@@ -34,15 +34,12 @@ const AllProductsPage = () => {
   });
 
   const totalPages = Math.ceil(filteredProducts.length / itemsPerPage);
-
   const handlePrev = () => {
     setCurrentPage((prev) => Math.max(prev - 1, 1));
   };
-
   const handleNext = () => {
     setCurrentPage((prev) => Math.min(prev + 1, totalPages));
   };
-
   const startIndex = (currentPage - 1) * itemsPerPage;
   const currentProducts = filteredProducts.slice(
     startIndex,
@@ -85,7 +82,7 @@ const AllProductsPage = () => {
           <option value="">Semua Kategori</option>
           {categories.map((category, index: number) => (
             <option key={index} value={category.id}>
-              {category.id}
+              {category.name}
             </option>
           ))}
         </select>
@@ -101,14 +98,14 @@ const AllProductsPage = () => {
             {currentProducts.map((map) => (
               <Link
                 key={map.id}
-                href={`/${nearestStore.slug}/product/${map.product.slug}`}
+                href={`/${nearestStore.slug}/product/${map.slug}`}
                 className="block bg-white border border-gray-200 rounded-2xl overflow-hidden shadow-md hover:shadow-xl transition-transform transform hover:-translate-y-1"
               >
-                {map.product.ProductImages?.[0]?.imageUrl && (
+                {map.ProductImages?.[0]?.imageUrl && (
                   <div className="relative w-full h-64">
                     <Image
-                      src={map.product.ProductImages[0].imageUrl}
-                      alt={map.product.name}
+                      src={map.ProductImages[0].imageUrl}
+                      alt={map.name}
                       fill
                       className="object-cover"
                     />
@@ -116,14 +113,31 @@ const AllProductsPage = () => {
                 )}
                 <div className="p-6">
                   <h2 className="text-xl font-semibold mb-2 truncate text-gray-900">
-                    {map.product.name}
+                    {map.name}
                   </h2>
                   <p className="text-base text-gray-500 line-clamp-2 mb-3">
-                    {map.product.excerpt}
+                    {map.excerpt}
                   </p>
-                  <p className="text-sm text-gray-700">Stok: {map.stock}</p>
+                  <p className="text-sm text-gray-700">
+                    Stok: {map.storeProducts[0].stock}
+                  </p>
                   <p className="text-green-600 font-bold text-xl mt-3">
-                    Rp{map.price.toLocaleString()}
+                    {map.storeProducts[0].priceAfterDiscount > 0 ? (
+                      <>
+                        <span className="line-through text-gray-600">
+                          Rp {map.storeProducts[0].price}
+                        </span>{' '}
+                        <span className="text-green-600">
+                          Rp {map.storeProducts[0].priceAfterDiscount}
+                        </span>
+                      </>
+                    ) : (
+                      <>
+                        <span className="text-green-600">
+                          Rp {map.storeProducts[0].price}
+                        </span>
+                      </>
+                    )}
                   </p>
                 </div>
               </Link>

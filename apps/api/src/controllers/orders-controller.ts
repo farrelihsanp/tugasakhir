@@ -1,20 +1,17 @@
 import { Request, Response, NextFunction } from 'express';
-// import { MidtransClient } from 'midtrans-node-client';
+import { MidtransClient } from 'midtrans-node-client';
 import { prisma } from '../configs/prisma.js';
-// import { v4 as uuid } from 'uuid';
 import cloudinary from '../configs/cloudinary.js';
 import fs from 'node:fs/promises';
 import { OrderStatus, PaymentMethodType, typeOfChange } from '@prisma/client';
-// import { Product } from '../types/express.js';
+import { updateOrderStatus } from '../helpers/update-order-status.js';
+// import { v4 as uuid } from 'uuid';
 
-// const snap = new MidtransClient.Snap({
-//   isProduction: false,
-//   serverKey: process.env.MIDTRANS_SERVER_KEY,
-// });
+const snap = new MidtransClient.Snap({
+  isProduction: false,
+  serverKey: process.env.MIDTRANS_SERVER_KEY,
+});
 
-/* -------------------------------------------------------------------------- */
-/*                                  COSTUMER                                  */
-/* -------------------------------------------------------------------------- */
 export const createOrder = async (
   req: Request,
   res: Response,
@@ -24,12 +21,8 @@ export const createOrder = async (
     const userId = req.user?.id;
     const { storeSlug } = req.params;
 
-    const store = await prisma.store.findFirst({
-      where: { slug: storeSlug },
-    });
-
-    if (!store) {
-      res.status(404).json({ error: 'Store not found' });
+    if (!userId) {
+      res.status(401).json({ error: 'Unauthorized' });
       return;
     }
 
@@ -38,13 +31,14 @@ export const createOrder = async (
       return;
     }
 
-    if (!userId) {
-      res.status(401).json({ error: 'Unauthorized' });
+    const store = await prisma.store.findFirst({ where: { slug: storeSlug } });
+    if (!store) {
+      res.status(404).json({ error: 'Store not found' });
       return;
     }
 
     const cartBuyerCustomer = await prisma.cart.findUnique({
-      where: { userId: userId },
+      where: { userId },
       include: { CartValueCalculation: true },
     });
 
@@ -56,9 +50,7 @@ export const createOrder = async (
     const hasilBelanjaan = await prisma.cartItem.findMany({
       where: { cartId: cartBuyerCustomer.id },
       include: {
-        storeProduct: {
-          include: { product: true },
-        },
+        storeProduct: { include: { product: true } },
       },
     });
 
@@ -76,23 +68,23 @@ export const createOrder = async (
       estimatedTime,
     } = req.body;
 
-    if (
-      !courierName ||
-      !serviceType ||
-      !shippingCostFinal ||
-      !code ||
-      !description ||
-      !estimatedTime
-    ) {
-      res.status(400).json({
-        error:
-          'Courier name, service type, shipping cost, code, description, and estimated time are required',
-      });
-      return;
-    }
+    // if (
+    //   !courierName ||
+    //   !code ||
+    //   !serviceType ||
+    //   !description ||
+    //   !shippingCostFinal ||
+    //   !estimatedTime
+    // ) {
+    //   res.status(400).json({
+    //     error:
+    //       'Courier name, code, service type, description, shipping cost, and estimated time are required',
+    //   });
+    //   return;
+    // }
 
     const shippingAddress = await prisma.address.findFirst({
-      where: { userId: userId, isPrimary: true },
+      where: { userId, isPrimary: true },
     });
 
     if (!shippingAddress) {
@@ -100,16 +92,15 @@ export const createOrder = async (
       return;
     }
 
-    // Create slug
+    // Helper slug
     const createSlug = (input: string): string => {
-      const randomNumber = Math.floor(Math.random() * 1000);
-      const formattedRandomNumber = randomNumber.toString().padStart(3, '0');
-      const fullInput = `${input}-${formattedRandomNumber}`;
-      return fullInput;
+      const rand = Math.floor(Math.random() * 1000)
+        .toString()
+        .padStart(3, '0');
+      return `${input}-${rand}`;
     };
 
-    // const orderId = uuid();
-
+    const orderId = Math.floor(Math.random() * 1000000);
     const totalAmount =
       cartBuyerCustomer.CartValueCalculation?.totalAmountCart || 0;
     const totalAmountAfterVoucher =
@@ -117,11 +108,12 @@ export const createOrder = async (
 
     const newOrder = await prisma.order.create({
       data: {
-        userId: userId,
+        id: orderId,
+        userId,
         storeId: store.id,
         shippingAddressId: shippingAddress.id,
         totalAmount:
-          (totalAmount || totalAmountAfterVoucher) + shippingCostFinal,
+          (totalAmountAfterVoucher || totalAmount) + shippingCostFinal,
         slug: createSlug('ORDER'),
         paymentMethodType: PaymentMethodType.UNSET,
         status: OrderStatus.WAITING_FOR_PAYMENT,
@@ -131,26 +123,31 @@ export const createOrder = async (
     });
 
     await prisma.orderItem.createMany({
-      data: hasilBelanjaan.map((item) => ({
-        orderId: newOrder.id,
-        storeProductId: item.storeProductId,
-        productId: item.storeProduct.productId,
-        price: Number(item.price),
-        quantity: item.quantity,
-        total: Number(item.total),
-      })),
+      data: hasilBelanjaan.map((item) => {
+        const isDiscounted = Number(item.priceAfterDiscount) > 0;
+        const usedPrice = isDiscounted
+          ? Number(item.priceAfterDiscount)
+          : Number(item.price);
+        const usedTotal = isDiscounted
+          ? Number(item.totalAfterDiscount)
+          : Number(item.total);
+
+        return {
+          orderId: newOrder.id,
+          storeProductId: item.storeProductId,
+          productId: item.storeProduct.productId,
+          price: usedPrice,
+          quantity: item.quantity,
+          total: usedTotal,
+        };
+      }),
     });
 
     for (const item of hasilBelanjaan) {
-      const storeProductId = item.storeProductId;
-      const quantityPurchased = item.quantity;
-
       await prisma.storeProduct.update({
-        where: { id: storeProductId },
+        where: { id: item.storeProductId },
         data: {
-          stock: {
-            decrement: quantityPurchased,
-          },
+          stock: { decrement: item.quantity },
         },
       });
     }
@@ -159,25 +156,22 @@ export const createOrder = async (
       where: { cartId: cartBuyerCustomer.id },
     });
 
-    const extractFirstNumber = (str: string): number | null => {
+    const extractFirstNumber = (str: string): number => {
       const match = str.match(/\d+/);
-      return match ? parseInt(match[0], 10) : null;
+      return match ? parseInt(match[0], 10) : 0;
     };
-    let firstNumberEstimatedTime = extractFirstNumber(estimatedTime);
-    if (firstNumberEstimatedTime === null) {
-      console.warn('No valid number found in estimatedTime:', estimatedTime);
-      firstNumberEstimatedTime = 0;
-    }
+
+    const firstNumberEstimatedTime = extractFirstNumber(estimatedTime);
 
     await prisma.shippingInformation.create({
       data: {
         orderId: newOrder.id,
-        courierName: courierName,
-        code: code,
-        serviceType: serviceType,
-        description: description,
-        shippingCost: shippingCostFinal,
-        estimatedTime: firstNumberEstimatedTime,
+        courierName: courierName || '',
+        code: code || '',
+        serviceType: serviceType || '',
+        description: description || '',
+        shippingCost: shippingCostFinal || 0,
+        estimatedTime: firstNumberEstimatedTime || 1,
       },
     });
 
@@ -241,75 +235,127 @@ export const payWithManualTransfer = async (
   }
 };
 
-// export const payWithMidTrans = async (
-//   req: Request,
-//   res: Response,
-//   next: NextFunction,
-// ) => {
-//   try {
-//     const newOrder = await createOrder(req, res, next);
+export const payWithMidTrans = async (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) => {
+  try {
+    const { orderId } = req.params;
+    const userId = req.user?.id;
 
-//     if (!newOrder) {
-//       res.status(400).json({ error: 'Order creation failed' });
-//       return;
-//     }
+    if (!userId || !orderId) {
+      res.status(401).json({ error: 'Unauthorized or Order ID is required' });
+      return;
+    }
 
-//     await prisma.order.update({
-//       where: { id: newOrder.id },
-//       data: {
-//         paymentMethodType: PaymentMethodType.MIDTRANS,
-//       },
-//     });
+    const order = await prisma.order.findUnique({
+      where: { id: Number(orderId) },
+      include: { shippingInformation: true },
+    });
 
-//     const customer = await prisma.user.findUnique({
-//       where: { id: newOrder.userId },
-//     });
+    if (!order) {
+      res.status(404).json({ error: 'Order not found' });
+      return;
+    }
 
-//     if (!customer) {
-//       res.status(400).json({ error: 'User not found' });
-//       return;
-//     }
+    await prisma.order.update({
+      where: { id: Number(orderId) },
+      data: {
+        paymentMethodType: PaymentMethodType.MIDTRANS,
+      },
+    });
 
-//     const orderItems = await prisma.orderItem.findMany({
-//       where: { orderId: newOrder.id },
-//       include: { storeProduct: { include: { product: true } } },
-//     });
+    const customer = await prisma.user.findFirst({
+      where: { orders: { some: { id: Number(orderId) } } },
+    });
 
-//     if (!orderItems) {
-//       res.status(400).json({ error: 'Order items not found' });
-//       return;
-//     }
+    if (!customer) {
+      res.status(400).json({ error: 'User not found' });
+      return;
+    }
 
-//     const item_details = orderItems.map((item) => ({
-//       id: item.productId!,
-//       name: item.storeProduct.product.name,
-//       price: (item.storeProduct.product as Product).price,
-//       quantity: item.quantity,
-//     }));
+    const orderItems = await prisma.orderItem.findMany({
+      where: { orderId: Number(orderId) },
+      include: { storeProduct: { include: { product: true } } },
+    });
 
-//     const parameter = {
-//       transaction_details: {
-//         order_id: newOrder.id.toString(),
-//         gross_amount: newOrder.totalAmount,
-//       },
-//       item_details,
-//       customer_details: {
-//         first_name: customer.name,
-//         email: customer.email,
-//       },
-//       callbacks: {
-//         finish: 'http://localhost:3000',
-//       },
-//     };
+    if (!orderItems || orderItems.length === 0) {
+      res.status(400).json({ error: 'Order items not found' });
+      return;
+    }
 
-//     const transaction = await snap.createTransaction(parameter);
+    const ShippingCost = order?.shippingInformation?.shippingCost;
 
-//     res.status(201).json({ ok: true, data: { order: newOrder, transaction } });
-//   } catch (error) {
-//     console.error('Error during Midtrans payment:', error);
-//     next(error);
-//   }
-// };
+    const item_details = orderItems.map((item) => {
+      const price = item.storeProduct.price;
+      return {
+        id: item.productId!,
+        name: item.storeProduct.product.name,
+        price: Number(price),
+        quantity: item.quantity,
+      };
+    });
+
+    const parameter = {
+      transaction_details: {
+        order_id: orderId,
+        gross_amount: order.totalAmount,
+      },
+      item_details: Number(item_details) + Number(ShippingCost),
+      customer_details: {
+        first_name: customer.name,
+        email: customer.email,
+      },
+      callbacks: {
+        finish: `http://localhost:3000`,
+      },
+    };
+
+    const transaction = await snap.createTransaction(parameter);
+
+    const finalOrder = await prisma.order.findUnique({
+      where: { id: Number(orderId) },
+      include: {
+        shippingInformation: true,
+        orderItems: {
+          include: {
+            storeProduct: {
+              include: {
+                product: {
+                  include: {
+                    ProductImages: { select: { imageUrl: true } },
+                  },
+                },
+              },
+            },
+          },
+        },
+      },
+    });
+
+    res
+      .status(201)
+      .json({ ok: true, data: { order: finalOrder, transaction } });
+  } catch (error) {
+    console.error('Error during Midtrans payment:', error);
+    next(error);
+  }
+};
+
+export const orderNotification = async (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) => {
+  const data = req.body;
+  try {
+    updateOrderStatus(data);
+    res.status(200).json({ ok: true, message: 'Order status updated' });
+  } catch (error) {
+    next(error);
+  }
+};
 
 export const uploadPaymentProof = async (
   req: Request,
@@ -372,7 +418,7 @@ export const cancelOrder = async (
   next: NextFunction,
 ) => {
   try {
-    const { orderId } = req.body;
+    const { orderId } = req.params;
     const userId = req.user?.id;
 
     if (!userId) {
@@ -455,7 +501,7 @@ export const orderConfirmed = async (
   next: NextFunction,
 ) => {
   try {
-    const { orderId } = req.body;
+    const { orderId } = req.params;
     const userId = req.user?.id;
 
     if (!userId) {
@@ -731,7 +777,6 @@ export const processOrder = async (
       return;
     }
 
-    // Persiapkan data untuk createMany
     const productChangesData = orderCostumer.orderItems.map((item) => ({
       orderId: orderCostumer.id,
       userId: userId,

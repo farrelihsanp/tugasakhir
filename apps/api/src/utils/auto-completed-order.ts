@@ -20,8 +20,6 @@ const autoCompletedOrder = async () => {
         status: OrderStatus.COMPLETED,
       },
     });
-
-    console.log('Orders status updated to COMPLETED.');
   } catch (error) {
     console.error('Error updating order status:', error);
   }

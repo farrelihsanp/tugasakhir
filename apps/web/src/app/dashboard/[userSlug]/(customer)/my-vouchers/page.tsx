@@ -107,13 +107,14 @@ export default function MyVouchersPage() {
               >
                 {voucher.voucherImage && (
                   <Image
-                    src={voucher.voucherImage}
+                    src={voucher.voucherImage.trim()}
                     alt={voucher.name}
                     width={2000}
                     height={2000}
                     className="w-full h-48 object-cover rounded-t-lg"
                   />
                 )}
+
                 <div className="p-6">
                   <h2 className="text-xl font-semibold mb-2 text-gray-900">
                     {voucher.name}

@@ -75,6 +75,9 @@ const UserDetailPage: React.FC = () => {
             <strong className="text-teal-600">Email:</strong> {user.email}
           </p>
           <p className="text-lg text-gray-700">
+            <strong className="text-teal-600">username:</strong> {user.username}
+          </p>
+          <p className="text-lg text-gray-700">
             <strong className="text-teal-600">Referral Number:</strong>{' '}
             {user.referralNumber}
           </p>

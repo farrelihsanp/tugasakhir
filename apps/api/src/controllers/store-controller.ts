@@ -262,6 +262,28 @@ export const getStoreById = async (
   }
 };
 
+export const getStoreBySlug = async (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) => {
+  const { storeSlug } = req.params;
+
+  try {
+    const store = await prisma.store.findFirst({
+      where: { slug: storeSlug },
+    });
+    if (!store) {
+      res.status(404).json({ error: 'Store not found' });
+      return;
+    }
+    res.status(200).json({ ok: true, message: 'Store found', data: store });
+  } catch (error) {
+    console.error(error);
+    next(error);
+  }
+};
+
 // Get all stores
 export const getAllStores = async (
   _req: Request,

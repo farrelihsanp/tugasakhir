@@ -6,7 +6,7 @@ async function deleteInactiveVouchers() {
   try {
     const deletedVouchers = await prisma.voucher.deleteMany({
       where: {
-        stock: 0,
+        stockVoucherAdmin: 0,
         isActive: false,
       },
     });
@@ -19,7 +19,6 @@ async function deleteInactiveVouchers() {
   }
 }
 
-// Schedule the task to run every hour
 cron.schedule('0 * * * *', () => {
   console.log('Running scheduled task to delete inactive vouchers...');
   deleteInactiveVouchers();

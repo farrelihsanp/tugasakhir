@@ -5,9 +5,13 @@ import { toast } from 'react-toastify';
 import Image from 'next/image';
 import { Voucher } from '@prisma/client';
 import Link from 'next/link';
+import { FaChevronLeft, FaChevronRight } from 'react-icons/fa';
 
-// DONE
-export default function Hero() {
+interface HeroProps {
+  heightClass?: string;
+}
+
+export default function Hero({ heightClass = 'h-[50vh]' }: HeroProps) {
   const [vouchers, setVouchers] = useState<Voucher[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
@@ -25,7 +29,7 @@ export default function Hero() {
         const data = await response.json();
         setVouchers(data.data);
         setLoading(false);
-      } catch (error: unknown) {
+      } catch (error) {
         console.error('Error fetching vouchers:', error);
         setLoading(false);
         setError('Error fetching vouchers');
@@ -44,7 +48,6 @@ export default function Hero() {
     return <div className="text-center text-red-500">{error}</div>;
   }
 
-  // Next button functionality
   const handleNext = () => {
     setCurrentIndex((current) => (current + 1) % vouchers.length);
   };
@@ -56,51 +59,74 @@ export default function Hero() {
   };
 
   return (
-    <section className="max-w-7xl mx-auto py-8">
-      <div className="relative flex items-center justify-center">
-        {vouchers.length > 0 && (
-          <div className="relative w-full h-[400px] md:w-[600px] mx-auto">
-            <div className="flex overflow-hidden rounded-xl">
-              <div className="flex-none w-full h-full relative">
-                {/* Previous Button */}
-                <button
-                  className="absolute left-2 top-1/2 transform -translate-y-1/2 bg-white p-3 rounded-full shadow-lg hover:bg-opacity-90 hover:scale-110 transition duration-300 ease-in-out z-10"
-                  onClick={handlePrev}
-                >
-                  &lt;
-                </button>
-                <Link href={`/vouchers-store/${vouchers[currentIndex].code}`}>
-                  {vouchers[currentIndex].voucherImage && (
-                    <Image
-                      src={vouchers[currentIndex].voucherImage}
-                      width={2000}
-                      height={2000}
-                      alt={vouchers[currentIndex].name}
-                      className="object-cover w-full h-full rounded-xl transition-transform duration-500 transform hover:scale-105"
-                    />
-                  )}
-                </Link>
+    <section className={`relative w-full ${heightClass} overflow-hidden mt-20`}>
+      {vouchers.length > 0 && (
+        <div className="relative w-full h-full">
+          <Link href={`/vouchers-store/${vouchers[currentIndex].code}`}>
+            {vouchers[currentIndex].voucherImage && (
+              <Image
+                src={vouchers[currentIndex].voucherImage}
+                fill
+                alt={vouchers[currentIndex].name}
+                className="object-cover w-full h-full"
+                priority
+              />
+            )}
+          </Link>
 
-                {/* Next Button */}
-                <button
-                  className="absolute right-2 top-1/2 transform -translate-y-1/2 bg-white p-3 rounded-full shadow-lg hover:bg-opacity-90 hover:scale-110 transition duration-300 ease-in-out z-10"
-                  onClick={handleNext}
-                >
-                  &gt;
-                </button>
-              </div>
-            </div>
+          <div className="absolute inset-0 flex items-center justify-center">
+            <p className="text-[150px] md:text-[80px] text-white font-bold text-stroke-2 text-stroke-gray-900">
+              Quickmart
+            </p>
+          </div>
 
-            {/* Voucher Info */}
-            <div className="mt-4 text-center text-xl font-semibold">
+          <div className="absolute bottom-4 left-4 md:left-10 p-5 rounded-md max-w-md bg-white/20 backdrop-blur-xl">
+            <h2 className="text-9xl md:text-3xl font-bold mb-2 text-black">
               {vouchers[currentIndex].name}
-            </div>
-            <div className="text-center text-lg text-gray-600">
-              {vouchers[currentIndex].code}
+            </h2>
+            <p className="text-black text-sm mb-4">
+              {vouchers[currentIndex].description}
+            </p>
+            <div className="inline-block bg-yellow-400 text-sm font-medium text-gray-900 px-2 py-1 rounded mb-2">
+              Expired At:{' '}
+              {new Date(vouchers[currentIndex].endDate).toLocaleDateString(
+                'id-ID',
+                {
+                  day: 'numeric',
+                  month: 'long',
+                  year: 'numeric',
+                },
+              )}
             </div>
           </div>
-        )}
-      </div>
+
+          {/* Tombol navigasi bawah tengah */}
+          <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 flex items-center gap-4">
+            <button
+              onClick={handlePrev}
+              className="bg-white p-3 rounded-full shadow hover:scale-110 transition"
+            >
+              <FaChevronLeft />
+            </button>
+            <button
+              onClick={handleNext}
+              className="bg-white p-3 rounded-full shadow hover:scale-110 transition"
+            >
+              <FaChevronRight />
+            </button>
+          </div>
+        </div>
+      )}
     </section>
   );
+}
+
+{
+  /* <Link
+href={`/vouchers-store/${vouchers[currentIndex].code}`}
+className="inline-block bg-gray-800 hover:bg-gray-900 text-white text-sm px-4 py-2 rounded transition"
+>
+View Details
+</Link>
+</div> */
 }

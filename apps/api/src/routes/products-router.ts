@@ -1,12 +1,14 @@
 import express from 'express';
 import {
   createProduct,
-  deleteProduct,
   updateProductGlobal,
   updateProductInSomeStore,
-  getDetailProductByIdByStoreId,
+  deleteProduct,
+  getAllProducts,
+  getDetailProductBySlugByStoreSlug,
   getAllProductsByStoreId,
-  getAllProductsByCategoryByStoreId,
+  getAllProductsByStoreSlug,
+  getAllProductsByCategoryByStoreSlug,
   getCheapProductsByStoreId,
   getFilteredProductChanges,
   getMonthlyProductSummary,
@@ -27,26 +29,43 @@ router
     createProduct,
   );
 
+router
+  .route('/update-product-global')
+  .put(
+    uploadMany.array('productImages', 5),
+    verifyToken,
+    roleGuard(['SUPERADMIN']),
+    updateProductGlobal,
+  );
+
+router
+  .route('/update-product-in-store/:storeSlug')
+  .put(verifyToken, roleGuard(['SUPERADMIN']), updateProductInSomeStore);
+
 // Delete a product
 router
   .route('/delete-product')
   .delete(verifyToken, roleGuard(['SUPERADMIN']), deleteProduct);
 
 router
-  .route('/update-product')
-  .put(verifyToken, roleGuard(['SUPERADMIN']), updateProductGlobal);
-
-router
-  .route('/update-product-in-store/:id')
-  .put(verifyToken, roleGuard(['SUPERADMIN']), updateProductInSomeStore);
+  .route('/all-products')
+  .get(verifyToken, roleGuard(['SUPERADMIN']), getAllProducts);
 
 // Get a product by ID
 router
   .route('/detail-product/:storeSlug/:productSlug')
-  .get(verifyToken, getDetailProductByIdByStoreId);
+  .get(verifyToken, getDetailProductBySlugByStoreSlug);
 
 // Get all products by store
 router.route('/products-store/:storeId').get(getAllProductsByStoreId);
+
+router
+  .route('/products-store-slug/:storeSlug')
+  .get(
+    verifyToken,
+    roleGuard(['CUSTOMERS', 'SUPERADMIN', 'STOREADMIN']),
+    getAllProductsByStoreSlug,
+  );
 
 // get all products by category
 router
@@ -54,7 +73,7 @@ router
   .get(
     verifyToken,
     roleGuard(['CUSTOMERS', 'SUPERADMIN', 'STOREADMIN']),
-    getAllProductsByCategoryByStoreId,
+    getAllProductsByCategoryByStoreSlug,
   );
 
 // get all cheap products

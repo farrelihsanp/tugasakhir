@@ -24,6 +24,7 @@ type Voucher = {
 
 export default function VouchersStore() {
   const [voucher, setVoucher] = useState<Voucher | undefined>(undefined);
+
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -44,7 +45,6 @@ export default function VouchersStore() {
         if (!res.ok) {
           throw new Error(`Error ${res.status}: ${res.statusText}`);
         }
-
         const json = await res.json();
         setVoucher(json.data);
       } catch (err: unknown) {

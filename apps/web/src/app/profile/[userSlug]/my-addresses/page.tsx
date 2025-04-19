@@ -4,6 +4,8 @@ import React, { useEffect, useState } from 'react';
 import { useStoreContext } from '@/utility/StoreContext';
 import Link from 'next/link';
 import { Address } from '@prisma/client';
+import { toast } from 'react-toastify'; // Import toast
+import 'react-toastify/dist/ReactToastify.css'; // Import styles for react-toastify
 
 const AddressPage = () => {
   const [addresses, setAddresses] = useState<Address[]>([]);
@@ -72,6 +74,10 @@ const AddressPage = () => {
 
     if (res.ok) {
       setAddresses((prev) => prev.filter((address) => address.id !== id));
+      toast.success('Address deleted successfully'); // Show toast notification on success
+      setTimeout(() => {
+        window.location.reload(); // Reload the page after 2 seconds
+      }, 1000);
     } else {
       const error = await res.json();
       console.error('Error deleting address:', error);
@@ -87,7 +93,7 @@ const AddressPage = () => {
           'Content-Type': 'application/json',
         },
         credentials: 'include',
-        body: JSON.stringify({ addressIds: id }),
+        body: JSON.stringify({ addressId: id }),
       },
     );
 
@@ -98,6 +104,10 @@ const AddressPage = () => {
           address.id === id ? { ...address, isPrimary: true } : address,
         ),
       );
+      toast.success('Primary address set successfully');
+      setTimeout(() => {
+        window.location.reload();
+      }, 1000);
     } else {
       const error = await res.json();
       console.error('Error setting primary address:', error);
@@ -179,7 +189,7 @@ const AddressPage = () => {
                           Set Primary
                         </button>
                         <Link
-                          href={`/customer/${user?.username}/edit-address/${address.id}`}
+                          href={`/profile/${user?.username}/edit-address/${address.id}`}
                           className="bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-700 transition duration-200"
                         >
                           Edit

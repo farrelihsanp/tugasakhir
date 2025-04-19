@@ -4,12 +4,30 @@ import { useEffect, useState } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import { Order } from '@/types/types';
 import Image from 'next/image';
+import { toast } from 'react-toastify';
+
+interface SnapWindow extends Window {
+  snap?: { embed: (token: string, options: { embedId: string }) => void };
+}
 
 const OrderPaymentPage = () => {
   const router = useRouter();
   const { orderId, userSlug } = useParams();
   const [order, setOrder] = useState<Order | null>(null);
   const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    const myMidtransClientKey = process.env.NEXT_PUBLIC_MIDTRANS_CLIENT_KEY;
+    const script = document.createElement('script');
+    script.src = 'https://app.sandbox.midtrans.com/snap/snap.js';
+    script.setAttribute('data-client-key', myMidtransClientKey as string);
+
+    document.body.appendChild(script);
+
+    return () => {
+      document.body.removeChild(script);
+    };
+  }, []);
 
   useEffect(() => {
     const fetchOrder = async () => {
@@ -46,11 +64,36 @@ const OrderPaymentPage = () => {
       const data = await res.json();
       if (!res.ok)
         throw new Error(data.error || 'Failed to update payment method');
+      toast.success('Payment method updated successfully');
       router.push(
         `http://localhost:3000/dashboard/${userSlug}/${orderId}/manual-transfer`,
       );
     } catch (error: unknown) {
-      alert((error as Error).message);
+      toast.error((error as Error).message);
+    }
+  };
+
+  const handleMidTransPayment = async (e: React.FormEvent) => {
+    e.preventDefault();
+    try {
+      const res = await fetch(
+        `http://localhost:8000/api/v1/create-order-midtrans/${orderId}`,
+        {
+          method: 'PUT',
+          credentials: 'include',
+          headers: { 'Content-Type': 'application/json' },
+        },
+      );
+      const data = await res.json();
+
+      (window as SnapWindow).snap!.embed(data.data.transaction.token, {
+        embedId: 'snap-container',
+      });
+
+      if (!res.ok) throw new Error(data.error || 'Failed to initiate payment');
+      window.location.href = data.data.transaction.redirect_url;
+    } catch (error: unknown) {
+      toast.error((error as Error).message);
     }
   };
 
@@ -125,10 +168,10 @@ const OrderPaymentPage = () => {
             Pembayaran Transfer
           </button>
           <button
-            disabled
-            className="bg-gray-300 text-gray-500 cursor-not-allowed"
+            onClick={handleMidTransPayment}
+            className="bg-green-600 text-white hover:bg-green-700"
           >
-            Payment Gateway (Segera Hadir)
+            Payment Gateway (MidTrans)
           </button>
         </div>
       </div>

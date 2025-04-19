@@ -15,7 +15,7 @@ const router = express.Router();
 
 // Route for creating an admin
 router.post(
-  '/create/',
+  '/create',
   upload.single('adminImage'),
   verifyToken,
   roleGuard(['SUPERADMIN']),

@@ -69,9 +69,6 @@ const OrderForm = () => {
     }
   }, [selectedVoucher]);
 
-  console.log('isinya selectedVoucher', selectedVoucher);
-  console.log('isinya savedSelectedVoucher', savedSelectedVoucher);
-
   useEffect(() => {
     if (selectedShipping) {
       localStorage.setItem(
@@ -481,9 +478,17 @@ const OrderForm = () => {
           <button
             onClick={handleSetPrimaryAddress}
             className="w-full bg-green-600 text-white py-3 rounded-md hover:bg-green-700 transition duration-300"
-            disabled={loading}
+            disabled={Boolean(
+              loading ||
+                totalAmountCartAfterVoucher ||
+                shippingCostAfterVoucher,
+            )}
           >
-            {loading ? 'Setting Primary...' : 'Set as Primary Address'}
+            {loading
+              ? 'Setting Primary Address...'
+              : totalAmountCartAfterVoucher || shippingCostAfterVoucher
+                ? 'Cannot set primary address'
+                : 'Set Primary Address'}
           </button>
         </div>
 

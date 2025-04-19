@@ -88,10 +88,10 @@ const ManageStoresPage: React.FC = () => {
         </table>
         <div className="mt-6 text-center">
           <Link
-            href="manage-products/product"
+            href="manage-products/all-products"
             className="bg-blue-500 text-white px-6 py-3 rounded-md hover:bg-blue-700"
           >
-            Create Product
+            Product
           </Link>
         </div>
         <div className="mt-6 text-center">

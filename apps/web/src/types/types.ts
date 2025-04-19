@@ -5,6 +5,7 @@ import {
   VoucherType,
   VoucherCategory,
   Provider,
+  DiscountType,
 } from '@prisma/client';
 
 export interface User {
@@ -41,7 +42,7 @@ export interface Category {
   excerpt: string;
   name: string;
   description: string;
-  Image: string;
+  image: string;
   slug: string;
   CategoryProduct: CategoryProduct[];
 }
@@ -72,13 +73,36 @@ export interface Product {
   description: string;
   productId: number;
   stock: number;
+  slug: string;
+  excerpt: string;
   price: number;
   isCheap: boolean;
   createdAt: string;
   updatedAt: string;
   CategoryProduct: CategoryProduct[];
   ProductImages: ProductImage[];
+  storeProducts: StoreProduct[];
   product: ProductDetails;
+  priceAfterDiscount: number;
+}
+
+export interface Discount {
+  id: number;
+  type: DiscountType;
+  name: string;
+  value: number;
+  minPurchase: number;
+  maxDiscount: number;
+  expiredAt: string;
+  isActive: boolean;
+  createdAt: string;
+  updatedAt: string;
+  DiscountProduct: DiscountProduct[];
+}
+
+export interface DiscountProduct {
+  productId: number;
+  discountId: number;
 }
 
 export interface CategoryProduct {
@@ -110,6 +134,10 @@ export interface Store {
   city: string;
   latitude: number;
   longitude: number;
+  storeImage: string;
+  province: string;
+  postalCode: string;
+  country: string;
   phoneNumber: string;
   maxServiceDistance: number;
   isPrimary: boolean;
@@ -127,6 +155,8 @@ export interface Voucher {
   startDate: string;
   endDate: string;
   stock: number;
+  minPurchase: number;
+  maxPriceReduction: number;
   isActive: boolean;
   voucherImage: string;
   voucherCategory: VoucherCategory;
@@ -136,6 +166,7 @@ export interface Voucher {
 export interface VoucherUser {
   id: number;
   userId: number;
+  productId: number;
   voucherId: number;
   createdAt: string;
   updatedAt: string;
@@ -181,6 +212,8 @@ export interface OrderItem {
 export type StoreProduct = {
   id: number;
   price: number;
+  priceAfterDiscount: number;
+  backupPrice: number;
   name: string;
   stock: number;
   isCheap: boolean;
@@ -233,7 +266,9 @@ export interface CartItem {
   cartId: number;
   quantity: number;
   price: number;
+  priceAfterDiscount: number;
   total: number;
+  totalAfterDiscount: number;
   storeProduct: StoreProduct;
   Product: Product;
 }
@@ -267,6 +302,7 @@ export interface CheapProducts {
   productId: number;
   stock: number;
   price: number;
+  priceAfterDiscount: number;
   isCheap: boolean;
   createdAt: string;
   updatedAt: string;
@@ -286,6 +322,7 @@ export interface StoreContextType {
   loading: boolean;
   error: string | null;
   user: User | null;
+  setUser: React.Dispatch<React.SetStateAction<User | null>>;
   storeStoreAdmin: Store | null;
   handleLogout: () => void;
 }
@@ -300,4 +337,15 @@ export interface ProductItemProps {
   price: number;
   excerpt: string;
   stock: number;
+}
+
+export interface FormData {
+  productId: string;
+  name: string;
+  excerpt: string;
+  description: string;
+  price: string;
+  weight: string;
+  categoryId: number;
+  images: File[];
 }

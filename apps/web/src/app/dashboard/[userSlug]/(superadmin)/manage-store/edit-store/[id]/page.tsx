@@ -22,9 +22,6 @@ type Store = {
 export default function EditStorePage() {
   const { id, userSlug } = useParams() as { id: string; userSlug: string };
 
-  console.log('userSlug isinya :', userSlug);
-  console.log('id isinya :', id);
-
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
   const [formData, setFormData] = useState<Store>({
@@ -46,6 +43,7 @@ export default function EditStorePage() {
 
   useEffect(() => {
     const fetchStoreData = async () => {
+      setLoading(true);
       try {
         const res = await fetch(
           `http://localhost:8000/api/v1/stores/someStore/${id}`,
@@ -57,15 +55,15 @@ export default function EditStorePage() {
         if (res.ok) {
           setFormData({
             id: data.id,
-            name: data.name,
-            address: data.address,
-            city: data.city,
-            province: data.province,
-            country: data.country,
-            postalCode: data.postalCode,
-            phoneNumber: data.phoneNumber,
-            storeImage: data.storeImage,
-            maxServiceDistance: data.maxServiceDistance / 1000, // Convert from meters to kilometers
+            name: data.data.name,
+            address: data.data.address,
+            city: data.data.city,
+            province: data.data.province,
+            country: data.data.country,
+            postalCode: data.data.postalCode,
+            phoneNumber: data.data.phoneNumber,
+            storeImage: data.data.storeImage,
+            maxServiceDistance: data.data.maxServiceDistance / 1000,
           });
           setLoading(false);
         } else {
@@ -136,7 +134,12 @@ export default function EditStorePage() {
 
   if (loading) {
     return (
-      <div className="p-6 text-center font-medium">Loading store data...</div>
+      <div className="p-6 text-center font-medium">
+        <div className="flex justify-center items-center">
+          <div className="animate-spin border-t-4 border-blue-500 border-solid w-16 h-16 rounded-full"></div>
+          <span className="ml-4">Loading store data...</span>
+        </div>
+      </div>
     );
   }
 

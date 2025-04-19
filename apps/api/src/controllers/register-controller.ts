@@ -6,6 +6,7 @@ import { Resend } from 'resend';
 import { prisma } from '../configs/prisma.js';
 import cloudinary from '../configs/cloudinary.js';
 import { genSalt, hash } from 'bcryptjs';
+import { Provider } from '@prisma/client';
 
 const resend = new Resend(process.env.RESEND_API_KEY);
 
@@ -84,9 +85,6 @@ export async function register(
   }
 }
 
-/* -------------------------------------------------------------------------- */
-/*                          KODE KERJA SAMPAI DISINI                          */
-/* -------------------------------------------------------------------------- */
 export async function completeRegister(
   req: Request,
   res: Response,
@@ -147,16 +145,19 @@ export async function completeRegister(
       cloudinaryData = { secure_url: defaultImageUrl };
     }
 
-    // Update user data
+    const referralCode = `REF${Date.now().toString().slice(-5)}`;
+
     const finalUser = await prisma.user.update({
       where: { id: user.id },
       data: {
         name,
         username,
         password: hashedPassword,
+        referralNumber: referralCode,
         role,
         profileImage: cloudinaryData.secure_url,
         emailConfirmed: true,
+        provider: Provider.CREDENTIALS,
       },
     });
 

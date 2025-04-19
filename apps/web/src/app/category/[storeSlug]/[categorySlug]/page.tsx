@@ -22,7 +22,6 @@ interface StoreProduct {
 
 export default function ProdukPage() {
   const params = useParams();
-  console.log('params:', params);
 
   const storeSlug = params.storeSlug;
   const categorySlug = params.categorySlug;

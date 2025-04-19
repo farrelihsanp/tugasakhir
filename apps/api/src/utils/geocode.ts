@@ -8,6 +8,7 @@ export async function convertCoordinatesToAddress(
     const data = await opencage.geocode({
       q: `${latitude}, ${longitude}`,
       language: 'en',
+      key: process.env.OPENCAGE_API_KEY,
     });
     return data;
   } catch (error) {
@@ -20,6 +21,7 @@ export async function convertAddressToCoordinates(address: string) {
     const data = await opencage.geocode({
       q: address,
       language: 'en',
+      key: process.env.OPENCAGE_API_KEY,
     });
     return data;
   } catch (error) {
@@ -27,7 +29,7 @@ export async function convertAddressToCoordinates(address: string) {
   }
 }
 
-console.log(
-  await convertCoordinatesToAddress(-6.289169504340975, 106.83223534481418),
-);
-console.log(await convertAddressToCoordinates('Jl. Ahmad Yani, Jakarta'));
+// console.log(
+//   await convertCoordinatesToAddress(-6.289169504340975, 106.83223534481418),
+// );
+// console.log(await convertAddressToCoordinates('Jl. Ahmad Yani, Jakarta'));

@@ -1,14 +1,16 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
+import Image from 'next/image';
+import Link from 'next/link';
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
-const Register = () => {
+export default function RegisterPage() {
   const [emailInput, setEmailInput] = useState('');
   const [errorMessage, setErrorMessage] = useState('');
   const [successMessage, setSuccessMessage] = useState('');
-  const [isLoading, setIsLoading] = useState(false); // New state for loading
+  const [isLoading, setIsLoading] = useState(false);
 
   const handleEmailChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setEmailInput(event.target.value);
@@ -22,32 +24,26 @@ const Register = () => {
       return;
     }
 
-    setIsLoading(true); // Start loading
-
+    setIsLoading(true);
     localStorage.setItem('email', emailInput);
 
     try {
-      // Kirim permintaan POST ke API register
       const response = await fetch(
         'http://localhost:8000/api/v1/auth/register',
         {
           method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
+          headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ emailInput }),
         },
       );
 
       if (response.ok) {
-        setSuccessMessage(
-          'Registration successful! Please check your email for confirmation.',
-        );
+        setSuccessMessage('Registration successful! Please check your email.');
         setErrorMessage('');
-        toast.success('Registration successful!'); // Success toastify
+        toast.success('Registration successful!');
         setTimeout(() => {
-          window.location.href = 'http://localhost:3000'; // Redirect after success
-        }, 3000); // Wait 3 seconds before redirect
+          window.location.href = 'http://localhost:3000';
+        }, 3000);
       } else {
         const data = await response.json();
         setErrorMessage(data.message || 'An error occurred, please try again.');
@@ -58,63 +54,69 @@ const Register = () => {
       setErrorMessage('An error occurred, please try again later.');
       setSuccessMessage('');
     } finally {
-      setIsLoading(false); // Stop loading
+      setIsLoading(false);
     }
   };
 
   useEffect(() => {
     const savedEmail = localStorage.getItem('email');
-    if (savedEmail) {
-      setEmailInput(savedEmail);
-    }
+    if (savedEmail) setEmailInput(savedEmail);
   }, []);
 
   return (
-    <>
-      <div className="flex justify-center items-center min-h-screen bg-gray-100">
-        <div className="bg-white p-8 rounded-lg shadow-lg w-full max-w-md">
-          <h1 className="text-2xl font-semibold text-center mb-6">Register</h1>
-          <form onSubmit={handleRegister}>
-            <div className="mb-4">
-              <label
-                className="block text-sm font-medium text-gray-700"
-                htmlFor="email"
-              >
-                Email:
-              </label>
+    <div className="flex min-h-screen">
+      {/* Left Image */}
+      <div className="w-1/2 relative">
+        <Image
+          src="https://images.unsplash.com/photo-1526470498-9ae73c665de8?q=80&w=1396&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
+          alt="Register Illustration"
+          layout="fill"
+          objectFit="cover"
+          className="z-0"
+        />
+      </div>
+
+      {/* Right Form */}
+      <div className="w-1/2 flex items-center justify-center bg-white px-10">
+        <div className="max-w-md w-full">
+          <h1 className="text-4xl font-bold mb-6 text-center">
+            Create Account
+          </h1>
+          <form onSubmit={handleRegister} className="space-y-4">
+            <div>
               <input
-                id="email"
                 type="email"
+                placeholder="Email"
                 value={emailInput}
                 onChange={handleEmailChange}
-                required
-                className="w-full px-4 py-2 mt-1 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
+                className={`w-full px-4 py-3 border rounded-md focus:outline-none ${
+                  errorMessage ? 'border-red-500' : 'border-gray-300'
+                }`}
               />
+              {errorMessage && (
+                <p className="text-red-500 text-sm mt-1">{errorMessage}</p>
+              )}
+              {successMessage && (
+                <p className="text-green-500 text-sm mt-1">{successMessage}</p>
+              )}
             </div>
-            {errorMessage && (
-              <p className="text-red-500 text-sm">{errorMessage}</p>
-            )}
-            {successMessage && (
-              <p className="text-green-500 text-sm">{successMessage}</p>
-            )}
             <button
               type="submit"
-              className="w-full mt-4 py-2 px-4 bg-blue-500 text-white font-semibold rounded-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500"
-              disabled={isLoading} // Disable button when loading
+              disabled={isLoading}
+              className="w-full bg-blue-500 text-white py-3 rounded-md font-semibold hover:bg-blue-600 disabled:opacity-50"
             >
-              {isLoading ? 'Registering...' : 'Register'}{' '}
-              {/* Display loading text */}
+              {isLoading ? 'Registering...' : 'Register'}
             </button>
-            {isLoading && (
-              <div className="text-center mt-4">
-                <div className="spinner-border animate-spin border-4 border-t-4 border-blue-500 w-6 h-6 rounded-full"></div>
-              </div>
-            )}
           </form>
+
+          <p className="text-center mt-6 text-sm">
+            Already have an account?{' '}
+            <Link href="/auth/login" className="text-blue-600 font-semibold">
+              Login here
+            </Link>
+          </p>
         </div>
       </div>
-    </>
+    </div>
   );
-};
-
-export default Register;
+}

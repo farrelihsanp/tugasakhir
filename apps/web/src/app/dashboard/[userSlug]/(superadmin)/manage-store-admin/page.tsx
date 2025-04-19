@@ -67,10 +67,18 @@ const ManageStoreAdmin: React.FC = () => {
         <div className="flex gap-4 p-2">
           <div>
             <Link
-              href={`/superadmin/${user?.username}/assign-store-admin`}
+              href={`/dashboard/${user?.username}/assign-store-admin`}
               className="bg-blue-600 text-white py-2 px-4 rounded-lg mb-6"
             >
               Assign Store Admin
+            </Link>
+          </div>
+          <div>
+            <Link
+              href={`/dashboard/${user?.username}/create-admin`}
+              className="bg-blue-600 text-white py-2 px-4 rounded-lg mb-6"
+            >
+              Create Admin
             </Link>
           </div>
         </div>
@@ -116,12 +124,6 @@ const ManageStoreAdmin: React.FC = () => {
                           onClick={() => handleDelete(admin.id)}
                         >
                           Hapus
-                        </button>
-                        <button
-                          className="bg-green-600 text-white py-2 px-4 rounded-md hover:bg-green-700"
-                          onClick={() => {}}
-                        >
-                          Edit
                         </button>
                       </td>
                     </tr>

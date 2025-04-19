@@ -32,12 +32,12 @@ export const StoreProvider: React.FC<{ children: React.ReactNode }> = ({
   const [error, setError] = useState<string | null>(null);
   const [storeStoreAdmin, setStoreStoreAdmin] = useState<Store | null>(null);
 
-  const storeIdStoreAdmin = user?.StoreUser[0]?.storeId;
-  console.log('isinya storeIdStoreAdmin', storeIdStoreAdmin);
-  console.log('isinya user', user);
+  const storeIdStoreAdmin =
+    user && user.StoreUser ? user?.StoreUser[0]?.storeId : null;
 
   /* -------------------------------------------------------------------------- */
-  /*                           FETCH YANG SEDANG LOGIN                          */
+  /*                           FETCH YANG SEDAN
+  G LOGIN                          */
   /* -------------------------------------------------------------------------- */
   useEffect(() => {
     setLoading(true);
@@ -109,7 +109,7 @@ export const StoreProvider: React.FC<{ children: React.ReactNode }> = ({
       const fetchCheapProduct = async () => {
         try {
           const res = await fetch(
-            `http://localhost:8000/api/v1/stores/cheap-products-store/${nearestStore.id}`,
+            `http://localhost:8000/api/v1/cheap-products-store/${nearestStore.id}`,
             {
               method: 'GET',
               credentials: 'include',
@@ -131,9 +131,8 @@ export const StoreProvider: React.FC<{ children: React.ReactNode }> = ({
   /* -------------------------------------------------------------------------- */
   /*                                 FETCH STORE                                */
   /* -------------------------------------------------------------------------- */
-
   useEffect(() => {
-    if (user) {
+    if (user && user.StoreUser?.length > 0) {
       const fetchStore = async () => {
         try {
           const res = await fetch(
@@ -175,6 +174,7 @@ export const StoreProvider: React.FC<{ children: React.ReactNode }> = ({
   return (
     <StoreContext.Provider
       value={{
+        setUser,
         nearestStore,
         storeStoreAdmin,
         setNearestStore,

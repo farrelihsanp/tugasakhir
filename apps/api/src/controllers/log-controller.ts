@@ -69,7 +69,7 @@ export async function login(req: Request, res: Response, next: NextFunction) {
       storeId: storeStoreAdmin?.storeId,
     };
     const token = jwt.sign(jwtPayload, process.env.JWT_SECRET_KEY as string, {
-      expiresIn: '24h',
+      expiresIn: '1h',
     });
 
     res
@@ -262,8 +262,6 @@ export const updateUserProfile = async (
   let profileImage;
 
   try {
-    let cloudinaryData;
-
     const user = await prisma.user.findUnique({
       where: { id: Number(userId) },
     });
@@ -280,20 +278,21 @@ export const updateUserProfile = async (
       },
     });
 
+    // Cek jika ada file foto yang diunggah
     if (req.file) {
       try {
-        cloudinaryData = await cloudinary.uploader.upload(req.file.path, {
+        const cloudinaryData = await cloudinary.uploader.upload(req.file.path, {
           folder: 'profileimage/images',
         });
         await fs.unlink(req.file.path);
-        profileImage = cloudinaryData.secure_url; // Use the new image URL
+        profileImage = cloudinaryData.secure_url; // Set foto baru
       } catch (uploadError) {
         console.error('Cloudinary upload error:', uploadError);
         res.status(500).json({ error: 'Image upload failed' });
         return;
       }
     } else {
-      profileImage = user.profileImage;
+      profileImage = user.profileImage; // Gunakan foto lama jika tidak ada file baru
     }
 
     const data: UserData = {};

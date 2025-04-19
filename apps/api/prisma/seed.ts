@@ -6,6 +6,7 @@ import {
   VoucherCategory,
   VoucherType,
   PaymentMethodType,
+  DiscountType,
 } from '@prisma/client';
 
 async function main() {
@@ -39,7 +40,7 @@ async function main() {
     const salt = await genSalt(10);
 
     // Superadmin User
-    const superadminPassword = await hash('superadminpass', salt);
+    const superadminPassword = await hash('123123', salt);
     const superadmin = await prisma.user.create({
       data: {
         name: 'John Doe',
@@ -56,7 +57,7 @@ async function main() {
     });
 
     // Storeadmin User
-    const storeadminPassword1 = await hash('storeadminpass', salt);
+    const storeadminPassword1 = await hash('123123', salt);
     const storeadmin1 = await prisma.user.create({
       data: {
         name: 'Jane Smith',
@@ -140,7 +141,7 @@ async function main() {
     const customerPassword = await hash('farrel123', salt);
     const customer1 = await prisma.user.create({
       data: {
-        name: 'Farrel Ihsan Ganteng',
+        name: 'Farrel Ihsan Prahaditya',
         username: 'farrelihsanp',
         password: customerPassword,
         email: 'farrel.prahaditya@gmail.com',
@@ -153,13 +154,29 @@ async function main() {
       },
     });
 
+    // const customerPassword = await hash('caca123', salt);
+    // const customer1 = await prisma.user.create({
+    //   data: {
+    //     name: 'salsabila yara',
+    //     username: 'salsabilayara',
+    //     password: customerPassword,
+    //     email: 'caca@gmail.com',
+    //     emailConfirmed: true,
+    //     role: 'CUSTOMERS',
+    //     profileImage:
+    //       'https://res.cloudinary.com/dm1cnsldc/image/upload/v1739728940/event/images/s6x3zkhiibcahfndhmxe.jpg',
+    //     referralNumber: 'REF112295',
+    //     provider: 'CREDENTIALS',
+    //   },
+    // });
+
     const customerPassword2 = await hash('fauzan123', salt);
     await prisma.user.create({
       data: {
         name: 'Fauzan Rianda',
         username: 'fauzanrianda',
         password: customerPassword2,
-        email: 'fauzanrianda@gmail.com',
+        email: 'fauzan@gmail.com',
         emailConfirmed: true,
         role: 'CUSTOMERS',
         profileImage:
@@ -190,18 +207,18 @@ async function main() {
     /* -------------------------------------------------------------------------- */
     const store1 = await prisma.store.create({
       data: {
-        name: 'Toko Apple Apartment Jatipadang',
+        name: 'Toko Amaya House',
         storeImage:
           'https://i.pinimg.com/736x/a6/a6/80/a6a680d5757a99612ac553be1e3b9fe9.jpg',
         address: 'Jl. Jatipadang Raya',
         city: 'Jakarta Selatan',
         province: 'DKI Jakarta',
         country: 'Indonesia',
-        postalCode: '20111',
+        postalCode: '12540',
         phoneNumber: '081234567890',
-        slug: 'toko-apple-apartment-jatipadang',
-        latitude: -6.291792587863591,
-        longitude: 106.82860649874273,
+        slug: 'toko-amaya-house',
+        latitude: -6.293389176422945,
+        longitude: 106.82845241103227,
         maxServiceDistance: 25000.0,
         isActive: true,
       },
@@ -209,18 +226,18 @@ async function main() {
 
     const store2 = await prisma.store.create({
       data: {
-        name: 'Toko Taman Karang Pola',
+        name: 'Toko Pasar Minggu',
         storeImage:
           'https://i.pinimg.com/736x/a6/a6/80/a6a680d5757a99612ac553be1e3b9fe9.jpg',
         address: 'Jl. Raya Ragunan',
         city: 'Jakarta Selatan',
         province: 'DKI Jakarta',
         country: 'Indonesia',
-        postalCode: '28111',
+        postalCode: '12540',
         phoneNumber: '081234567891',
-        slug: 'toko-taman-karang-pola',
-        latitude: -6.286289550419184,
-        longitude: 106.83149673268163,
+        slug: 'toko-pasar-minggu',
+        latitude: -6.284935683234264,
+        longitude: 106.84383928917386,
         maxServiceDistance: 100000.0,
         isActive: true,
         isPrimary: true,
@@ -322,7 +339,7 @@ async function main() {
         excerpt: 'Sayuran segar',
         description: 'Berbagai jenis sayuran segar dan berkualitas',
         image:
-          'https://res.cloudinary.com/dm1cnsldc/image/upload/v1743477309/SAYURAN_wigiuz.jpg',
+          'https://res.cloudinary.com/dm1cnsldc/image/upload/v1744779139/SAYURAN_nlh78e.jpg',
         slug: 'sayuran',
       },
     });
@@ -433,6 +450,16 @@ async function main() {
         isCheap: true,
       },
     });
+
+    await prisma.storeProduct.create({
+      data: {
+        storeId: store2.id,
+        productId: tomat.id,
+        price: 10000,
+        stock: 150,
+        isCheap: true,
+      },
+    });
     await prisma.categoryProduct.create({
       data: {
         productId: tomat.id,
@@ -482,7 +509,7 @@ async function main() {
       data: {
         storeId: store2.id,
         productId: semangka.id,
-        price: 5000,
+        price: 45000,
         stock: 150,
         isCheap: true,
       },
@@ -607,7 +634,7 @@ async function main() {
     /* -------------------------------------------------------------------------- */
     const sabunMandi = await prisma.product.create({
       data: {
-        name: 'Sabun Mandi Life Boy',
+        name: 'Sabun Life Boy',
         excerpt: 'Sabun mandi',
         description: 'Sabun mandi berkualitas tinggi',
         slug: 'sabun-mandi',
@@ -2043,13 +2070,13 @@ async function main() {
       },
     });
 
-    // Tambahkan ke cart Salsabila (semua dari store1)
+    // Tambahkan ke cart farrel (semua dari store1)
     const cartItemsData = [
-      {
-        product: tomat,
-        storeProduct: tomatStoreProduct,
-        quantity: 2,
-      },
+      // {
+      //   product: tomat,
+      //   storeProduct: tomatStoreProduct,
+      //   quantity: 2,
+      // },
       {
         product: sabunMandi,
         storeProduct: sabunStoreProduct,
@@ -2095,7 +2122,7 @@ async function main() {
         minPurchase: 100,
         maxPriceReduction: 100000000,
         voucherImage:
-          'https://res.cloudinary.com/dm1cnsldc/image/upload/v1739627187/film_event_mzciww.jpg',
+          'https://images.unsplash.com/photo-1506617564039-2f3b650b7010?q=80&w=1740&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D ',
       },
     });
 
@@ -2114,7 +2141,7 @@ async function main() {
         minPurchase: 100,
         maxPriceReduction: 1000000,
         voucherImage:
-          'https://res.cloudinary.com/dm1cnsldc/image/upload/v1739627191/tech_hrqpsd.jpg',
+          'https://images.unsplash.com/photo-1583258292688-d0213dc5a3a8?q=80&w=1548&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
       },
     });
 
@@ -2133,7 +2160,7 @@ async function main() {
         minPurchase: 100,
         maxPriceReduction: 1000000,
         voucherImage:
-          'https://res.cloudinary.com/dm1cnsldc/image/upload/v1739627191/tech_hrqpsd.jpg',
+          'https://images.unsplash.com/photo-1695653422909-20d8cc35ca2e?q=80&w=1548&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
       },
     });
 
@@ -2152,7 +2179,7 @@ async function main() {
         minPurchase: 100,
         maxPriceReduction: 1000000,
         voucherImage:
-          'https://res.cloudinary.com/dm1cnsldc/image/upload/v1739627189/health-workshop_zns6qb.jpg',
+          'https://images.unsplash.com/photo-1732155512296-58a6d9d96bcd?q=80&w=1750&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
       },
     });
 
@@ -2211,6 +2238,7 @@ async function main() {
 
     const orderSiCustomerFarrel_one = await prisma.order.create({
       data: {
+        id: 123123,
         userId: customer1.id,
         slug: 'ORDER-123',
         storeId: store1.id,
@@ -2219,7 +2247,7 @@ async function main() {
         status: OrderStatus.PENDING_PAYMENT,
         paymentMethodType: PaymentMethodType.BANK_TRANSFER,
         paymentProof:
-          'https://dummyimage.com/600x400/90ee90/fff&text=bukti+transfer',
+          'https://dummyimage.com/600x400/90ee90/fff&text=bukti+transfer+1',
         paymentProofUploadedAt: new Date(),
         orderConfirmationAt: new Date(),
         shippingInformation: {
@@ -2272,6 +2300,7 @@ async function main() {
 
     const orderSiCustomerFarrel_two = await prisma.order.create({
       data: {
+        id: 456456,
         userId: customer1.id,
         slug: 'ORDER-456',
         storeId: store1.id,
@@ -2279,7 +2308,8 @@ async function main() {
         totalAmount: 800000,
         status: OrderStatus.WAITING_FOR_PAYMENT,
         paymentMethodType: PaymentMethodType.BANK_TRANSFER,
-        paymentProof: '',
+        paymentProof:
+          'https://dummyimage.com/600x400/90ee90/fff&text=bukti+transfer+2',
         paymentProofUploadedAt: new Date(),
         orderConfirmationAt: new Date(),
         shippingInformation: {
@@ -2328,6 +2358,68 @@ async function main() {
       }
     }
 
+    // ORDER KETIGA FARREL
+
+    const orderSiCustomerFarrel_three = await prisma.order.create({
+      data: {
+        id: 789789,
+        userId: customer1.id,
+        slug: 'ORDER-789',
+        storeId: store1.id,
+        shippingAddressId: customerAddress.id,
+        totalAmount: 800000,
+        status: OrderStatus.DELIVERED,
+        paymentMethodType: PaymentMethodType.BANK_TRANSFER,
+        paymentProof:
+          'https://dummyimage.com/600x400/90ee90/fff&text=bukti+transfer+3',
+        paymentProofUploadedAt: new Date(),
+        orderConfirmationAt: new Date(),
+        shippingInformation: {
+          create: {
+            courierName: 'JNE',
+            code: 'JNE123456',
+            serviceType: 'REGULER',
+            description: 'JNE Reguler',
+            shippingCost: 60000,
+            estimatedTime: 3,
+          },
+        },
+      },
+    });
+
+    const orderItemsFarrel_three = [
+      {
+        product: tomat,
+        storeProduct: tomatStoreProduct,
+        quantity: 10,
+      },
+      {
+        product: sabunMandi,
+        storeProduct: sabunStoreProduct,
+        quantity: 10,
+      },
+      {
+        product: jeruk,
+        storeProduct: jerukStoreProduct,
+        quantity: 10,
+      },
+    ];
+
+    for (const item of orderItemsFarrel_three) {
+      if (item.storeProduct) {
+        await prisma.orderItem.create({
+          data: {
+            orderId: orderSiCustomerFarrel_three.id,
+            productId: item.product.id,
+            storeProductId: item.storeProduct.id,
+            quantity: item.quantity,
+            price: +item.storeProduct.price,
+            total: Number(item.storeProduct.price) * item.quantity,
+          },
+        });
+      }
+    }
+
     /* -------------------------------------------------------------------------- */
     /*                                  Referral Seed                             */
     /* -------------------------------------------------------------------------- */
@@ -2354,15 +2446,19 @@ async function main() {
     /*                                DISCOUNT SEED                               */
     /* -------------------------------------------------------------------------- */
 
+    const storeProductsTomat = await prisma.storeProduct.findMany({
+      where: { productId: tomat.id },
+    });
+
     const discount1 = await prisma.discount.create({
       data: {
         name: 'Diskon Tomat',
-        type: 'PERCENTAGE',
-        value: 10,
-        priceBeforeDiscount: 10000,
-        minPurchase: 50000,
-        maxDiscount: 10000,
-        expiredAt: new Date(new Date().setDate(new Date().getDate() + 30)),
+        type: DiscountType.PERCENTAGE,
+        value: 75,
+        minPurchase: 10,
+        maxDiscount: 1000000,
+        expiredAt: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000),
+        isActive: true,
         DiscountProduct: {
           create: {
             productId: tomat.id,
@@ -2371,15 +2467,31 @@ async function main() {
       },
     });
 
-    await prisma.discount.create({
+    for (const product of storeProductsTomat) {
+      const updatedPrice =
+        +product.price - (+product.price * discount1.value) / 100;
+      await prisma.storeProduct.update({
+        where: { id: product.id },
+        data: {
+          priceAfterDiscount: updatedPrice,
+          backupPrice: updatedPrice,
+        },
+      });
+    }
+
+    const storeProductsSemangka = await prisma.storeProduct.findMany({
+      where: { productId: semangka.id },
+    });
+
+    const discount2 = await prisma.discount.create({
       data: {
         name: 'Diskon Semangka',
-        type: 'AMOUNT',
+        type: DiscountType.AMOUNT,
         value: 5000,
-        priceBeforeDiscount: 5000,
         minPurchase: 100000,
         maxDiscount: 10000,
-        expiredAt: new Date(new Date().setDate(new Date().getDate() + 30)),
+        expiredAt: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000),
+        isActive: true,
         DiscountProduct: {
           create: {
             productId: semangka.id,
@@ -2388,12 +2500,16 @@ async function main() {
       },
     });
 
-    await prisma.discountReport.create({
-      data: {
-        discountId: discount1.id,
-        userId: customer1.id,
-      },
-    });
+    for (const product of storeProductsSemangka) {
+      const updatedPrice = +product.price - discount2.value;
+      await prisma.storeProduct.update({
+        where: { id: product.id },
+        data: {
+          priceAfterDiscount: updatedPrice,
+          backupPrice: updatedPrice,
+        },
+      });
+    }
 
     /* -------------------------------------------------------------------------- */
 

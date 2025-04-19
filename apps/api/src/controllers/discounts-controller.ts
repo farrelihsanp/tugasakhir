@@ -2,6 +2,9 @@ import { prisma } from '../configs/prisma.js';
 import { Request, Response, NextFunction } from 'express';
 import { DiscountType } from '@prisma/client';
 
+/* -------------------------------------------------------------------------- */
+/*                  CONTROLLER YANG BERHASIL YANG DIKOMENTAR                  */
+/* -------------------------------------------------------------------------- */
 export const createDiscount = async (
   req: Request,
   res: Response,
@@ -32,25 +35,14 @@ export const createDiscount = async (
   }
 
   try {
-    const product = await prisma.storeProduct.findFirst({
-      where: { productId: Number(productId) },
-      include: { product: true },
-    });
-
-    if (!product) {
-      res.status(404).json({ message: 'Product not found' });
-      return;
-    }
-
     let discountType = type;
     let valueDiscount = value;
 
-    const discount = await prisma.discount.create({
+    await prisma.discount.create({
       data: {
         name,
         type: discountType,
         value: valueDiscount,
-        priceBeforeDiscount: Number(product.price),
         minPurchase,
         maxDiscount,
         expiredAt: new Date(expiredAt),
@@ -62,88 +54,179 @@ export const createDiscount = async (
       },
     });
 
+    const storeProducts = await prisma.storeProduct.findMany({
+      where: { productId: Number(productId) },
+    });
+
+    /* -------------------------------------------------------------------------- */
+    /*                            JIKA BUY ONE GET ONE                            */
+    /* -------------------------------------------------------------------------- */
     if (buyOneGetOne) {
       discountType = DiscountType.AMOUNT;
-      valueDiscount = Number(product.price) / 2;
-    }
-    let newPrice = Number(product.price);
-    if (DiscountType.AMOUNT || DiscountType.PERCENTAGE) {
-      if (discountType === 'AMOUNT') {
-        newPrice = newPrice - valueDiscount;
-
-        if (newPrice > maxDiscount) {
-          newPrice = maxDiscount;
-        }
-      } else if (DiscountType.PERCENTAGE) {
-        newPrice = newPrice - (newPrice * valueDiscount) / 100;
-
-        if (newPrice > maxDiscount) {
-          newPrice = maxDiscount;
-        }
-      }
-
-      const storeProduct = await prisma.storeProduct.findFirst({
-        where: { productId: Number(productId) },
-      });
-
-      if (!storeProduct) {
-        throw new Error('Product not found');
-      }
-
-      if (discount.isActive) {
+      valueDiscount = 1 / 2;
+      for (const product of storeProducts) {
+        const updatedPrice = +product.price * valueDiscount;
         await prisma.storeProduct.update({
-          where: { id: storeProduct.id },
-          data: { price: newPrice },
+          where: { id: product.id },
+          data: {
+            priceAfterDiscount: updatedPrice,
+            backupPrice: updatedPrice,
+          },
+        });
+      }
+    }
+    /* -------------------------------------------------------------------------- */
+    /*                          JIKA DISCOUNT TYPE AMOUNT                         */
+    /* -------------------------------------------------------------------------- */
+
+    if (discountType === DiscountType.AMOUNT) {
+      if (valueDiscount > maxDiscount) {
+        valueDiscount = maxDiscount;
+        for (const product of storeProducts) {
+          const updatedPrice = +product.price - valueDiscount;
+          await prisma.storeProduct.update({
+            where: { id: product.id },
+            data: {
+              priceAfterDiscount: updatedPrice,
+              backupPrice: updatedPrice,
+            },
+          });
+        }
+      }
+    }
+
+    /* -------------------------------------------------------------------------- */
+    /*                        JIKA DISCOUNT TYPE PERCENTAGE                       */
+    /* -------------------------------------------------------------------------- */
+
+    if (discountType === DiscountType.PERCENTAGE) {
+      for (const product of storeProducts) {
+        const updatedPrice =
+          +product.price - (+product.price * valueDiscount) / 100;
+        await prisma.storeProduct.update({
+          where: { id: product.id },
+          data: {
+            priceAfterDiscount: updatedPrice,
+            backupPrice: updatedPrice,
+          },
         });
       }
     }
 
-    const finalData = await prisma.discount.update({
-      where: { id: discount.id },
-      data: { priceAfterDiscount: newPrice },
-    });
+    // --------------------------------------------------------------------------
 
     res.status(201).json({
       ok: true,
-      message: 'Discount created and applied to product successfully',
-      data: finalData,
+      message: 'Discount created and applied successfully',
     });
   } catch (error) {
     next(error);
   }
 };
 
-export const getDiscountReport = async (
-  _req: Request,
-  res: Response,
-  next: NextFunction,
-) => {
-  try {
-    const reports = await prisma.discountReport.findMany({
-      include: {
-        discount: true,
-        User: {
-          select: {
-            id: true,
-            name: true,
-            email: true,
-          },
-        },
-      },
-      orderBy: {
-        createdAt: 'desc',
-      },
-    });
+// export const createDiscount = async (
+//   req: Request,
+//   res: Response,
+//   next: NextFunction,
+// ) => {
+//   const {
+//     productId,
+//     name,
+//     buyOneGetOne = false,
+//     type,
+//     value,
+//     minPurchase,
+//     maxDiscount,
+//     expiredAt,
+//   } = req.body;
 
-    res.status(200).json({
-      ok: true,
-      message: 'Discount reports found successfully',
-      data: reports,
-    });
-  } catch (error) {
-    next(error);
-  }
-};
+//   if (
+//     !productId ||
+//     !name ||
+//     !type ||
+//     !value ||
+//     !minPurchase ||
+//     !maxDiscount ||
+//     !expiredAt
+//   ) {
+//     res.status(400).json({ message: 'Missing required fields' });
+//     return;
+//   }
+
+//   try {
+//     // 1. Buat diskon
+//     await prisma.discount.create({
+//       data: {
+//         name,
+//         type,
+//         value,
+//         minPurchase,
+//         maxDiscount,
+//         expiredAt: new Date(expiredAt),
+//         DiscountProduct: {
+//           create: {
+//             productId: Number(productId),
+//           },
+//         },
+//       },
+//     });
+
+//     // 2. Ambil semua storeProduct yang sesuai
+//     const storeProducts = await prisma.storeProduct.findMany({
+//       where: { productId: Number(productId) },
+//     });
+
+//     // 3. Proses diskon Buy One Get One
+//     if (buyOneGetOne) {
+//       for (const product of storeProducts) {
+//         const updatedPrice = +product.price * 0.5;
+//         await prisma.storeProduct.update({
+//           where: { id: product.id },
+//           data: {
+//             priceAfterDiscount: updatedPrice,
+//             backupPrice: updatedPrice,
+//           },
+//         });
+//       }
+//     }
+
+//     // 4. Proses diskon berdasarkan tipe
+//     if (type === DiscountType.AMOUNT) {
+//       const discountValue = Math.min(value, maxDiscount); // jaga-jaga kalau value lebih besar dari max
+//       for (const product of storeProducts) {
+//         const updatedPrice = Math.max(0, +product.price - discountValue);
+//         await prisma.storeProduct.update({
+//           where: { id: product.id },
+//           data: {
+//             priceAfterDiscount: updatedPrice,
+//             backupPrice: updatedPrice,
+//           },
+//         });
+//       }
+//     }
+
+//     if (type === DiscountType.PERCENTAGE) {
+//       for (const product of storeProducts) {
+//         const discountAmount = (+product.price * value) / 100;
+//         const updatedPrice = Math.max(0, +product.price - discountAmount);
+//         await prisma.storeProduct.update({
+//           where: { id: product.id },
+//           data: {
+//             priceAfterDiscount: updatedPrice,
+//             backupPrice: updatedPrice,
+//           },
+//         });
+//       }
+//     }
+
+//     res.status(201).json({
+//       ok: true,
+//       message: 'Discount created and applied successfully',
+//     });
+//   } catch (error) {
+//     next(error);
+//   }
+// };
 
 export const deactivateDiscount = async (
   req: Request,
@@ -161,11 +244,7 @@ export const deactivateDiscount = async (
     const discount = await prisma.discount.findUnique({
       where: { id: Number(discountId) },
       include: {
-        DiscountProduct: {
-          select: {
-            productId: true,
-          },
-        },
+        DiscountProduct: true,
       },
     });
 
@@ -175,28 +254,28 @@ export const deactivateDiscount = async (
     }
 
     await prisma.discount.update({
-      where: { id: Number(discountId) },
-      data: { isActive: false },
+      where: { id: discount.id },
+      data: {
+        isActive: false,
+      },
     });
 
-    const storeProduct = await prisma.storeProduct.findFirst({
+    const storeProducts = await prisma.storeProduct.findMany({
       where: { productId: discount.DiscountProduct[0].productId },
     });
 
-    if (!storeProduct) {
-      res.status(404).json({ message: 'Product not found' });
-      return;
+    for (const product of storeProducts) {
+      await prisma.storeProduct.update({
+        where: { id: product.id },
+        data: {
+          priceAfterDiscount: 0,
+        },
+      });
     }
-
-    const finalData = await prisma.storeProduct.update({
-      where: { id: storeProduct.id },
-      data: { price: discount.priceBeforeDiscount },
-    });
 
     res.status(200).json({
       ok: true,
       message: 'Discount deactivated successfully',
-      data: finalData,
     });
   } catch (error) {
     next(error);
@@ -219,11 +298,7 @@ export const activateDiscount = async (
     const discount = await prisma.discount.findUnique({
       where: { id: Number(discountId) },
       include: {
-        DiscountProduct: {
-          select: {
-            productId: true,
-          },
-        },
+        DiscountProduct: true,
       },
     });
 
@@ -232,34 +307,31 @@ export const activateDiscount = async (
       return;
     }
 
-    await prisma.discount.update({
-      where: { id: Number(discountId) },
-      data: { isActive: true },
-    });
-
-    const storeProduct = await prisma.storeProduct.findFirst({
+    const storeProducts = await prisma.storeProduct.findMany({
       where: { productId: discount.DiscountProduct[0].productId },
     });
 
-    if (!storeProduct) {
-      res.status(404).json({ message: 'Product not found' });
-      return;
+    for (const product of storeProducts) {
+      if (product.backupPrice) {
+        await prisma.storeProduct.update({
+          where: { id: product.id },
+          data: {
+            priceAfterDiscount: +product.backupPrice,
+          },
+        });
+      }
     }
 
-    if (!discount.priceAfterDiscount) {
-      res.status(404).json({ message: 'Discount price not found' });
-      return;
-    }
-
-    const finalData = await prisma.storeProduct.update({
-      where: { id: storeProduct.id },
-      data: { price: discount.priceAfterDiscount },
+    await prisma.discount.update({
+      where: { id: discount.id },
+      data: {
+        isActive: true,
+      },
     });
 
     res.status(200).json({
       ok: true,
       message: 'Discount activated successfully',
-      data: finalData,
     });
   } catch (error) {
     next(error);
@@ -274,14 +346,7 @@ export const getAllDiscounts = async (
   try {
     const discounts = await prisma.discount.findMany({
       include: {
-        DiscountProduct: {
-          select: {
-            productId: true,
-          },
-        },
-      },
-      orderBy: {
-        createdAt: 'desc',
+        DiscountProduct: true,
       },
     });
 
@@ -311,11 +376,7 @@ export const getDiscountById = async (
     const discount = await prisma.discount.findUnique({
       where: { id: Number(discountId) },
       include: {
-        DiscountProduct: {
-          select: {
-            productId: true,
-          },
-        },
+        DiscountProduct: true,
       },
     });
 
@@ -328,6 +389,72 @@ export const getDiscountById = async (
       ok: true,
       message: 'Discount found successfully',
       data: discount,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const getDiscountForProduct = async (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) => {
+  try {
+    const { productId } = req.body;
+
+    if (!productId) {
+      res.status(400).json({ message: 'Product ID is required' });
+      return;
+    }
+
+    const discount = await prisma.discount.findMany({
+      where: {
+        isActive: true,
+        DiscountProduct: {
+          some: {
+            productId: Number(productId),
+          },
+        },
+      },
+      include: {
+        DiscountProduct: true,
+      },
+    });
+
+    if (!discount) {
+      res.status(404).json({ message: 'Discount not found' });
+      return;
+    }
+
+    res.status(200).json({
+      ok: true,
+      message: 'Discount found successfully',
+      data: discount,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+export const getDiscountReport = async (
+  _req: Request,
+  res: Response,
+  next: NextFunction,
+) => {
+  try {
+    const reports = await prisma.discountReport.findMany({
+      include: {
+        User: true,
+      },
+      orderBy: {
+        createdAt: 'desc',
+      },
+    });
+
+    res.status(200).json({
+      ok: true,
+      message: 'Discount reports found successfully',
+      data: reports,
     });
   } catch (error) {
     next(error);

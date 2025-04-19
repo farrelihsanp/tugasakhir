@@ -2,6 +2,7 @@
 import crypto from 'crypto';
 import { prisma } from '../configs/prisma.js';
 import { OrderStatusData } from '../types/express.d.js';
+import { OrderStatus } from '@prisma/client';
 
 export async function updateOrderStatus(data: OrderStatusData) {
   const hash = crypto
@@ -28,7 +29,7 @@ export async function updateOrderStatus(data: OrderStatusData) {
   } else if (transactionStatus === 'settlement') {
     await prisma.order.update({
       where: { id: data.order_id },
-      data: { status: 'PAID' },
+      data: { status: OrderStatus.PAID },
     });
   } else if (
     transactionStatus === 'cancel' ||
@@ -38,12 +39,12 @@ export async function updateOrderStatus(data: OrderStatusData) {
   ) {
     await prisma.order.update({
       where: { id: data.order_id },
-      data: { status: 'CANCELLED' },
+      data: { status: OrderStatus.PAYMENT_DECLINED },
     });
   } else if (transactionStatus === 'pending') {
     await prisma.order.update({
       where: { id: data.order_id },
-      data: { status: 'PENDING_PAYMENT' },
+      data: { status: OrderStatus.PENDING_PAYMENT },
     });
   }
 }

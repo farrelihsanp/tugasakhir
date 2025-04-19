@@ -5,6 +5,7 @@ import {
   updateStore,
   deleteStore,
   getStoreById,
+  getStoreBySlug,
   getAllStores,
   getNearestStore,
 } from '../controllers/store-controller.js';
@@ -29,6 +30,9 @@ router.delete('/:id', ...protectedRoute, deleteStore);
 
 // Get a store by ID
 router.get('/someStore/:id', getStoreById);
+
+// Get a store by slug
+router.get('/store-slug/:storeSlug', getStoreBySlug);
 
 // Get all stores
 router.get('/', getAllStores);

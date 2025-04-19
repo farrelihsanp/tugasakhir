@@ -2,7 +2,8 @@ import express from 'express';
 import {
   createOrder,
   payWithManualTransfer,
-  // payWithMidTrans,
+  payWithMidTrans,
+  orderNotification,
   uploadPaymentProof,
   getAllOrdersStore,
   cancelOrder,
@@ -30,12 +31,11 @@ router
   .route('/manual-transfer/:orderId')
   .put(verifyToken, roleGuard(['CUSTOMERS']), payWithManualTransfer);
 
-// Create a new order with Midtrans
-// router
-//   .route('/create-order-midtrans/:storeSlug')
-//   .post(verifyToken, roleGuard(['CUSTOMERS']), payWithMidTrans);
+router
+  .route('/create-order-midtrans/:orderId')
+  .put(verifyToken, roleGuard(['CUSTOMERS']), payWithMidTrans);
 
-// Upload payment proof for bank transfer
+router.route('/notification').post(orderNotification);
 
 router
   .route('/upload-payment-proof/:orderId')
@@ -48,12 +48,12 @@ router
 
 // Cancel an order
 router
-  .route('/cancel-order')
-  .put(verifyToken, roleGuard(['CUSTOMERS']), cancelOrder);
+  .route('/cancel-order/:orderId')
+  .delete(verifyToken, roleGuard(['CUSTOMERS']), cancelOrder);
 
 // order confirmed
 router
-  .route('/order-confirmed')
+  .route('/order-confirmed/:orderId')
   .put(verifyToken, roleGuard(['CUSTOMERS']), orderConfirmed);
 
 // get all orders customer

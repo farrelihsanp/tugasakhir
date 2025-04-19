@@ -1,3 +1,5 @@
+// DONE
+
 'use client';
 
 import { useState, useEffect } from 'react';
@@ -28,9 +30,6 @@ const OrderStatusPage = () => {
           {
             method: 'GET',
             credentials: 'include',
-            headers: {
-              'Content-Type': 'application/json',
-            },
           },
         );
 
@@ -51,12 +50,11 @@ const OrderStatusPage = () => {
   const handleCancelOrder = async (orderId: number) => {
     try {
       const response = await fetch(
-        'http://localhost:8000/api/v1/cancel-order',
+        `http://localhost:8000/api/v1/cancel-order/${orderId}`,
         {
-          method: 'POST',
-          body: JSON.stringify({ orderId }),
-          headers: { 'Content-Type': 'application/json' },
+          method: 'DELETE',
           credentials: 'include',
+          headers: { 'Content-Type': 'application/json' },
         },
       );
 
@@ -72,6 +70,9 @@ const OrderStatusPage = () => {
             : order,
         ),
       );
+      setTimeout(() => {
+        window.location.reload();
+      }, 2000);
     } catch (error: unknown) {
       console.error('Error cancelling order:', error);
       toast.error('Error cancelling the order');
@@ -81,12 +82,11 @@ const OrderStatusPage = () => {
   const handleConfirmOrder = async (orderId: number) => {
     try {
       const response = await fetch(
-        'http://localhost:8000/api/v1/order-confirmed',
+        `http://localhost:8000/api/v1/order-confirmed/${orderId}`,
         {
-          method: 'POST',
-          body: JSON.stringify({ orderId }),
-          headers: { 'Content-Type': 'application/json' },
+          method: 'PUT',
           credentials: 'include',
+          headers: { 'Content-Type': 'application/json' },
         },
       );
 
@@ -102,6 +102,9 @@ const OrderStatusPage = () => {
             : order,
         ),
       );
+      setTimeout(() => {
+        window.location.reload();
+      }, 2000);
     } catch (error: unknown) {
       console.error('Error confirming order:', error);
       toast.error('Error confirming the order');
@@ -200,7 +203,7 @@ const OrderStatusPage = () => {
             </div>
             <div className="mt-10">
               <Link
-                href={`/dashboard/${user?.username}/my-orders/${order.slug}`}
+                href={`/dashboard/${user?.username}/my-orders/${order.id}`}
                 className="text-blue-600"
               >
                 View Order Detail

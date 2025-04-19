@@ -64,6 +64,11 @@ export const addToCart = async (
       return;
     }
 
+    // const priceToUse =
+    //   storeProduct.priceAfterDiscount.toNumber() > 0
+    //     ? storeProduct.priceAfterDiscount
+    //     : storeProduct.price;
+
     let cartItem = await prisma.cartItem.findFirst({
       where: {
         cartId: cart.id,
@@ -73,12 +78,21 @@ export const addToCart = async (
 
     const totalPrice = Number(storeProduct.price) * quantity;
 
+    const totalPriceAfterDiscount =
+      Number(storeProduct.priceAfterDiscount) * quantity;
+
+    const priceAfterDiscount = Number(storeProduct.priceAfterDiscount);
+
     if (cartItem) {
       cartItem = await prisma.cartItem.update({
         where: { id: cartItem.id },
         data: {
           quantity: cartItem.quantity + quantity,
           total: cartItem.total + totalPrice,
+          priceAfterDiscount: priceAfterDiscount > 0 ? priceAfterDiscount : 0,
+          totalAfterDiscount:
+            (cartItem.totalAfterDiscount || 0) +
+            (totalPriceAfterDiscount ? totalPriceAfterDiscount : 0),
         },
       });
     } else {
@@ -89,7 +103,11 @@ export const addToCart = async (
           quantity,
           total: totalPrice,
           cartId: cart.id,
-          price: storeProduct.price,
+          price: Number(storeProduct.price),
+          priceAfterDiscount: priceAfterDiscount ? priceAfterDiscount : 0,
+          totalAfterDiscount: totalPriceAfterDiscount
+            ? totalPriceAfterDiscount
+            : 0,
         },
       });
     }
@@ -119,6 +137,7 @@ export const increaseQuantityProduct = async (
       res.status(401).json({ error: 'Unauthorized' });
       return;
     }
+
     if (!cartItemId || !quantity) {
       res.status(400).json({ error: 'Cart item ID and quantity are required' });
       return;
@@ -134,22 +153,32 @@ export const increaseQuantityProduct = async (
       return;
     }
 
-    if (cartItem.storeProduct.stock < quantity + cartItem.quantity) {
+    const totalRequestedQuantity = cartItem.quantity + quantity;
+
+    if (cartItem.storeProduct.stock < totalRequestedQuantity) {
       res.status(400).json({ error: 'Not enough stock available' });
       return;
     }
 
-    await prisma.cartItem.update({
+    const hasDiscount = Number(cartItem.storeProduct.priceAfterDiscount) > 0;
+
+    const updatedItem = await prisma.cartItem.update({
       where: { id: cartItemId },
       data: {
-        quantity: { increment: quantity },
-        total:
-          Number(cartItem.storeProduct.price) * (cartItem.quantity + quantity),
+        quantity: totalRequestedQuantity,
+        total: Number(cartItem.storeProduct.price) * totalRequestedQuantity,
+        totalAfterDiscount: hasDiscount
+          ? Number(cartItem.storeProduct.priceAfterDiscount) *
+            totalRequestedQuantity
+          : null,
       },
     });
 
-    res.status(200).json({ message: 'Update quantity successfully' });
-    return;
+    res.status(200).json({
+      ok: true,
+      message: 'Quantity increased successfully',
+      data: updatedItem,
+    });
   } catch (error) {
     console.error('Error updating quantity:', error);
     next(error);
@@ -185,25 +214,30 @@ export const decreaseQuantityProduct = async (
     }
 
     const newQuantity = cartItem.quantity - quantity;
-    if (newQuantity < 0) {
-      res.status(400).json({ error: 'Quantity cannot be negative' });
-      return;
-    }
-    if (newQuantity === 0) {
-      res.status(400).json({ error: 'Cannot decrease to 0' });
+
+    if (newQuantity < 1) {
+      res.status(400).json({ error: 'Quantity must be at least 1' });
       return;
     }
 
-    await prisma.cartItem.update({
+    const hasDiscount = +cartItem.storeProduct.priceAfterDiscount > 0;
+
+    const updatedCartItem = await prisma.cartItem.update({
       where: { id: cartItemId },
       data: {
         quantity: newQuantity,
         total: Number(cartItem.storeProduct.price) * newQuantity,
+        totalAfterDiscount: hasDiscount
+          ? Number(cartItem.storeProduct.priceAfterDiscount) * newQuantity
+          : null,
       },
     });
 
-    res.status(200).json({ message: 'Update quantity successfully' });
-    return;
+    res.status(200).json({
+      ok: true,
+      message: 'Quantity updated successfully',
+      data: updatedCartItem,
+    });
   } catch (error) {
     console.error('Error updating quantity:', error);
     next(error);
@@ -255,8 +289,10 @@ export const getTotalAmountCart = async (
     }
 
     const cart = await prisma.cart.findUnique({
-      where: { userId: userId },
-      include: { cartItems: true },
+      where: { userId },
+      include: {
+        cartItems: true,
+      },
     });
 
     if (!cart) {
@@ -264,19 +300,37 @@ export const getTotalAmountCart = async (
       return;
     }
 
-    const totalAmount = cart.cartItems.reduce(
-      (total, item) => total + item.total,
-      0,
-    );
+    let totalWithoutDiscount = 0;
+    let totalWithDiscount = 0;
+
+    cart.cartItems.map((item) => {
+      const price = Number(item.price);
+      const priceAfterDiscount = item.priceAfterDiscount
+        ? Number(item.priceAfterDiscount)
+        : null;
+
+      const quantity = item.quantity;
+
+      if (priceAfterDiscount !== null && priceAfterDiscount > 0) {
+        const totalAfterDisc = priceAfterDiscount * quantity;
+        totalWithDiscount += totalAfterDisc;
+      } else {
+        const total = price * quantity;
+        totalWithoutDiscount += total;
+      }
+
+      return item;
+    });
+
+    const finalTotal = totalWithoutDiscount + totalWithDiscount;
 
     res.status(200).json({
       ok: true,
-      message: 'Total amount retrieved successfully',
-      data: { totalAmount },
+      message: 'Total amount calculated successfully',
+      data: finalTotal,
     });
-    return;
   } catch (error) {
-    console.error('Error retrieving total amount:', error);
+    console.error('Error calculating total amount:', error);
     next(error);
   }
 };
@@ -337,8 +391,10 @@ export const checkout = async (
     }
 
     const cart = await prisma.cart.findUnique({
-      where: { userId: userId },
-      include: { cartItems: true },
+      where: { userId },
+      include: {
+        cartItems: true,
+      },
     });
 
     if (!cart) {
@@ -346,35 +402,58 @@ export const checkout = async (
       return;
     }
 
-    const totalAmount = cart.cartItems.reduce(
-      (total, item) => total + item.total,
-      0,
-    );
+    let totalWithoutDiscount = 0;
+    let totalWithDiscount = 0;
+
+    cart.cartItems.map((item) => {
+      const price = Number(item.price);
+      const priceAfterDiscount = item.priceAfterDiscount
+        ? Number(item.priceAfterDiscount)
+        : null;
+
+      const quantity = item.quantity;
+
+      if (priceAfterDiscount !== null && priceAfterDiscount > 0) {
+        const totalAfterDisc = priceAfterDiscount * quantity;
+        totalWithDiscount += totalAfterDisc;
+      } else {
+        const total = price * quantity;
+        totalWithoutDiscount += total;
+      }
+
+      return item;
+    });
+
+    const finalTotal = totalWithoutDiscount + totalWithDiscount;
 
     await prisma.cartValueCalculation.upsert({
       where: { cartId: cart.id },
-      create: {
-        cart: { connect: { id: cart.id } },
-        totalAmountCart: totalAmount,
+      update: {
+        totalAmountCart: finalTotal,
       },
-      update: { totalAmountCart: totalAmount },
+      create: {
+        cartId: cart.id,
+        totalAmountCart: finalTotal,
+      },
     });
 
+    // ------------------------------------------------------------------------
+
     const finalData = await prisma.cart.findUnique({
-      where: { userId: userId },
+      where: { userId },
       include: {
         CartValueCalculation: true,
+        DiscountReport: true,
       },
     });
 
     res.status(200).json({
       ok: true,
-      message: 'Total amount retrieved successfully',
+      message: 'Checkout calculation successful',
       data: finalData,
     });
-    return;
   } catch (error) {
-    console.error('Error retrieving total amount:', error);
-    next(error);
+    console.error('Error during checkout:', error);
+    return next(error);
   }
 };
