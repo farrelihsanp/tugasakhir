@@ -2,9 +2,14 @@
 
 import React, { useState, useEffect } from 'react';
 import { Store } from '@/types/types';
-import { toast } from 'react-toastify'; // Import Toastify
+import { toast } from 'react-toastify';
+import { useRouter } from 'next/navigation';
+import { useParams } from 'next/navigation';
 
 const CreateAdminForm: React.FC = () => {
+  const router = useRouter();
+  const { userSlug } = useParams();
+
   const [stores, setStores] = useState<Store[]>([]);
   const [formData, setFormData] = useState({
     name: '',
@@ -100,20 +105,27 @@ const CreateAdminForm: React.FC = () => {
           storeId: '',
           adminImage: null,
         });
+        router.push(
+          `http://localhost:3000/dashboard/${userSlug}/manage-store-admin`,
+        );
+        setTimeout(() => {
+          window.location.reload();
+        }, 1000);
       } else {
         const errorData = await response.json();
         setError(errorData.message);
+        toast.error(`Error: ${errorData.message}`);
       }
     } catch (error) {
       console.error('Error creating admin:', error);
       toast.error('An error occurred while creating the admin');
     } finally {
-      setLoading(false);
+      setLoading(false); // Stop loading once the request is complete
     }
   };
 
   return (
-    <div className="flex justify-center items-center min-h-screen bg-gray-100">
+    <div className="flex justify-center items-center min-h-screen ">
       <div className="w-full max-w-md p-8 bg-white shadow-lg rounded-lg">
         <h1 className="text-2xl font-semibold text-center text-gray-800 mb-6">
           Create Admin
@@ -199,8 +211,8 @@ const CreateAdminForm: React.FC = () => {
 
           <button
             type="submit"
-            className="w-full py-2 mt-4 bg-indigo-500 text-white font-semibold rounded-md shadow-md hover:bg-indigo-600"
-            disabled={loading} // Disable button while loading
+            className="w-full py-2 mt-4 bg-primary text-white font-semibold rounded-md shadow-md hover:bg-indigo-600"
+            disabled={loading}
           >
             {loading ? 'Creating Admin...' : 'Create Admin'}{' '}
             {/* Show loading text */}

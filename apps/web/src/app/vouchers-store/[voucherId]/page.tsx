@@ -4,7 +4,6 @@ import { useEffect, useState } from 'react';
 import Image from 'next/image';
 import { useParams } from 'next/navigation';
 
-// DONE
 type Voucher = {
   id: number;
   code: string;
@@ -24,7 +23,6 @@ type Voucher = {
 
 export default function VouchersStore() {
   const [voucher, setVoucher] = useState<Voucher | undefined>(undefined);
-
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -61,72 +59,81 @@ export default function VouchersStore() {
 
   if (loading)
     return (
-      <div className="flex justify-center items-center h-screen bg-gray-50">
-        <p className="text-gray-500 text-lg">Loading vouchers...</p>
+      <div className="flex justify-center items-center h-screen bg-gray-100">
+        <p className="text-gray-500 text-lg">Loading voucher...</p>
       </div>
     );
+
   if (error)
     return (
-      <div className="flex justify-center items-center h-screen bg-gray-50">
+      <div className="flex justify-center items-center h-screen bg-gray-100">
         <p className="text-red-500 text-lg">Error: {error}</p>
       </div>
     );
 
   return (
-    <section className="min-h-screen bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
-      <div className="max-w-3xl mx-auto bg-white p-8 rounded-lg shadow-lg">
-        {voucher ? (
-          <>
-            <h1 className="text-center text-4xl font-semibold text-gray-800">
-              {voucher.name}
-            </h1>
-            <p className="text-center text-lg text-gray-500 mt-2">
+    <section className="h-[75vh] flex items-center justify-center py-10 px-4">
+      {voucher ? (
+        <div className="flex max-w-4xl w-full bg-white rounded-lg overflow-hidden shadow-lg">
+          {/* LEFT: DISKON BESAR */}
+          <div className="w-1/4 bg-white border-r border-dashed border-gray-300 flex flex-col items-center justify-center px-4 py-10">
+            <h2 className="text-3xl font-bold text-black mb-2">
+              {voucher.code}
+            </h2>
+            <p className="text-[10px] text-center text-gray-500 italic mt-4">
               {voucher.description}
             </p>
-            <div className="flex justify-center mt-6">
-              <Image
-                src={voucher.voucherImage}
-                alt={voucher.name}
-                width={350}
-                height={350}
-                className="rounded-lg shadow-md"
-              />
+          </div>
+
+          {/* MIDDLE: DETAIL VOUCHER */}
+          <div className="w-1/2 bg-primary text-quaternary px-6 py-8 relative">
+            <h3 className="text-3xl font-bold mb-1">{voucher.name}</h3>
+            <div className="h-1 w-14 bg-quaternary mb-4"></div>
+            <p className="text-sm mb-6">{voucher.description}</p>
+            <p className="text-xs mb-1">
+              Valid from: {new Date(voucher.startDate).toLocaleDateString()}
+            </p>
+            <p className="text-xs mb-1">
+              Until: {new Date(voucher.endDate).toLocaleDateString()}
+            </p>
+            <p className="text-xs mb-1">
+              Min Purchase: Rp {voucher.minPurchase.toLocaleString()}
+            </p>
+            <p className="text-xs mb-1">
+              Max Reduction: Rp {voucher.maxPriceReduction.toLocaleString()}
+            </p>
+            <p className="text-xs mb-1">
+              Stock Left: {voucher.stockVoucherAdmin}
+            </p>
+            <p className="text-xs mt-3">
+              Status:{' '}
+              <span
+                className={`font-semibold ${
+                  voucher.isActive ? 'text-quaternary' : 'text-red-500'
+                }`}
+              >
+                {voucher.isActive ? 'Active' : 'Inactive'}
+              </span>
+            </p>
+          </div>
+
+          {/* RIGHT: GAMBAR */}
+          <div className="w-1/4 relative">
+            <Image
+              src={voucher.voucherImage.trim()}
+              alt={voucher.name}
+              layout="fill"
+              objectFit="cover"
+              className="h-full w-full"
+            />
+            <div className="absolute top-0 right-0 bg-tertiary text-quaternary px-2 py-1 text-[10px] font-semibold tracking-widest rounded-bl">
+              NO. {voucher.id.toString().padStart(2, '0')}
             </div>
-            <div className="mt-6 space-y-4 text-center">
-              <p className="text-xl text-gray-700">
-                <strong>Voucher Code:</strong> {voucher.code}
-              </p>
-              <p className="text-xl text-gray-700">
-                <strong>Discount:</strong> {voucher.value}% off
-              </p>
-              <p className="text-lg text-gray-600 mt-2">
-                Valid from {new Date(voucher.startDate).toLocaleDateString()} to{' '}
-                {new Date(voucher.endDate).toLocaleDateString()}
-              </p>
-              <p className="text-lg text-gray-600">
-                <strong>Minimum Purchase:</strong> Rp{' '}
-                {voucher.minPurchase.toLocaleString()}
-              </p>
-              <p className="text-lg text-gray-600">
-                <strong>Max Price Reduction:</strong> Rp{' '}
-                {voucher.maxPriceReduction.toLocaleString()}
-              </p>
-              <p className="text-lg text-gray-600">
-                <strong>Remaining Stock:</strong> {voucher.stockVoucherAdmin}
-              </p>
-              <p className="text-lg mt-4">
-                {voucher.isActive ? (
-                  <span className="text-green-500 font-medium">Active</span>
-                ) : (
-                  <span className="text-red-500 font-medium">Inactive</span>
-                )}
-              </p>
-            </div>
-          </>
-        ) : (
-          <p className="text-center text-red-500 text-xl">Voucher not found</p>
-        )}
-      </div>
+          </div>
+        </div>
+      ) : (
+        <p className="text-center text-red-500 text-xl">Voucher not found</p>
+      )}
     </section>
   );
 }

@@ -38,14 +38,14 @@ const ManageStoresPage: React.FC = () => {
   }, []);
 
   return (
-    <section className="min-h-screen flex items-center justify-center bg-gray-50 py-8">
-      <div className="w-full max-w-4xl p-8 bg-white rounded-lg shadow-lg transform transition duration-300 hover:scale-105">
+    <section className="min-h-screen flex items-center justify-center py-8">
+      <div className="w-full max-w-4xl p-8 bg-white rounded-lg shadow-lg">
         <h2 className="text-3xl font-semibold text-center text-gray-900 mb-6">
           Manage Product
         </h2>
         {error && <p className="text-red-500 text-center mb-4">{error}</p>}
         <table className="min-w-full table-auto border-separate border-spacing-0 rounded-lg overflow-hidden shadow-md">
-          <thead className="bg-blue-600 text-white">
+          <thead className="bg-primary text-white">
             <tr>
               <th className="px-6 py-3 text-left">ID</th>
               <th className="px-6 py-3 text-left">Store Name</th>
@@ -67,17 +67,9 @@ const ManageStoresPage: React.FC = () => {
                     <div>
                       <Link
                         href={`manage-products/${store.slug}`}
-                        className="text-blue-500 hover:text-blue-700 transition-colors"
+                        className="text-quaternary bg-primary py-2 px-4 rounded hover:scale-105 transition-all duration-300"
                       >
                         View
-                      </Link>
-                    </div>
-                    <div>
-                      <Link
-                        href={`manage-store/edit-store/${store.id}`}
-                        className="text-green-500 hover:text-green-700 transition-colors"
-                      >
-                        Edit
                       </Link>
                     </div>
                   </div>
@@ -86,21 +78,23 @@ const ManageStoresPage: React.FC = () => {
             ))}
           </tbody>
         </table>
-        <div className="mt-6 text-center">
-          <Link
-            href="manage-products/all-products"
-            className="bg-blue-500 text-white px-6 py-3 rounded-md hover:bg-blue-700"
-          >
-            Product
-          </Link>
-        </div>
-        <div className="mt-6 text-center">
-          <Link
-            href="manage-products/category"
-            className="bg-blue-500 text-white px-6 py-3 rounded-md hover:bg-blue-700"
-          >
-            Category
-          </Link>
+        <div className="flex justify-center items-center mt-3 gap-4">
+          <div className="mt-6 text-center">
+            <Link
+              href="manage-products/all-products"
+              className="bg-primary text-white px-6 py-3 rounded-md hover:bg-blue-700"
+            >
+              Product
+            </Link>
+          </div>
+          <div className="mt-6 text-center">
+            <Link
+              href="manage-products/category"
+              className="bg-primary text-white px-6 py-3 rounded-md hover:bg-blue-700"
+            >
+              Category
+            </Link>
+          </div>
         </div>
       </div>
     </section>

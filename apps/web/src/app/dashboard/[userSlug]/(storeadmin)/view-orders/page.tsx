@@ -71,7 +71,7 @@ export default function PendingOrdersPage() {
   }, [storeId]);
 
   return (
-    <section className="min-h-screen flex justify-center items-center bg-gray-100">
+    <section className="min-h-screen flex justify-center items-center ">
       <div className="w-full max-w-3xl mx-auto p-6 bg-white rounded-lg shadow-lg">
         <h1 className="text-3xl font-semibold text-center text-gray-800 mb-6">
           Pending Orders
@@ -109,12 +109,12 @@ export default function PendingOrdersPage() {
                   </p>
                 </div>
                 <div className="text-right">
-                  <p className="text-xl font-semibold text-blue-600">
+                  <p className="text-xl font-semibold text-primary">
                     Rp {order.totalAmount.toLocaleString('id-ID')}
                   </p>
                   <Link
                     href={`view-orders/${order.id}`}
-                    className="text-sm text-white bg-blue-600 px-6 py-3 rounded-md hover:bg-blue-700 transition duration-200 mt-3 inline-block"
+                    className="text-sm text-white bg-primary px-6 py-3 rounded-md hover:bg-blue-700 transition duration-200 mt-3 inline-block"
                   >
                     View Details
                   </Link>

@@ -65,14 +65,14 @@ const ManageStoresPage: React.FC = () => {
   };
 
   return (
-    <section className="min-h-screen flex items-center justify-center bg-gray-50 py-8">
-      <div className="w-full max-w-4xl p-8 bg-white rounded-lg shadow-lg transform transition duration-300 hover:scale-105">
+    <section className="min-h-screen flex items-center justify-center  py-8">
+      <div className="w-full max-w-4xl p-8 bg-white rounded-lg shadow-lg">
         <h2 className="text-3xl font-semibold text-center text-gray-900 mb-6">
           Manage Stores
         </h2>
         {error && <p className="text-red-500 text-center mb-4">{error}</p>}
         <table className="min-w-full table-auto border-separate border-spacing-0 rounded-lg overflow-hidden shadow-md">
-          <thead className="bg-blue-600 text-white">
+          <thead className="bg-primary text-white">
             <tr>
               <th className="px-6 py-3 text-left">ID</th>
               <th className="px-6 py-3 text-left">Store Name</th>
@@ -123,7 +123,7 @@ const ManageStoresPage: React.FC = () => {
         </table>
         <div className="mt-6 text-center">
           <Link href="manage-store/create-store">
-            <button className="bg-blue-500 text-white px-6 py-3 rounded-md hover:bg-blue-700">
+            <button className="bg-primary text-white px-6 py-3 rounded-md hover:bg-blue-700">
               Create Store
             </button>
           </Link>

@@ -61,17 +61,22 @@ const VoucherPage = () => {
 
     try {
       const response = await fetch(
-        `http://localhost:8000/api/v1/delete-voucher/${voucherId}`,
+        'http://localhost:8000/api/v1/delete-voucher',
         {
           method: 'DELETE',
           credentials: 'include',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ voucherId }),
         },
       );
-
       const data = await response.json();
-      if (data.ok) {
+      if (data) {
         toast.success('Voucher deleted successfully');
-        fetchVouchers();
+        setTimeout(() => {
+          window.location.reload();
+        }, 1500);
       } else {
         toast.error('Failed to delete voucher');
       }
@@ -83,60 +88,90 @@ const VoucherPage = () => {
     }
   };
 
-  return (
-    <section className="min-h-screen flex flex-col items-center justify-center bg-gray-50">
-      <div className="container max-w-3xl mx-auto p-8 bg-white shadow-xl rounded-xl border border-gray-200">
-        <h2 className="text-3xl font-semibold mb-6 text-center text-gray-800">
-          Vouchers
-        </h2>
-        {error && <p className="text-red-600 mb-4 text-center">{error}</p>}
+  if (loading)
+    return <p className="text-center text-gray-500">Loading vouchers...</p>;
+  if (error) return <p className="text-center text-red-500">Error: {error}</p>;
 
-        <div className="mb-6">
-          <Link
-            href={`/dashboard/${user?.username}/vouchers/create`}
-            className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition duration-300"
-          >
-            Create New Voucher
-          </Link>
+  return (
+    <section className="h-[75vh] flex flex-col items-center justify-center py-10">
+      <div className="max-w-5xl mx-auto px-4">
+        <div className="flex justify-center items-center mb-8">
+          <div className="flex flex-col items-center space-y-4">
+            <h2 className="text-3xl font-bold text-tertiary">
+              Manage Vouchers
+            </h2>
+            <div className="flex space-x-2 w-full max-w-md">
+              <Link
+                href={`/dashboard/${user?.username}/vouchers/create`}
+                className="bg-primary hover:bg-green-700 text-white py-2 px-6 rounded-lg transition duration-300 text-center w-full"
+              >
+                Create New Voucher
+              </Link>
+            </div>
+          </div>
         </div>
 
-        <div className="space-y-4">
-          {vouchers.map((voucher) => (
-            <div
-              key={voucher.id}
-              className="flex justify-between items-center p-4 bg-gray-100 rounded-lg"
-            >
-              <div>
-                <h3 className="font-medium text-gray-800">{voucher.name}</h3>
-                <p className="text-gray-600">{voucher.description}</p>
-              </div>
-              <div className="flex space-x-4">
-                <div>
-                  <button
-                    onClick={() => handleUpdateVoucher(voucher.code)}
-                    className="px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700 transition duration-300"
-                    disabled={loading}
-                  >
-                    {loading ? 'Updating...' : 'Update'}
-                  </button>
+        <div className="grid gap-6 md:grid-cols-2 w-full">
+          {vouchers.length > 0 &&
+            vouchers.map((voucher) => (
+              <div
+                key={voucher.id}
+                className="flex w-full border border-gray-300 rounded-md overflow-hidden shadow-md"
+              >
+                {/* LEFT - IMAGE + INFO */}
+                <div className="w-2/3 p-6 text-quaternary relative overflow-hidden bg-tertiary">
+                  <div
+                    className="absolute inset-0 z-0"
+                    style={{
+                      backgroundImage: `url(${voucher.voucherImage.trim()})`,
+                      backgroundSize: 'cover',
+                      backgroundPosition: 'center',
+                      opacity: 0.5,
+                    }}
+                  ></div>
+
+                  <div className="relative z-20">
+                    <h1 className="text-2xl font-bold mb-2">{voucher.name}</h1>
+                    <p className="text-sm">{voucher.description}</p>
+                  </div>
                 </div>
-                <button
-                  onClick={() => handleDeleteVoucher(voucher.id)}
-                  className="px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700 transition duration-300"
-                  disabled={loading}
-                >
-                  {loading ? 'Deleting...' : 'Delete'}
-                </button>
-                <button
-                  onClick={() => handleGetVoucherById(voucher.id)}
-                  className="px-4 py-2 bg-yellow-600 text-white rounded-md hover:bg-yellow-700 transition duration-300"
-                  disabled={loading}
-                >
-                  {loading ? 'Fetching...' : 'Get Details'}
-                </button>
+
+                {/* RIGHT - DETAILS */}
+                <div className="w-1/3 bg-quaternary text-tertiary px-4 py-6 flex flex-col justify-between border-l border-dashed border-gray-400">
+                  <div>
+                    <p className="text-xs mb-2">Use by:</p>
+                    <p className="font-bold text-sm mb-4">
+                      {new Date(voucher.endDate).toLocaleDateString(undefined, {
+                        day: '2-digit',
+                        month: 'long',
+                        year: 'numeric',
+                      })}
+                    </p>
+                    <button
+                      onClick={() => handleUpdateVoucher(voucher.code)}
+                      className="bg-primary text-white px-3 py-1 rounded text-sm font-semibold hover:bg-green-700 transition"
+                    >
+                      Update
+                    </button>
+                    <button
+                      onClick={() => handleDeleteVoucher(voucher.id)}
+                      className="bg-primary text-white px-3 py-1 rounded text-sm font-semibold hover:bg-red-700 transition mt-2"
+                    >
+                      Delete
+                    </button>
+                    <button
+                      onClick={() => handleGetVoucherById(voucher.id)}
+                      className="bg-primary text-white px-3 py-1 rounded text-sm font-semibold hover:bg-yellow-700 transition mt-2"
+                    >
+                      View Details
+                    </button>
+                  </div>
+                  <p className="text-[10px] mt-4 italic">
+                    Excludes Sporting items and golf equipment.
+                  </p>
+                </div>
               </div>
-            </div>
-          ))}
+            ))}
         </div>
       </div>
     </section>

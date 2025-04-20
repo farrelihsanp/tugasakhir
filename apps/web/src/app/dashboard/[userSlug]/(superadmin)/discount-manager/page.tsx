@@ -4,24 +4,7 @@ import React, { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { toast } from 'react-toastify';
 import Link from 'next/link';
-
-export type DiscountType = 'AMOUNT' | 'PERCENTAGE' | 'BUY_1_GET_1';
-
-export interface DiscountProduct {
-  productId: number;
-}
-
-export interface Discount {
-  id: number;
-  name: string;
-  type: DiscountType;
-  value: number;
-  minPurchase: number;
-  maxDiscount: number;
-  expiredAt: string;
-  isActive: boolean;
-  DiscountProduct: DiscountProduct[];
-}
+import { Discount } from '@/types/types';
 
 export default function DiscountsPage() {
   const [discounts, setDiscounts] = useState<Discount[]>([]);
@@ -33,6 +16,10 @@ export default function DiscountsPage() {
     try {
       const res = await fetch('http://localhost:8000/api/v1/all-discounts', {
         credentials: 'include',
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+        },
       });
       const json = await res.json();
       if (json.ok) {
@@ -122,7 +109,9 @@ export default function DiscountsPage() {
                   </td>
                   <td className="px-4 py-2 space-x-2">
                     <button
-                      onClick={() => router.push(`/discounts/${discount.id}`)}
+                      onClick={() =>
+                        router.push(`discount-manager/${discount.id}`)
+                      }
                       className="text-blue-600 hover:underline"
                     >
                       Detail

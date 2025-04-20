@@ -49,7 +49,7 @@ router
 
 router
   .route('/all-products')
-  .get(verifyToken, roleGuard(['SUPERADMIN']), getAllProducts);
+  .get(verifyToken, roleGuard(['SUPERADMIN', 'STOREADMIN']), getAllProducts);
 
 // Get a product by ID
 router

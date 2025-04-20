@@ -87,7 +87,7 @@ export default function LoginPage() {
       {/* Left Background Image */}
       <div className="w-1/2 relative">
         <Image
-          src="https://images.unsplash.com/photo-1628102491629-778571d893a3?q=80&w=1760&auto=format&fit=crop"
+          src="https://images.unsplash.com/photo-1614907634002-65ac4cb74acb?q=80&w=1372&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
           alt="Login Illustration"
           layout="fill"
           objectFit="cover"
@@ -98,7 +98,7 @@ export default function LoginPage() {
       {/* Right Form */}
       <div className="w-1/2 flex items-center justify-center bg-white px-10">
         <div className="max-w-md w-full">
-          <h1 className="text-4xl font-bold mb-6 text-center">Welcome Back</h1>
+          <h1 className="text-4xl font-bold mb-6 text-center">Login</h1>
           <form onSubmit={handleLogin} className="space-y-4">
             <div>
               <input

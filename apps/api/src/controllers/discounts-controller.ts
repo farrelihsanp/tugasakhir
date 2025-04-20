@@ -376,7 +376,11 @@ export const getDiscountById = async (
     const discount = await prisma.discount.findUnique({
       where: { id: Number(discountId) },
       include: {
-        DiscountProduct: true,
+        DiscountProduct: {
+          include: {
+            Product: true,
+          },
+        },
       },
     });
 

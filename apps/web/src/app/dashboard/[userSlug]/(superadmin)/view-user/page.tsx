@@ -7,6 +7,7 @@ import { User } from '@prisma/client';
 const AllUsersPage: React.FC = () => {
   const [users, setUsers] = useState<User[]>([]);
   const [error, setError] = useState<string>('');
+  const [loading, setLoading] = useState<{ [key: number]: boolean }>({});
 
   useEffect(() => {
     const fetchUsers = async () => {
@@ -37,6 +38,7 @@ const AllUsersPage: React.FC = () => {
 
   const deleteUser = async (id: number) => {
     if (window.confirm('Are you sure you want to delete this user?')) {
+      setLoading((prev) => ({ ...prev, [id]: true })); // Set loading true for the specific user
       try {
         const response = await fetch(
           `http://localhost:8000/api/v1/users/${id}`,
@@ -58,19 +60,21 @@ const AllUsersPage: React.FC = () => {
         if (err instanceof Error) {
           setError(`Error deleting user: ${err.message}`);
         }
+      } finally {
+        setLoading((prev) => ({ ...prev, [id]: false }));
       }
     }
   };
 
   return (
-    <section className="min-h-screen flex items-center justify-center bg-gray-50 py-8">
-      <div className="w-full max-w-4xl p-8 bg-white rounded-lg shadow-lg transform transition duration-300 hover:scale-105">
+    <section className="min-h-screen flex items-center justify-center  py-8">
+      <div className="w-full max-w-4xl p-8 bg-white rounded-lg shadow-lg">
         <h2 className="text-3xl font-semibold text-center text-gray-900 mb-6">
           All Users - Role Customers
         </h2>
         {error && <p className="text-red-500 text-center mb-4">{error}</p>}
         <table className="min-w-full table-auto border-separate border-spacing-0 rounded-lg overflow-hidden shadow-md">
-          <thead className="bg-blue-600 text-white">
+          <thead className="bg-primary text-white">
             <tr>
               <th className="px-6 py-3 text-left">ID</th>
               <th className="px-6 py-3 text-left">Name</th>
@@ -88,23 +92,29 @@ const AllUsersPage: React.FC = () => {
                 <td className="px-6 py-4">{user.name}</td>
                 <td className="px-6 py-4">{user.email}</td>
                 <td className="px-6 py-4">
-                  <div className="flex space-x-4">
-                    <div>
-                      <Link
-                        href={`view-user/${user.id}`}
-                        className="text-blue-500 hover:text-blue-700 transition-colors"
-                      >
-                        View
-                      </Link>
-                    </div>
-                    <div>
-                      <button
-                        onClick={() => deleteUser(user.id)}
-                        className="text-red-500 hover:text-red-700 transition-colors"
-                      >
-                        Delete
-                      </button>
-                    </div>
+                  <div className="flex space-x-4 justify-start">
+                    <Link
+                      href={`view-user/${user.id}`}
+                      className={`${
+                        loading[user.id]
+                          ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
+                          : 'text-blue-500 hover:text-blue-700 bg-blue-100 hover:bg-blue-200 transition-colors'
+                      } p-2 rounded-md`}
+                    >
+                      {loading[user.id] ? 'Loading...' : 'View'}
+                    </Link>
+
+                    <button
+                      onClick={() => deleteUser(user.id)}
+                      disabled={loading[user.id]} // Disable button while loading
+                      className={`${
+                        loading[user.id]
+                          ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
+                          : 'text-red-500 hover:text-red-700 bg-red-100 hover:bg-red-200 transition-colors'
+                      } p-2 rounded-md`}
+                    >
+                      {loading[user.id] ? 'Deleting...' : 'Delete'}
+                    </button>
                   </div>
                 </td>
               </tr>

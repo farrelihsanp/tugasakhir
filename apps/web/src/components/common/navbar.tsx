@@ -204,7 +204,7 @@ export default function Navbar() {
               <FaClipboardList /> Manage Orders
             </Link>
             <Link
-              href={`/dashboard/${user.username}/manage-vouchers`}
+              href={`/dashboard/${user.username}/vouchers`}
               className="flex items-center gap-2 text-sm hover:text-green-700"
             >
               <FaTags /> Manage Vouchers
@@ -214,7 +214,7 @@ export default function Navbar() {
 
         {user?.role === 'SUPERADMIN' && (
           <Link
-            href={`/${user.username}/my-profile`}
+            href={`/profile/${user.username}`}
             className="flex items-center gap-2 text-sm hover:text-green-700"
           >
             <FaUserShield /> My Profile

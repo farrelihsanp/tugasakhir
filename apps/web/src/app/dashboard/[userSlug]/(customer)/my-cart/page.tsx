@@ -116,7 +116,7 @@ export default function CartPage() {
           fill
           className="object-cover rounded-lg"
         />
-        <div className="absolute inset-0 backdrop-blur-sm bg-white/10 flex items-center justify-center rounded-lg">
+        <div className="absolute inset-0 backdrop-blur-xs bg-white/10 flex items-center justify-center rounded-lg">
           <h1 className="text-white text-4xl md:text-5xl font-bold">
             Shopping Cart
           </h1>

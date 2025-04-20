@@ -1,21 +1,17 @@
 'use client';
 
-// GAGAL DI FILTER CATEGORY
-
 import React, { useState } from 'react';
 import { useStoreContext } from '@/utility/StoreContext';
 import Image from 'next/image';
 import Link from 'next/link';
+import { FaChevronLeft, FaChevronRight } from 'react-icons/fa';
 
 const AllProductsPage = () => {
   const { products, loading, error, nearestStore, categories } =
     useStoreContext();
 
-  // Pagination state
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 6;
-
-  // Search state
   const [searchQuery, setSearchQuery] = useState<string>('');
   const [selectedCategory, setSelectedCategory] = useState<string>('');
 
@@ -26,6 +22,7 @@ const AllProductsPage = () => {
             categoryProduct.Category.id.toString() === selectedCategory,
         )
       : true;
+
     const matchesSearch = product.name
       .toLowerCase()
       .includes(searchQuery.toLowerCase());
@@ -34,12 +31,6 @@ const AllProductsPage = () => {
   });
 
   const totalPages = Math.ceil(filteredProducts.length / itemsPerPage);
-  const handlePrev = () => {
-    setCurrentPage((prev) => Math.max(prev - 1, 1));
-  };
-  const handleNext = () => {
-    setCurrentPage((prev) => Math.min(prev + 1, totalPages));
-  };
   const startIndex = (currentPage - 1) * itemsPerPage;
   const currentProducts = filteredProducts.slice(
     startIndex,
@@ -57,19 +48,19 @@ const AllProductsPage = () => {
     );
 
   return (
-    <div className="p-6 min-h-screen flex flex-col justify-center items-center bg-gray-50">
-      <h1 className="text-4xl font-bold mb-8 text-center text-gray-800">
-        Semua Produk di{' '}
-        <span className="text-blue-600">{nearestStore.name}</span>
+    <div className="p-6 min-h-screen flex flex-col justify-center items-center bg-quaternary">
+      <h1 className="text-4xl font-bold mb-8 text-center text-tertiary">
+        All Products <br />
+        <span className="text-primary text-5xl">{nearestStore.name}</span>
       </h1>
 
-      <div className="mb-8 w-full max-w-xl">
+      <div className="mb-6 w-full max-w-xl">
         <input
           type="text"
           placeholder="Cari produk..."
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
-          className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+          className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
         />
       </div>
 
@@ -77,7 +68,7 @@ const AllProductsPage = () => {
         <select
           value={selectedCategory}
           onChange={(e) => setSelectedCategory(e.target.value)}
-          className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+          className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
         >
           <option value="">Semua Kategori</option>
           {categories.map((category, index: number) => (
@@ -94,74 +85,95 @@ const AllProductsPage = () => {
         </p>
       ) : (
         <>
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-8 w-full max-w-7xl">
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 w-full max-w-3xl">
             {currentProducts.map((map) => (
-              <Link
+              <div
                 key={map.id}
-                href={`/${nearestStore.slug}/product/${map.slug}`}
-                className="block bg-white border border-gray-200 rounded-2xl overflow-hidden shadow-md hover:shadow-xl transition-transform transform hover:-translate-y-1"
+                className="border border-gray-200 rounded-lg overflow-hidden shadow hover:shadow-lg transition relative bg-white"
               >
-                {map.ProductImages?.[0]?.imageUrl && (
-                  <div className="relative w-full h-64">
+                {map.storeProducts[0].priceAfterDiscount > 0 && (
+                  <div className="absolute top-2 left-2 bg-red-600 text-white text-xs px-2 py-1 rounded">
+                    Sale
+                  </div>
+                )}
+
+                <Link
+                  href={`/${nearestStore.slug}/product/${map.slug}`}
+                  className="block"
+                >
+                  <div className="relative w-full h-52">
                     <Image
-                      src={map.ProductImages[0].imageUrl}
+                      src={
+                        map.ProductImages?.[0]?.imageUrl ||
+                        'https://dummyimage.com/600x400/90ee90/fff&text=Product'
+                      }
                       alt={map.name}
                       fill
                       className="object-cover"
                     />
                   </div>
-                )}
-                <div className="p-6">
-                  <h2 className="text-xl font-semibold mb-2 truncate text-gray-900">
-                    {map.name}
-                  </h2>
-                  <p className="text-base text-gray-500 line-clamp-2 mb-3">
-                    {map.excerpt}
-                  </p>
-                  <p className="text-sm text-gray-700">
-                    Stok: {map.storeProducts[0].stock}
-                  </p>
-                  <p className="text-green-600 font-bold text-xl mt-3">
-                    {map.storeProducts[0].priceAfterDiscount > 0 ? (
-                      <>
-                        <span className="line-through text-gray-600">
-                          Rp {map.storeProducts[0].price}
-                        </span>{' '}
-                        <span className="text-green-600">
-                          Rp {map.storeProducts[0].priceAfterDiscount}
-                        </span>
-                      </>
-                    ) : (
-                      <>
-                        <span className="text-green-600">
+                  <div className="p-4">
+                    <p className="text-xs text-gray-500 mb-1">
+                      {map.CategoryProduct[0]?.Category.name || 'Kategori'}
+                    </p>
+                    <h2 className="text-base font-semibold truncate mb-1 text-tertiary">
+                      {map.name}
+                    </h2>
+                    <p className="text-sm text-gray-500 line-clamp-2 mb-2">
+                      {map.excerpt}
+                    </p>
+                    <div className="text-sm mb-2">
+                      {map.storeProducts[0].priceAfterDiscount > 0 ? (
+                        <>
+                          <span className="line-through text-gray-400 mr-2">
+                            Rp {map.storeProducts[0].price}
+                          </span>
+                          <span className="text-primary font-semibold">
+                            Rp {map.storeProducts[0].priceAfterDiscount}
+                          </span>
+                        </>
+                      ) : (
+                        <span className="text-primary font-semibold">
                           Rp {map.storeProducts[0].price}
                         </span>
-                      </>
-                    )}
-                  </p>
-                </div>
-              </Link>
+                      )}
+                    </div>
+                    <div className="text-xs text-gray-600">
+                      Stok: {map.storeProducts[0].stock}
+                    </div>
+                    {/* <div className="mt-3">
+                      <button className="bg-primary text-quaternary w-full text-sm font-medium py-2 px-4 rounded hover:bg-green-700 transition">
+                        + Add
+                      </button>
+                    </div> */}
+                  </div>
+                </Link>
+              </div>
             ))}
           </div>
 
-          {/* Pagination controls */}
+          {/* Pagination */}
           <div className="flex justify-center items-center mt-10 gap-6">
             <button
-              onClick={handlePrev}
+              onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
               disabled={currentPage === 1}
-              className="px-5 py-2 bg-gray-300 text-gray-800 rounded-lg disabled:opacity-50 hover:bg-gray-400 transition"
+              className="p-2 bg-tertiary text-white rounded-full disabled:opacity-50 hover:bg-yellow-600 transition"
             >
-              &larr; Sebelumnya
+              <FaChevronLeft size={18} />
             </button>
-            <span className="text-gray-700 text-lg">
-              Halaman {currentPage} dari {totalPages}
+
+            <span className="text-tertiary text-sm font-semibold">
+              {currentPage} / {totalPages}
             </span>
+
             <button
-              onClick={handleNext}
+              onClick={() =>
+                setCurrentPage((prev) => Math.min(prev + 1, totalPages))
+              }
               disabled={currentPage === totalPages}
-              className="px-5 py-2 bg-gray-300 text-gray-800 rounded-lg disabled:opacity-50 hover:bg-gray-400 transition"
+              className="p-2 bg-tertiary text-white rounded-full disabled:opacity-50 hover:bg-yellow-600 transition"
             >
-              Selanjutnya &rarr;
+              <FaChevronRight size={18} />
             </button>
           </div>
         </>

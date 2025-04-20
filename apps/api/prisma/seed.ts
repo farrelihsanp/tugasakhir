@@ -207,9 +207,9 @@ async function main() {
     /* -------------------------------------------------------------------------- */
     const store1 = await prisma.store.create({
       data: {
-        name: 'Toko Amaya House',
+        name: 'Amaya Store',
         storeImage:
-          'https://i.pinimg.com/736x/a6/a6/80/a6a680d5757a99612ac553be1e3b9fe9.jpg',
+          'https://res.cloudinary.com/dm1cnsldc/image/upload/v1745114284/AMAYA-STORE_od2nxd.webp',
         address: 'Jl. Jatipadang Raya',
         city: 'Jakarta Selatan',
         province: 'DKI Jakarta',
@@ -226,9 +226,9 @@ async function main() {
 
     const store2 = await prisma.store.create({
       data: {
-        name: 'Toko Pasar Minggu',
+        name: 'Pasar Minggu Store',
         storeImage:
-          'https://i.pinimg.com/736x/a6/a6/80/a6a680d5757a99612ac553be1e3b9fe9.jpg',
+          'https://res.cloudinary.com/dm1cnsldc/image/upload/v1745113883/TOKO-PASAR-MINGGU_ftc20y.webp',
         address: 'Jl. Raya Ragunan',
         city: 'Jakarta Selatan',
         province: 'DKI Jakarta',
@@ -246,9 +246,9 @@ async function main() {
 
     const store3 = await prisma.store.create({
       data: {
-        name: 'Toko Kelontong Purwadhika',
+        name: 'Setiabudi Store',
         storeImage:
-          'https://i.pinimg.com/736x/a6/a6/80/a6a680d5757a99612ac553be1e3b9fe9.jpg',
+          'https://res.cloudinary.com/dm1cnsldc/image/upload/v1745114000/DALL_E_2025-04-20_08.53.09_-_A_large_and_spacious_grocery_store_with_the_name_Setiabudi_displayed_prominently_on_the_storefront._The_shop_should_have_a_modern_and_sleek_design_bmedn6.webp',
         address: 'Jl. Jaya No. 789',
         city: 'Bandung',
         province: 'Jawa Barat',
@@ -265,9 +265,9 @@ async function main() {
 
     const store4 = await prisma.store.create({
       data: {
-        name: 'Toko Kelontong SPBU Kemang',
+        name: 'SPBU Kemang Store',
         storeImage:
-          'https://i.pinimg.com/736x/a6/a6/80/a6a680d5757a99612ac553be1e3b9fe9.jpg',
+          'https://res.cloudinary.com/dm1cnsldc/image/upload/v1745114101/TOKO-KEMANG_owqyjl.webp',
         address: 'Jl. Makmur No. 321',
         city: 'Surabaya',
         province: 'Jawa Timur',
@@ -284,9 +284,9 @@ async function main() {
 
     await prisma.store.create({
       data: {
-        name: 'Toko Kelontong Perempatan Ampera',
+        name: 'Ampera Store',
         storeImage:
-          'https://i.pinimg.com/736x/a6/a6/80/a6a680d5757a99612ac553be1e3b9fe9.jpg',
+          'https://res.cloudinary.com/dm1cnsldc/image/upload/v1745114162/AMPERA-STORE_rkpfz1.webp',
         address: 'Jl. Sehat No. 654',
         city: 'Jakarta',
         province: 'DKI Jakarta',
@@ -2109,7 +2109,7 @@ async function main() {
     /* -------------------------------------------------------------------------- */
     const voucher1 = await prisma.voucher.create({
       data: {
-        name: 'Diskon 90%',
+        name: 'Voucher 90%',
         description: 'Dapatkan diskon 90% pada semua produk',
         code: 'DISKON90',
         stockVoucherAdmin: 100,
@@ -2128,9 +2128,9 @@ async function main() {
 
     const voucher2 = await prisma.voucher.create({
       data: {
-        name: 'Diskon 1000 rupiah',
-        description: 'Dapatkan diskon 1000 rupiah',
-        code: 'DISKONBELANJA1000',
+        name: 'Voucher 1000 rupiah',
+        description: 'Dapatkan diskon 1000 rupiah pada semua produk',
+        code: 'HEMAT1K',
         stockVoucherAdmin: 100,
         voucherCategory: VoucherCategory.SHOPPING_RESULT,
         voucherType: VoucherType.AMOUNT,
@@ -2168,7 +2168,7 @@ async function main() {
       data: {
         name: 'Diskon tomat 1000 rupiah',
         description: 'Dapatkan diskon 1000 rupiah untuk produk tomat',
-        code: 'DISKONTOMAT1000',
+        code: 'TOMAT1000',
         stockVoucherAdmin: 100,
         voucherCategory: VoucherCategory.PRODUCT,
         voucherType: VoucherType.AMOUNT,

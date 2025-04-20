@@ -220,15 +220,15 @@ export const deleteVoucher = async (
       res.status(400).json({ error: 'User ID is required' });
       return;
     }
-    const { voucherIds } = req.body;
+    const { voucherId } = req.body;
 
-    if (!voucherIds) {
-      res.status(400).json({ error: 'Voucher IDs are required' });
+    if (!voucherId) {
+      res.status(400).json({ error: 'Voucher ID is required' });
       return;
     }
 
     const voucherToDelete = await prisma.voucher.findUnique({
-      where: { id: Number(voucherIds) },
+      where: { id: Number(voucherId) },
     });
 
     if (!voucherToDelete) {
@@ -237,10 +237,9 @@ export const deleteVoucher = async (
     }
 
     await prisma.voucher.delete({
-      where: { id: Number(voucherIds) },
+      where: { id: Number(voucherId) },
     });
-
-    res.status(204).json({ ok: true, message: 'Voucher deleted successfully' });
+    res.status(200).json({ ok: true, message: 'Voucher deleted successfully' });
   } catch (error) {
     console.error(error);
     next(error);

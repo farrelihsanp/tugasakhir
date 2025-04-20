@@ -13,7 +13,7 @@ export default function VoucherDetailPage() {
     const fetchVoucher = async () => {
       try {
         const response = await fetch(
-          `http://localhost:8000/api/v1/get-detail-voucher/${voucherId}`,
+          `http://localhost:8000/api/v1/my-voucher/${voucherId}`,
           {
             method: 'GET',
             credentials: 'include',
@@ -33,18 +33,20 @@ export default function VoucherDetailPage() {
   }, [voucherId]);
 
   return (
-    <section className="min-h-screen flex justify-center items-center bg-gray-50 p-4">
+    <section className="min-h-screen flex justify-center items-center p-4">
       <div className="max-w-2xl w-full bg-white shadow-lg rounded-lg overflow-hidden">
         {voucher ? (
           <div className="p-6">
             <div className="flex justify-center mb-4">
-              <Image
-                src={voucher.voucherImage}
-                width={1000}
-                height={1000}
-                alt={voucher.name}
-                className="object-cover w-32 h-32 rounded-full"
-              />
+              {voucher.voucherImage.trim() && (
+                <Image
+                  src={voucher.voucherImage.trim()}
+                  width={1000}
+                  height={1000}
+                  alt={voucher.name}
+                  className="object-cover w-64 h-64 rounded-full"
+                />
+              )}
             </div>
             <h1 className="text-3xl font-semibold text-center text-gray-800 mb-4">
               {voucher.name}

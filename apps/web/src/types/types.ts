@@ -76,6 +76,7 @@ export interface Product {
   slug: string;
   excerpt: string;
   price: number;
+  weight: number;
   isCheap: boolean;
   createdAt: string;
   updatedAt: string;
@@ -103,6 +104,7 @@ export interface Discount {
 export interface DiscountProduct {
   productId: number;
   discountId: number;
+  Product: Product;
 }
 
 export interface CategoryProduct {

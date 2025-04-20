@@ -62,17 +62,15 @@ export default function Hero({ heightClass = 'h-[50vh]' }: HeroProps) {
     <section className={`relative w-full ${heightClass} overflow-hidden mt-20`}>
       {vouchers.length > 0 && (
         <div className="relative w-full h-full">
-          <Link href={`/vouchers-store/${vouchers[currentIndex].code}`}>
-            {vouchers[currentIndex].voucherImage && (
-              <Image
-                src={vouchers[currentIndex].voucherImage}
-                fill
-                alt={vouchers[currentIndex].name}
-                className="object-cover w-full h-full"
-                priority
-              />
-            )}
-          </Link>
+          {vouchers[currentIndex].voucherImage && (
+            <Image
+              src={vouchers[currentIndex].voucherImage}
+              fill
+              alt={vouchers[currentIndex].name}
+              className="object-cover w-full h-full cursor-pointer"
+              priority
+            />
+          )}
 
           <div className="absolute inset-0 flex items-center justify-center">
             <p className="text-[150px] md:text-[80px] text-white font-bold text-stroke-2 text-stroke-gray-900">
@@ -98,6 +96,14 @@ export default function Hero({ heightClass = 'h-[50vh]' }: HeroProps) {
                 },
               )}
             </div>
+            <div>
+              <Link
+                href={`/vouchers-store`}
+                className="bg-primary text-sm font-medium text-quaternary px-2 py-1 rounded"
+              >
+                Claim Voucher
+              </Link>
+            </div>
           </div>
 
           {/* Tombol navigasi bawah tengah */}
@@ -119,14 +125,4 @@ export default function Hero({ heightClass = 'h-[50vh]' }: HeroProps) {
       )}
     </section>
   );
-}
-
-{
-  /* <Link
-href={`/vouchers-store/${vouchers[currentIndex].code}`}
-className="inline-block bg-gray-800 hover:bg-gray-900 text-white text-sm px-4 py-2 rounded transition"
->
-View Details
-</Link>
-</div> */
 }

@@ -58,7 +58,7 @@ router.get(
 
 // Delete a voucher
 router.delete(
-  '/delete-voucher/:id',
+  '/delete-voucher',
   verifyToken,
   roleGuard(['STOREADMIN']),
   deleteVoucher,

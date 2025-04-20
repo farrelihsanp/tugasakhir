@@ -35,6 +35,8 @@ const UpdateVoucher = () => {
   const [imagePreview, setImagePreview] = useState<string | null>(null);
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
 
+  const ImageEdit = imagePreview?.trim();
+
   useEffect(() => {
     if (voucherCode) {
       const fetchVoucherData = async (voucherCode: string) => {
@@ -144,7 +146,7 @@ const UpdateVoucher = () => {
   };
 
   return (
-    <div className="max-w-lg mx-auto p-6 bg-white shadow-md rounded-md">
+    <div className="max-w-lg mx-auto p-6 bg-white shadow-md rounded-md mt-10">
       <h2 className="text-2xl font-bold mb-4">Update Voucher</h2>
       <form onSubmit={handleSubmit} encType="multipart/form-data">
         {/* Voucher Name */}
@@ -323,13 +325,17 @@ const UpdateVoucher = () => {
           />
           {imagePreview && (
             <div className="mt-4">
-              <Image
-                src={imagePreview}
-                width={200}
-                height={200}
-                alt="Voucher Preview"
-                className="w-32 h-32 object-cover rounded-md"
-              />
+              {imagePreview && ImageEdit && (
+                <div className="mt-4">
+                  <Image
+                    src={ImageEdit}
+                    width={200}
+                    height={200}
+                    alt="Voucher Preview"
+                    className="w-32 h-32 object-cover rounded-md"
+                  />
+                </div>
+              )}
             </div>
           )}
         </div>
@@ -338,7 +344,7 @@ const UpdateVoucher = () => {
         <div className="mb-4">
           <button
             type="submit"
-            className="w-full py-2 px-4 bg-blue-600 text-white rounded-md"
+            className="w-full py-2 px-4 bg-primary text-white rounded-md"
           >
             Update Voucher
           </button>

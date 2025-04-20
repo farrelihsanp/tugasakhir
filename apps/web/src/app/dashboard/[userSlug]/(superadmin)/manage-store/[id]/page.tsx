@@ -2,7 +2,6 @@
 
 import React, { useState, useEffect } from 'react';
 import Image from 'next/image';
-import Link from 'next/link';
 import { useParams } from 'next/navigation';
 import { Store } from '@/types/types';
 
@@ -33,7 +32,7 @@ const StoreDetail = () => {
     };
 
     fetchStore();
-  }, [id]); // Fetch the store whenever the id changes
+  }, [id]);
 
   if (loading) {
     return <div>Loading...</div>;
@@ -49,30 +48,9 @@ const StoreDetail = () => {
 
   return (
     <section className="min-h-screen flex flex-col items-center justify-center">
-      <div className="max-w-5xl mx-auto pt-14">
-        {/* Back Button */}
-        <button className="mb-6 flex items-center">
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            fill="none"
-            viewBox="0 0 24 24"
-            strokeWidth="1.5"
-            stroke="currentColor"
-            className="w-5 h-5 mr-2"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              d="M15.75 19.5L8.25 12l7.5-7.5"
-            />
-          </svg>
-          <Link href="/storelisting" className="text-gray-600">
-            Back to Listing
-          </Link>
-        </button>
-
+      <div className="w-full px-24 mx-auto">
         {/* Store Header */}
-        <div className="relative w-full h-60 mb-6">
+        <div className="relative w-full h-200 mb-6">
           <Image
             src={store.storeImage}
             alt={store.name}

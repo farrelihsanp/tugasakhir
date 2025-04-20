@@ -16,7 +16,11 @@ export default async function deleteExpiredVoucher(
 
     const allUserVouchers = await prisma.voucher.findMany({
       where: {
-        userId: userId,
+        VoucherUser: {
+          some: {
+            userId: userId,
+          },
+        },
         isActive: true,
         endDate: { gt: new Date() },
       },
@@ -24,7 +28,11 @@ export default async function deleteExpiredVoucher(
 
     const expiredVouchers = await prisma.voucher.findMany({
       where: {
-        userId: userId,
+        VoucherUser: {
+          some: {
+            userId: userId,
+          },
+        },
         isActive: true,
         endDate: { lte: new Date() },
       },

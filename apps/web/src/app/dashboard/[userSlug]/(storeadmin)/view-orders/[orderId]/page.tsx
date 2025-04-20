@@ -161,7 +161,7 @@ const StoreAdminActionPage = () => {
           <div className="flex flex-col gap-4">
             <button
               onClick={handleSeeProof}
-              className="bg-gradient-to-r from-blue-500 to-blue-700 text-white py-3 rounded-lg font-semibold transition hover:opacity-90"
+              className="bg-gradient-to-r bg-primary text-white py-3 rounded-lg font-semibold transition hover:opacity-90"
             >
               LIHAT BUKTI TRANSFER
             </button>
@@ -169,7 +169,7 @@ const StoreAdminActionPage = () => {
               onClick={() =>
                 handleAction('reject-payment-proof', 'Pembayaran ditolak')
               }
-              className={`bg-gradient-to-r from-red-500 to-red-700 text-white py-3 rounded-lg font-semibold transition hover:opacity-90 ${
+              className={`bg-gradient-to-r bg-primary text-white py-3 rounded-lg font-semibold transition hover:opacity-90 ${
                 order.status === 'PROCESSING' ||
                 order.status === 'SHIPPED' ||
                 order.status === 'DELIVERED' ||
@@ -190,7 +190,7 @@ const StoreAdminActionPage = () => {
               onClick={() =>
                 handleAction('accept-payment-proof', 'Pembayaran diterima')
               }
-              className={`bg-gradient-to-r from-green-500 to-green-700 text-white py-3 rounded-lg font-semibold transition hover:opacity-90 ${
+              className={`bg-gradient-to-r bg-primary text-white py-3 rounded-lg font-semibold transition hover:opacity-90 ${
                 order.status === 'PROCESSING' ||
                 order.status === 'SHIPPED' ||
                 order.status === 'DELIVERED' ||
@@ -211,7 +211,7 @@ const StoreAdminActionPage = () => {
               onClick={() =>
                 handleAction('process-order', 'Order sedang diproses')
               }
-              className={`bg-gradient-to-r from-yellow-400 to-yellow-600 text-white py-3 rounded-lg font-semibold transition hover:opacity-90 ${
+              className={`bg-gradient-to-r bg-primary text-white py-3 rounded-lg font-semibold transition hover:opacity-90 ${
                 order.status === 'PROCESSING' ||
                 order.status === 'SHIPPED' ||
                 order.status === 'DELIVERED' ||
@@ -230,7 +230,7 @@ const StoreAdminActionPage = () => {
             </button>
             <button
               onClick={() => handleAction('sent-order', 'Order telah dikirim')}
-              className={`bg-gradient-to-r from-indigo-500 to-indigo-700 text-white py-3 rounded-lg font-semibold transition hover:opacity-90 ${
+              className={`bg-gradient-to-r bg-primary text-white py-3 rounded-lg font-semibold transition hover:opacity-90 ${
                 order.status === 'SHIPPED' ||
                 order.status === 'DELIVERED' ||
                 order.status === 'COMPLETED'

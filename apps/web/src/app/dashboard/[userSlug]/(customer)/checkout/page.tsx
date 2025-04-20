@@ -402,198 +402,232 @@ const OrderForm = () => {
   }
 
   return (
-    <section className="min-h-screen flex flex-col items-center justify-center bg-gray-50">
-      <div className="container max-w-lg mx-auto p-8 bg-white shadow-xl rounded-xl border border-gray-200">
+    <section className="min-h-screen flex flex-col items-center justify-center ">
+      <div>
         <h2 className="text-3xl font-semibold mb-6 text-center text-gray-800">
           Create Order
         </h2>
-
-        {error && <p className="text-red-600 mb-4 text-center">{error}</p>}
-
-        {/* Voucher */}
-        <div className="mb-6">
-          <label className="block text-sm font-medium text-gray-700 mb-2">
-            Voucher
-          </label>
-          <select
-            className="w-full border rounded-md p-3 bg-gray-50 text-gray-700"
-            value={selectedVoucher || ''}
-            onChange={(e) => {
-              setSelectedVoucher(e.target.value);
-            }}
-          >
-            <option value="">Select Voucher</option>
-            {vouchers.map((voucher) => (
-              <option key={voucher.id} value={voucher.id}>
-                {voucher.name}
-              </option>
-            ))}
-          </select>
-        </div>
-
-        {/* Apply Voucher Button */}
-        <div className="mb-6">
-          <button
-            onClick={handleVoucherApply}
-            className={`w-full py-3 rounded-md transition duration-300 ${
-              loading || totalAmountCartAfterVoucher || shippingCostAfterVoucher
-                ? 'bg-gray-400 cursor-not-allowed'
-                : 'bg-blue-600 hover:bg-blue-700 text-white'
-            }`}
-            disabled={Boolean(
-              loading ||
-                totalAmountCartAfterVoucher ||
-                shippingCostAfterVoucher,
-            )}
-          >
-            {loading
-              ? 'Applying Voucher...'
-              : totalAmountCartAfterVoucher || shippingCostAfterVoucher
-                ? 'Voucher sudah diaplikasikan'
-                : 'Apply Voucher'}
-          </button>
-        </div>
-
-        {/* Shipping Address */}
-        <div className="mb-6">
-          <label className="block text-sm font-medium text-gray-700 mb-2">
-            Shipping Address
-          </label>
-          <select
-            className="w-full border rounded-md p-3 bg-gray-50 text-gray-700"
-            value={selectedAddress || ''}
-            onChange={(e) => setSelectedAddress(e.target.value)}
-          >
-            <option value="">Select Address</option>
-            {addresses.map((address) => (
-              <option key={address.id} value={address.id}>
-                {address.street}, {address.city}, {address.country}
-              </option>
-            ))}
-          </select>
-        </div>
-
-        {/* Set Primary Address Button */}
-        <div className="mb-6">
-          <button
-            onClick={handleSetPrimaryAddress}
-            className="w-full bg-green-600 text-white py-3 rounded-md hover:bg-green-700 transition duration-300"
-            disabled={Boolean(
-              loading ||
-                totalAmountCartAfterVoucher ||
-                shippingCostAfterVoucher,
-            )}
-          >
-            {loading
-              ? 'Setting Primary Address...'
-              : totalAmountCartAfterVoucher || shippingCostAfterVoucher
-                ? 'Cannot set primary address'
-                : 'Set Primary Address'}
-          </button>
-        </div>
-
-        {/* Shipping Cost */}
-        <div className="mb-6">
-          <label className="block text-sm font-medium text-gray-700 mb-2">
-            Shipping Cost
-          </label>
-          <select
-            className="w-full border rounded-md p-3 bg-gray-50 text-gray-700"
-            value={selectedShipping ? JSON.stringify(selectedShipping) : ''}
-            onChange={handleShippingSelect}
-          >
-            <option value="">Select Courier</option>
-            {shippingCostRajaOngkir?.map((map, index) => (
-              <option
-                key={index}
-                value={JSON.stringify({
-                  name: map.name,
-                  etd: map.etd,
-                  cost: map.cost,
-                  description: map.description,
-                  service: map.service,
-                  code: map.code,
-                })}
-              >
-                {map.name} - {map.etd} - {map.cost} - {map.description} -{' '}
-                {map.service} - {map.code}
-              </option>
-            ))}
-          </select>
-        </div>
-
-        {/* Submit Order Button */}
-        <div className="mb-6">
-          <button
-            onClick={handleOrderSubmit}
-            className="w-full bg-blue-600 text-white py-3 rounded-md hover:bg-blue-700 transition duration-300"
-            disabled={loading}
-          >
-            {loading ? 'Processing...' : 'Submit Order'}
-          </button>
-        </div>
       </div>
 
-      {/* Display Total Amount */}
-      <div className="max-w-lg mx-auto p-6 bg-white shadow-xl rounded-xl border border-gray-200 mt-8">
-        <h3 className="text-xl font-semibold mb-4 text-gray-800">
-          Hasil Akhir
-        </h3>
-        <div className="bg-gray-50 p-4 rounded-md">
-          <div>
-            <p className="text-lg font-medium text-gray-800">
-              Hasil Belanjaan:{' '}
-              {totalAmountCartAfterVoucher ? (
-                <span>
-                  <span className="line-through text-gray-500">
-                    {totalAmountCart}
-                  </span>{' '}
-                  {totalAmountCartAfterVoucher}
-                  <span className="text-sm text-gray-500">
-                    {' '}
-                    (Kamu untung: {valueVoucherCart})
-                  </span>
-                </span>
-              ) : (
-                totalAmountCart
-              )}
-            </p>
-          </div>
-          <div>{removeVoucherCart}</div>
-          <div>
-            {' '}
-            <p className="text-lg font-medium text-gray-800">
-              Shipping Cost:
-              {shippingCostAfterVoucher ? (
-                <span>
-                  <span className="line-through text-gray-500">
-                    {shippingCost || 0}
-                  </span>{' '}
-                  {shippingCostAfterVoucher}
-                  <span className="text-sm text-gray-500">
-                    {' '}
-                    (Kamu untung: {valueVoucherShipping})
-                  </span>
-                </span>
-              ) : (
-                <span>{selectedShipping?.cost || 0}</span>
-              )}
-            </p>
-          </div>
-          <div>{removeVoucherShipping}</div>
-        </div>
+      <div className="flex justify-center items-center gap-10 ">
+        <div className="container max-w-lg mx-auto p-8 bg-white shadow-xl rounded-xl border border-gray-200 h-[550px]">
+          {error && <p className="text-red-600 mb-4 text-center">{error}</p>}
+          <h3 className="text-2xl font-semibold mb-6 text-gray-900">
+            Settings
+          </h3>
 
-        <div>
-          {addressPrimary ? (
-            <p className="text-lg font-medium text-gray-800">
-              Alamat Pengiriman: {addressPrimary.street}, {addressPrimary.city},{' '}
-              {addressPrimary.country}
-            </p>
-          ) : (
-            <p className="text-lg font-medium text-gray-800">
-              Alamat Pengiriman belum diatur
-            </p>
-          )}
+          {/* Voucher */}
+          <div className="mb-6">
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              Voucher
+            </label>
+            <select
+              className="w-full border rounded-md p-3 bg-gray-50 text-gray-700"
+              value={selectedVoucher || ''}
+              onChange={(e) => {
+                setSelectedVoucher(e.target.value);
+              }}
+            >
+              <option value="">Select Voucher</option>
+              {vouchers.map((voucher) => (
+                <option key={voucher.id} value={voucher.id}>
+                  {voucher.name}
+                </option>
+              ))}
+            </select>
+          </div>
+
+          {/* Apply Voucher Button */}
+          <div className="mb-6">
+            <button
+              onClick={handleVoucherApply}
+              className={`w-full py-3 rounded-md transition duration-300 ${
+                loading ||
+                totalAmountCartAfterVoucher ||
+                shippingCostAfterVoucher
+                  ? 'bg-gray-400 cursor-not-allowed text-white'
+                  : 'bg-primary hover:bg-green-400 text-white'
+              }`}
+              disabled={Boolean(
+                loading ||
+                  totalAmountCartAfterVoucher ||
+                  shippingCostAfterVoucher,
+              )}
+            >
+              {loading
+                ? 'Loading...'
+                : totalAmountCartAfterVoucher || shippingCostAfterVoucher
+                  ? 'Voucher sudah diaplikasikan'
+                  : 'Apply Voucher'}
+            </button>
+          </div>
+
+          {/* Shipping Address */}
+          <div className="mb-6">
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              Shipping Address
+            </label>
+            <select
+              className="w-full border rounded-md p-3 bg-gray-50 text-gray-700"
+              value={selectedAddress || ''}
+              onChange={(e) => setSelectedAddress(e.target.value)}
+            >
+              <option value="">Select Address</option>
+              {addresses.map((address) => (
+                <option key={address.id} value={address.id}>
+                  {address.street}, {address.city}, {address.country}
+                </option>
+              ))}
+            </select>
+          </div>
+
+          {/* Set Primary Address Button */}
+          <div className="mb-6">
+            <button
+              onClick={handleSetPrimaryAddress}
+              className={`w-full text-white py-3 rounded-md transition duration-300 ${
+                loading ||
+                totalAmountCartAfterVoucher ||
+                shippingCostAfterVoucher
+                  ? 'bg-gray-400 cursor-not-allowed'
+                  : 'bg-primary'
+              }`}
+              disabled={Boolean(
+                loading ||
+                  totalAmountCartAfterVoucher ||
+                  shippingCostAfterVoucher,
+              )}
+            >
+              {loading
+                ? 'Setting Primary Address...'
+                : totalAmountCartAfterVoucher || shippingCostAfterVoucher
+                  ? 'Cannot set primary address'
+                  : 'Set Primary Address'}
+            </button>
+          </div>
+
+          {/* Shipping Cost */}
+          <div className="mb-6">
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              Shipping Cost
+            </label>
+            <select
+              className="w-full border rounded-md p-3 bg-gray-50 text-gray-700"
+              value={selectedShipping ? JSON.stringify(selectedShipping) : ''}
+              onChange={handleShippingSelect}
+            >
+              <option value="">Select Courier</option>
+              {shippingCostRajaOngkir?.map((map, index) => (
+                <option
+                  key={index}
+                  value={JSON.stringify({
+                    name: map.name,
+                    etd: map.etd,
+                    cost: map.cost,
+                    description: map.description,
+                    service: map.service,
+                    code: map.code,
+                  })}
+                >
+                  {map.name} - {map.etd} - {map.cost} - {map.description} -{' '}
+                  {map.service} - {map.code}
+                </option>
+              ))}
+            </select>
+          </div>
+        </div>
+        {/* Display Total Amount */}
+        <div className="max-w-lg mx-auto p-6 bg-white shadow-lg rounded-2xl border border-gray-300 h-[550px]">
+          <h3 className="text-2xl font-semibold mb-6 text-gray-900">
+            Result Order
+          </h3>
+          <div className="bg-gray-100 p-6 rounded-xl">
+            <div className="mb-4">
+              <p className="text-lg font-medium text-gray-800">
+                Hasil Belanjaan: <br />
+                {totalAmountCartAfterVoucher ? (
+                  <span>
+                    <span className="line-through text-gray-500">
+                      {totalAmountCart}
+                    </span>{' '}
+                    <span className="text-xl font-semibold text-gray-800">
+                      {totalAmountCartAfterVoucher}
+                    </span>
+                    <span className="text-sm text-gray-500">
+                      {' '}
+                      (Kamu untung: {valueVoucherCart})
+                    </span>
+                  </span>
+                ) : (
+                  <span className="text-xl font-semibold text-gray-800">
+                    {totalAmountCart}
+                  </span>
+                )}
+              </p>
+            </div>
+            <div className={`mb-6 ${!removeVoucherCart && 'hidden'}`}>
+              {removeVoucherCart}
+            </div>
+            <div>
+              <p className="text-lg font-medium text-gray-800">
+                Shipping Cost: <br />
+                {shippingCostAfterVoucher ? (
+                  <span>
+                    <span className="line-through text-gray-500">
+                      {shippingCost || 0}
+                    </span>{' '}
+                    <span className="text-xl font-semibold text-gray-800">
+                      {shippingCostAfterVoucher}
+                    </span>
+                    <span className="text-sm text-gray-500">
+                      {' '}
+                      (Kamu untung: {valueVoucherShipping})
+                    </span>
+                  </span>
+                ) : (
+                  <span className="text-xl font-semibold text-gray-800">
+                    {selectedShipping?.cost || 0}
+                  </span>
+                )}
+              </p>
+            </div>
+            <div className={`mb-6 ${!removeVoucherShipping && 'hidden'}`}>
+              {removeVoucherShipping}
+            </div>
+          </div>
+
+          <div>
+            {addressPrimary ? (
+              <p className="text-lg font-medium text-gray-800 mt-5">
+                Alamat Pengiriman: <br />
+                <span className="font-semibold text-gray-900">
+                  {addressPrimary.street}, {addressPrimary.city},{' '}
+                  {addressPrimary.country}
+                </span>
+              </p>
+            ) : (
+              <p className="text-lg font-medium text-gray-600">
+                Alamat Pengiriman belum diatur
+              </p>
+            )}
+          </div>
+          <div className="mt-3">
+            Total Order: <br />
+            <span className="text-xl font-semibold text-gray-800">
+              {(shippingCostAfterVoucher || selectedShipping?.cost || 0) +
+                (totalAmountCartAfterVoucher || totalAmountCart || 0)}
+            </span>
+          </div>
+          {/* Submit Order Button */}
+          <div className="mt-15">
+            <button
+              onClick={handleOrderSubmit}
+              className="w-full bg-primary text-white py-3 rounded-md hover:bg-green-400 transition duration-300"
+              disabled={loading}
+            >
+              {loading ? 'Processing...' : 'Submit Order'}
+            </button>
+          </div>
         </div>
       </div>
     </section>

@@ -559,9 +559,6 @@ export const getAllProductsByCategoryByStoreSlug = async (
       where: {
         slug: storeSlug,
       },
-      select: {
-        id: true,
-      },
     });
 
     if (!store) {
@@ -586,6 +583,9 @@ export const getAllProductsByCategoryByStoreSlug = async (
         product: {
           include: {
             ProductImages: true,
+            CategoryProduct: {
+              include: { Category: true },
+            },
           },
         },
       },
@@ -602,6 +602,7 @@ export const getAllProductsByCategoryByStoreSlug = async (
       ok: true,
       message: 'Products retrieved successfully',
       data: products,
+      store: store,
     });
   } catch (error) {
     console.error(error);

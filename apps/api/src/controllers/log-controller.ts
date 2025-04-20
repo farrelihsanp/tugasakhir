@@ -69,7 +69,7 @@ export async function login(req: Request, res: Response, next: NextFunction) {
       storeId: storeStoreAdmin?.storeId,
     };
     const token = jwt.sign(jwtPayload, process.env.JWT_SECRET_KEY as string, {
-      expiresIn: '1h',
+      expiresIn: '24h',
     });
 
     res

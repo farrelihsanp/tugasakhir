@@ -1,11 +1,9 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import Image from 'next/image';
 import { Voucher } from '@/types/types';
 import { toast } from 'react-toastify';
 
-// PERTANYAAN - KENAPA SETELAH DI SUBMIT KOSONG
 export default function MyVouchersPage() {
   const [vouchers, setVouchers] = useState<Voucher[]>([]);
   const [loading, setLoading] = useState(true);
@@ -72,23 +70,23 @@ export default function MyVouchersPage() {
   if (error) return <p className="text-center text-red-500">Error: {error}</p>;
 
   return (
-    <section className="min-h-screen text-white py-10">
+    <section className="h-[75vh] flex flex-col items-center justify-center py-10 ">
       <div className="max-w-5xl mx-auto px-4">
         <div className="flex justify-center items-center mb-8">
           <div className="flex flex-col items-center space-y-4">
-            <h2 className="text-3xl font-bold text-black">
+            <h2 className="text-3xl font-bold text-tertiary">
               Claim Your Voucher
             </h2>
-            <div className="flex space-x-2">
+            <div className="flex space-x-2 w-full max-w-md">
               <input
                 type="text"
-                value={claimVoucher !== null ? claimVoucher : ''}
+                value={claimVoucher ?? ''}
                 onChange={(e) => setClaimVoucher(e.target.value)}
-                className="bg-gray-100 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
+                className="bg-gray-100 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary focus:border-primary block w-full p-2.5"
                 placeholder="Enter Voucher Code"
               />
               <button
-                className="bg-blue-600 hover:bg-blue-800 text-white py-2 px-6 rounded-lg transition duration-300"
+                className="bg-primary hover:bg-green-700 text-white py-2 px-6 rounded-lg transition duration-300"
                 onClick={claimVoucherByUser}
                 disabled={isClaiming}
               >
@@ -98,64 +96,54 @@ export default function MyVouchersPage() {
           </div>
         </div>
 
-        <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-3">
+        <div className="grid gap-6 md:grid-cols-2 w-full">
           {vouchers.length > 0 &&
             vouchers.map((voucher) => (
               <div
                 key={voucher.id}
-                className="bg-white rounded-lg shadow-lg hover:shadow-xl transition-transform duration-300 transform hover:scale-105"
+                className="flex w-full border border-gray-300 rounded-md overflow-hidden shadow-md"
               >
-                {voucher.voucherImage && (
-                  <Image
-                    src={voucher.voucherImage.trim()}
-                    alt={voucher.name}
-                    width={2000}
-                    height={2000}
-                    className="w-full h-48 object-cover rounded-t-lg"
-                  />
-                )}
+                {/* LEFT - IMAGE + INFO */}
+                <div className="w-2/3 p-6 text-quaternary relative overflow-hidden bg-tertiary">
+                  {/* Gambar latar dengan opacity yang bisa diatur */}
+                  <div
+                    className="absolute inset-0 z-0"
+                    style={{
+                      backgroundImage: `url(${voucher.voucherImage.trim()})`,
+                      backgroundSize: 'cover',
+                      backgroundPosition: 'center',
+                      opacity: 0.5, // atur nilai opacity di sini (0.0 - 1.0)
+                    }}
+                  ></div>
 
-                <div className="p-6">
-                  <h2 className="text-xl font-semibold mb-2 text-gray-900">
-                    {voucher.name}
-                  </h2>
-                  <p className="text-gray-800 text-sm">{voucher.description}</p>
-                  <div className="mt-4 space-y-2 text-sm text-gray-700">
-                    <p>
-                      <strong>Code:</strong>{' '}
-                      <span className="font-mono text-gray-800">
-                        {voucher.code}
-                      </span>
-                    </p>
-                    <p>
-                      <strong>Type:</strong>{' '}
-                      <span className="text-blue-500">
-                        {voucher.voucherType}
-                      </span>
-                    </p>
-                    <p>
-                      <strong>Value:</strong> {voucher.value}
-                    </p>
-                    <p>
-                      <strong>Stock:</strong>{' '}
-                      {voucher.VoucherUser[0].stockCustomer}
-                    </p>
-                    <p>
-                      <strong>Valid:</strong>{' '}
-                      {new Date(voucher.startDate).toLocaleDateString()} -{' '}
-                      {new Date(voucher.endDate).toLocaleDateString()}
-                    </p>
-                    <p>
-                      <strong>Status:</strong>{' '}
-                      <span
-                        className={
-                          voucher.isActive ? 'text-green-600' : 'text-red-600'
-                        }
-                      >
-                        {voucher.isActive ? 'Active' : 'Inactive'}
-                      </span>
-                    </p>
+                  {/* Konten tulisan */}
+                  <div className="relative z-20">
+                    <h1 className="text-2xl font-bold mb-2">{voucher.name}</h1>
+                    {/* <h2 className="text-3xl font-bold mb-1">
+                      {voucher.maxPriceReduction}
+                    </h2> */}
+                    <p className="text-sm">{voucher.description}</p>
                   </div>
+                </div>
+
+                {/* RIGHT - DETAILS */}
+                <div className="w-1/3 bg-quaternary text-tertiary px-4 py-6 flex flex-col justify-between border-l border-dashed border-gray-400">
+                  <div>
+                    <p className="text-xs mb-2">Use by:</p>
+                    <p className="font-bold text-sm mb-4">
+                      {new Date(voucher.endDate).toLocaleDateString(undefined, {
+                        day: '2-digit',
+                        month: 'long',
+                        year: 'numeric',
+                      })}
+                    </p>
+                    <button className="bg-red-600 text-white px-3 py-1 rounded text-sm font-semibold hover:bg-red-700 transition">
+                      {voucher.code}
+                    </button>
+                  </div>
+                  <p className="text-[10px] mt-4 italic">
+                    Excludes Sporting items and golf equipment.
+                  </p>
                 </div>
               </div>
             ))}

@@ -86,7 +86,7 @@ const CreateCategoryPage: React.FC = () => {
   };
 
   return (
-    <section className="min-h-screen flex items-center justify-center bg-gray-50 py-8">
+    <section className="min-h-screen flex items-center justify-center  py-8">
       <div className="w-full max-w-lg p-8 bg-white rounded-lg shadow-lg">
         <h2 className="text-3xl font-semibold text-center text-gray-900 mb-6">
           Create Category
@@ -126,7 +126,7 @@ const CreateCategoryPage: React.FC = () => {
           />
           <button
             type="submit"
-            className={`w-full p-3 bg-blue-500 text-white rounded-md ${loading && 'opacity-50'}`}
+            className={`w-full p-3 bg-primary text-white rounded-md ${loading && 'opacity-50'}`}
             disabled={loading}
           >
             {loading ? 'Creating Category...' : 'Create Category'}

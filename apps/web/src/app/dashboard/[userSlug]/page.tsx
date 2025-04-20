@@ -1,6 +1,7 @@
 'use client';
 
 import Link from 'next/link';
+import Image from 'next/image';
 import { useStoreContext } from '@/utility/StoreContext';
 import {
   FaStore,
@@ -15,151 +16,204 @@ export default function DashboardPage() {
 
   const roleComponents = {
     CUSTOMERS: (
-      <div className="bg-gradient-to-r from-blue-500 to-teal-500 min-h-screen flex flex-col items-center justify-center">
-        <h1 className="text-4xl font-bold text-white mb-10">
-          Customer Dashboard
+      <div className="bg-gradient-to-r min-h-screen flex flex-col items-center justify-start py-16 px-10">
+        <h1 className="text-4xl font-bold text-black mb-6 text-center">
+          Welcome, {user?.name}!
         </h1>
-        <div className="space-y-6 w-full max-w-lg">
-          <div>
-            <Link
-              href={`/dashboard/${user?.username}/my-cart`}
-              className="flex items-center px-8 py-4 bg-white text-blue-600 rounded-lg shadow-lg hover:bg-blue-700 hover:text-white transition duration-300 text-lg font-semibold"
-            >
-              <FaShoppingCart className="mr-4" />
-              <span>My Cart</span>
-            </Link>
-          </div>
-          <div>
-            <Link
-              href={`/dashboard/${user?.username}/my-orders`}
-              className="flex items-center px-8 py-4 bg-white text-blue-600 rounded-lg shadow-lg hover:bg-blue-700 hover:text-white transition duration-300 text-lg font-semibold"
-            >
-              <FaBoxOpen className="mr-4" />
-              <span>My Orders</span>
-            </Link>
-          </div>
-          <div>
-            <Link
-              href={`/dashboard/${user?.username}/my-vouchers`}
-              className="flex items-center px-8 py-4 bg-white text-blue-600 rounded-lg shadow-lg hover:bg-blue-700 hover:text-white transition duration-300 text-lg font-semibold"
-            >
-              <FaStore className="mr-4" />
-              <span>My Vouchers</span>
-            </Link>
-          </div>
+        <div className="mb-12 relative w-60 h-60">
+          {user?.profileImage && (
+            <Image
+              src={user.profileImage}
+              alt="Profile Photo"
+              fill
+              objectFit="cover"
+              className="rounded-full"
+            />
+          )}
+        </div>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 w-full max-w-7xl">
+          <Link
+            href={`/dashboard/${user?.username}/my-cart`}
+            className="bg-gradient-to-br from-green-500 to-green-600 text-white p-6 rounded-xl shadow-md hover:scale-105 transform transition duration-300"
+          >
+            <div className="flex flex-col justify-between h-full">
+              <div className="text-2xl font-bold mb-2">My Cart</div>
+              <p className="text-white text-sm mb-4">
+                View items you’ve added to your shopping cart.
+              </p>
+              <FaShoppingCart className="text-3xl" />
+            </div>
+          </Link>
+
+          <Link
+            href={`/dashboard/${user?.username}/my-orders`}
+            className="bg-gradient-to-br from-green-500 to-green-600 text-white p-6 rounded-xl shadow-md hover:scale-105 transform transition duration-300"
+          >
+            <div className="flex flex-col justify-between h-full">
+              <div className="text-2xl font-bold mb-2">My Orders</div>
+              <p className="text-white text-sm mb-4">
+                Track your orders and view purchase history.
+              </p>
+              <FaBoxOpen className="text-3xl" />
+            </div>
+          </Link>
+
+          <Link
+            href={`/dashboard/${user?.username}/my-vouchers`}
+            className="bg-gradient-to-br from-green-500 to-green-600 text-white p-6 rounded-xl shadow-md hover:scale-105 transform transition duration-300"
+          >
+            <div className="flex flex-col justify-between h-full">
+              <div className="text-2xl font-bold mb-2">My Vouchers</div>
+              <p className="text-white text-sm mb-4">
+                View and claim your available vouchers.
+              </p>
+              <FaStore className="text-3xl" />
+            </div>
+          </Link>
         </div>
       </div>
     ),
+
     STOREADMIN: (
-      <div className="bg-gradient-to-r from-blue-500 to-teal-500 min-h-screen flex flex-col items-center justify-center">
-        <h1 className="text-4xl font-bold text-white mb-10">
-          Store Admin Dashboard
+      <div className=" min-h-screen flex flex-col items-center justify-start py-16 px-10">
+        <h1 className="text-4xl font-bold text-tertiary mb-6 text-center">
+          Welcome Admin, {user?.name}!
         </h1>
-        <div className="space-y-6 w-full max-w-lg">
-          <div>
-            <Link
-              href={`/dashboard/${user?.username}/view-orders`}
-              className="flex items-center px-8 py-4 bg-white text-blue-600 rounded-lg shadow-lg hover:bg-blue-700 hover:text-white transition duration-300 text-lg font-semibold"
-            >
-              <FaStore className="mr-4" />
-              <span>View Orders</span>
-            </Link>
-          </div>
-          <div>
-            <Link
-              href={`/${storeStoreAdmin?.slug}/product`}
-              className="flex items-center px-8 py-4 bg-white text-blue-600 rounded-lg shadow-lg hover:bg-blue-700 hover:text-white transition duration-300 text-lg font-semibold"
-            >
-              <FaBoxOpen className="mr-4" />
-              <span>View Products</span>
-            </Link>
-          </div>
-          <div>
-            <Link
-              href={`/dashboard/${user?.username}/reports-analysis`}
-              className="flex items-center px-8 py-4 bg-white text-blue-600 rounded-lg shadow-lg hover:bg-blue-700 hover:text-white transition duration-300 text-lg font-semibold"
-            >
-              <FaShoppingCart className="mr-4" />
-              <span>Report Analysis</span>
-            </Link>
-          </div>
-          <div>
-            <Link
-              href={`/dashboard/${user?.username}/vouchers`}
-              className="flex items-center px-8 py-4 bg-white text-blue-600 rounded-lg shadow-lg hover:bg-blue-700 hover:text-white transition duration-300 text-lg font-semibold"
-            >
-              <FaShoppingCart className="mr-4" />
-              <span>Voucher</span>
-            </Link>
-          </div>
+        <div className="mb-12 relative w-60 h-60">
+          {user?.profileImage && (
+            <Image
+              src={user.profileImage}
+              alt="Profile Photo"
+              fill
+              objectFit="cover"
+              className="rounded-full"
+            />
+          )}
+        </div>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 w-full max-w-7xl">
+          <Link
+            href={`/dashboard/${user?.username}/view-orders`}
+            className="bg-gradient-to-br from-green-500 to-green-600 text-white p-6 rounded-xl shadow-md hover:scale-105 transform transition duration-300"
+          >
+            <div className="flex flex-col justify-between h-full">
+              <div className="text-2xl font-bold mb-2">View Orders</div>
+              <p className="text-sm mb-4">Monitor all customer orders here.</p>
+              <FaStore className="text-3xl" />
+            </div>
+          </Link>
+          <Link
+            href={`/${storeStoreAdmin?.slug}/product`}
+            className="bg-gradient-to-br from-green-500 to-green-600 text-white p-6 rounded-xl shadow-md hover:scale-105 transform transition duration-300"
+          >
+            <div className="flex flex-col justify-between h-full">
+              <div className="text-2xl font-bold mb-2">View Products</div>
+              <p className="text-sm mb-4">Manage your product listings.</p>
+              <FaBoxOpen className="text-3xl" />
+            </div>
+          </Link>
+          <Link
+            href={`/dashboard/${user?.username}/reports-analysis`}
+            className="bg-gradient-to-br from-green-500 to-green-600 text-white p-6 rounded-xl shadow-md hover:scale-105 transform transition duration-300"
+          >
+            <div className="flex flex-col justify-between h-full">
+              <div className="text-2xl font-bold mb-2">Report Analysis</div>
+              <p className="text-sm mb-4">Analyze sales and trends.</p>
+              <FaChartLine className="text-3xl" />
+            </div>
+          </Link>
+          <Link
+            href={`/dashboard/${user?.username}/vouchers`}
+            className="bg-gradient-to-br from-green-500 to-green-600 text-white p-6 rounded-xl shadow-md hover:scale-105 transform transition duration-300"
+          >
+            <div className="flex flex-col justify-between h-full">
+              <div className="text-2xl font-bold mb-2">Voucher</div>
+              <p className="text-sm mb-4">Manage discount vouchers.</p>
+              <FaShoppingCart className="text-3xl" />
+            </div>
+          </Link>
         </div>
       </div>
     ),
+
     SUPERADMIN: (
-      <div className="bg-gradient-to-r from-blue-500 to-teal-500 min-h-screen flex flex-col items-center justify-center">
-        <h1 className="text-4xl font-bold text-white mb-10">
-          Super Admin Dashboard
+      <div className=" min-h-screen flex flex-col items-center justify-start py-16 px-10">
+        <h1 className="text-4xl font-bold text-black mb-6 text-center">
+          Welcome! {user?.name}
         </h1>
-        <div className="space-y-6 w-full max-w-lg">
-          <div>
-            <Link
-              href={`/dashboard/${user?.username}/manage-store-admin`}
-              className="flex items-center px-8 py-4 bg-white text-blue-600 rounded-lg shadow-lg hover:bg-blue-700 hover:text-white transition duration-300 text-lg font-semibold"
-            >
-              <FaStore className="mr-4" />
-              <span>Manage Store Admin</span>
-            </Link>
-          </div>
-          <div>
-            <Link
-              href={`/dashboard/${user?.username}/view-user`}
-              className="flex items-center px-8 py-4 bg-white text-blue-600 rounded-lg shadow-lg hover:bg-blue-700 hover:text-white transition duration-300 text-lg font-semibold"
-            >
-              <FaUsers className="mr-4" />
-              <span>View Users</span>
-            </Link>
-          </div>
-          <div>
-            <Link
-              href={`/dashboard/${user?.username}/manage-store`}
-              className="flex items-center px-8 py-4 bg-white text-blue-600 rounded-lg shadow-lg hover:bg-blue-700 hover:text-white transition duration-300 text-lg font-semibold"
-            >
-              <FaStore className="mr-4" />
-              <span>Manage Store</span>
-            </Link>
-          </div>
-          <div>
-            <Link
-              href={`/dashboard/${user?.username}/manage-products`}
-              className="flex items-center px-8 py-4 bg-white text-blue-600 rounded-lg shadow-lg hover:bg-blue-700 hover:text-white transition duration-300 text-lg font-semibold"
-            >
-              <FaStore className="mr-4" />
-              <span>Manage Products</span>
-            </Link>
-          </div>
-          <div>
-            <Link
-              href={`/dashboard/${user?.username}/report-analysis`}
-              className="flex items-center px-8 py-4 bg-white text-blue-600 rounded-lg shadow-lg hover:bg-blue-700 hover:text-white transition duration-300 text-lg font-semibold"
-            >
-              <FaChartLine className="mr-4" />
-              <span>Reports & Analysis</span>
-            </Link>
-          </div>
-          <div>
-            <Link
-              href={`/dashboard/${user?.username}/discount-manager`}
-              className="flex items-center px-8 py-4 bg-white text-blue-600 rounded-lg shadow-lg hover:bg-blue-700 hover:text-white transition duration-300 text-lg font-semibold"
-            >
-              <FaChartLine className="mr-4" />
-              <span>Discount Manager</span>
-            </Link>
-          </div>
+        <div className="mb-12 relative w-60 h-60">
+          {user?.profileImage && (
+            <Image
+              src={user.profileImage}
+              alt="Profile Photo"
+              fill
+              objectFit="cover"
+              className="rounded-full"
+            />
+          )}
+        </div>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 w-full max-w-7xl">
+          <Link
+            href={`/dashboard/${user?.username}/manage-store-admin`}
+            className="bg-gradient-to-br from-green-500 to-green-600 text-white p-6 rounded-xl shadow-md hover:scale-105 transform transition duration-300"
+          >
+            <div className="flex flex-col justify-between h-full">
+              <div className="text-2xl font-bold mb-2">Store Admin</div>
+              <p className="text-sm mb-4">Add or update store admins.</p>
+              <FaUsers className="text-3xl" />
+            </div>
+          </Link>
+          <Link
+            href={`/dashboard/${user?.username}/view-user`}
+            className="bg-gradient-to-br from-green-500 to-green-600 text-white p-6 rounded-xl shadow-md hover:scale-105 transform transition duration-300"
+          >
+            <div className="flex flex-col justify-between h-full">
+              <div className="text-2xl font-bold mb-2">Users</div>
+              <p className="text-sm mb-4">Monitor all user accounts.</p>
+              <FaUsers className="text-3xl" />
+            </div>
+          </Link>
+          <Link
+            href={`/dashboard/${user?.username}/manage-store`}
+            className="bg-gradient-to-br from-green-500 to-green-600 text-white p-6 rounded-xl shadow-md hover:scale-105 transform transition duration-300"
+          >
+            <div className="text-2xl font-bold mb-2">Stores</div>
+            <p className="text-sm mb-4">Create or manage store data.</p>
+            <FaStore className="text-3xl" />
+          </Link>
+          <Link
+            href={`/dashboard/${user?.username}/manage-products`}
+            className="bg-gradient-to-br from-green-500 to-green-600 text-white p-6 rounded-xl shadow-md hover:scale-105 transform transition duration-300"
+          >
+            <div className="text-2xl font-bold mb-2">Products</div>
+            <p className="text-sm mb-4">
+              Full access to all product management.
+            </p>
+            <FaBoxOpen className="text-3xl" />
+          </Link>
+          <Link
+            href={`/dashboard/${user?.username}/report-analysis`}
+            className="bg-gradient-to-br from-green-500 to-green-600 text-white p-6 rounded-xl shadow-md hover:scale-105 transform transition duration-300"
+          >
+            <div className="text-2xl font-bold mb-2">Reports</div>
+            <p className="text-sm mb-4">Review data trends and performance.</p>
+            <FaChartLine className="text-3xl" />
+          </Link>
+          <Link
+            href={`/dashboard/${user?.username}/discount-manager`}
+            className="bg-gradient-to-br from-green-500 to-green-600 text-white p-6 rounded-xl shadow-md hover:scale-105 transform transition duration-300"
+          >
+            <div className="text-2xl font-bold mb-2">Discount Manager</div>
+            <p className="text-sm mb-4">
+              Control active discounts and campaigns.
+            </p>
+            <FaChartLine className="text-3xl" />
+          </Link>
         </div>
       </div>
     ),
+
     UNSET: (
-      <div className="bg-gradient-to-r from-red-500 to-yellow-500 min-h-screen flex flex-col items-center justify-center">
+      <div className="bg-gradient-to-r from-red-500 to-yellow-500 min-h-screen flex flex-col items-center justify-center py-10">
         <h1 className="text-4xl font-bold text-white mb-10">Unknown Role</h1>
         <p className="text-lg text-white">
           It looks like your role is not defined yet.
