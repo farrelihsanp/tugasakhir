@@ -68,12 +68,20 @@ export default function DiscountsPage() {
     <div className="p-8">
       <div className="flex justify-between items-center mb-6">
         <h1 className="text-2xl font-semibold">Daftar Diskon</h1>
-        <Link
-          href="create-discount"
-          className="bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-600"
-        >
-          Create Discount
-        </Link>
+        <div className="flex gap-2">
+          <Link
+            href="discount-reports"
+            className="bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-600"
+          >
+            Discount Reports
+          </Link>
+          <Link
+            href="create-discount"
+            className="bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-600"
+          >
+            Create Discount
+          </Link>
+        </div>
       </div>
 
       {loading ? (

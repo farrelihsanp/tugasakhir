@@ -3,7 +3,7 @@ import { prisma } from '../configs/prisma.js';
 import { Role } from '@prisma/client';
 import { Provider } from '@prisma/client';
 
-export const getAllUsers = async (
+export const getAllCustomers = async (
   _req: Request,
   res: Response,
   next: NextFunction,
@@ -13,6 +13,19 @@ export const getAllUsers = async (
       where: { role: Role.CUSTOMERS },
     });
     res.status(200).json(users);
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const getAllUsers = async (
+  _req: Request,
+  res: Response,
+  next: NextFunction,
+) => {
+  try {
+    const users = await prisma.user.findMany();
+    res.status(200).json({ ok: true, message: 'Users found', data: users });
   } catch (error) {
     next(error);
   }

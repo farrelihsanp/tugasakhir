@@ -3,9 +3,13 @@ import { MidtransClient } from 'midtrans-node-client';
 import { prisma } from '../configs/prisma.js';
 import cloudinary from '../configs/cloudinary.js';
 import fs from 'node:fs/promises';
-import { OrderStatus, PaymentMethodType, typeOfChange } from '@prisma/client';
+import {
+  OrderStatus,
+  PaymentMethodType,
+  typeOfChange,
+  Role,
+} from '@prisma/client';
 import { updateOrderStatus } from '../helpers/update-order-status.js';
-// import { v4 as uuid } from 'uuid';
 
 const snap = new MidtransClient.Snap({
   isProduction: false,
@@ -39,7 +43,7 @@ export const createOrder = async (
 
     const cartBuyerCustomer = await prisma.cart.findUnique({
       where: { userId },
-      include: { CartValueCalculation: true },
+      include: { CartValueCalculation: true, cartItems: true },
     });
 
     if (!cartBuyerCustomer) {
@@ -121,6 +125,23 @@ export const createOrder = async (
         updatedAt: new Date(),
       },
     });
+
+    // ---
+
+    const totalDiscountBenefit = cartBuyerCustomer.cartItems.reduce(
+      (a, b) => a + (b.priceAfterDiscount || 0) * b.quantity,
+      0,
+    );
+
+    await prisma.discountReport.createMany({
+      data: {
+        userId: userId,
+        orderId: newOrder.id,
+        customerBenefits: totalDiscountBenefit,
+      },
+    });
+
+    // ---
 
     await prisma.orderItem.createMany({
       data: hasilBelanjaan.map((item) => {
@@ -219,10 +240,24 @@ export const payWithManualTransfer = async (
       return;
     }
 
+    const order = await prisma.order.findFirst({
+      where: {
+        id: Number(orderId),
+      },
+    });
+
+    if (!order) {
+      res.status(404).json({ error: 'Order not found' });
+      return;
+    }
+
+    const updatedAt = order.updatedAt ? order.updatedAt : new Date();
+
     await prisma.order.update({
       where: { id: Number(orderId) },
       data: {
         paymentMethodType: PaymentMethodType.BANK_TRANSFER,
+        updatedAt,
       },
     });
 
@@ -376,6 +411,37 @@ export const uploadPaymentProof = async (
       return;
     }
 
+    const order = await prisma.order.findFirst({
+      where: {
+        id: Number(orderId),
+      },
+    });
+
+    if (!order) {
+      res.status(404).json({ error: 'Order not found' });
+      return;
+    }
+
+    if (order.paymentMethodType !== PaymentMethodType.BANK_TRANSFER) {
+      res.status(400).json({ error: 'Payment method is not Bank Transfer' });
+      return;
+    }
+
+    const timeElapsed = new Date().getTime() - order.updatedAt.getTime();
+    const hoursElapsed = timeElapsed / (1000 * 3600);
+
+    if (hoursElapsed > 24) {
+      await prisma.order.update({
+        where: { id: Number(orderId) },
+        data: { status: OrderStatus.CANCELLED },
+      });
+
+      res.status(400).json({
+        error: 'Payment proof upload time expired. Order has been cancelled.',
+      });
+      return;
+    }
+
     // --------------------------------------------------------------------------
     let paymentProofUrl = null;
 
@@ -395,6 +461,10 @@ export const uploadPaymentProof = async (
       res.status(400).json({ error: 'No payment proof image provided' });
       return;
     }
+
+    // --------------------------------------------------------------------------
+
+    // --------------------------------------------------------------------------
 
     await prisma.order.update({
       where: { id: +orderId },
@@ -484,6 +554,12 @@ export const cancelOrder = async (
       });
     }
 
+    await prisma.discountReport.deleteMany({
+      where: {
+        orderId: orderCostumer.id,
+      },
+    });
+
     await prisma.order.delete({
       where: { id: orderCostumer.id },
     });
@@ -540,6 +616,26 @@ export const orderConfirmed = async (
 };
 
 export const getAllOrderCustomer = async (
+  _req: Request,
+  res: Response,
+  next: NextFunction,
+) => {
+  try {
+    const orders = await prisma.order.findMany({
+      include: {
+        user: true,
+        store: true,
+      },
+    });
+
+    res.status(200).json({ ok: true, message: 'Orders found', data: orders });
+  } catch (error) {
+    console.error(error);
+    next(error);
+  }
+};
+
+export const getOrderCustomer = async (
   req: Request,
   res: Response,
   next: NextFunction,
@@ -552,22 +648,35 @@ export const getAllOrderCustomer = async (
       return;
     }
 
-    const orders = await prisma.order.findMany({
+    const order = await prisma.order.findMany({
       where: {
         userId: userId,
       },
       include: {
         user: true,
+        store: true,
+        orderItems: {
+          include: {
+            Product: true,
+          },
+        },
       },
     });
-    res.status(200).json(orders);
+
+    if (!order) {
+      res.status(404).json({ error: 'Order not found' });
+      return;
+    }
+
+    res.status(200).json({ ok: true, message: 'Order found', data: order });
   } catch (error) {
     console.error(error);
     next(error);
   }
 };
+
 /* -------------------------------------------------------------------------- */
-/*                                 STOREADMIN & SUPERADMIN                                */
+/*                          STOREADMIN DAN SUPERADMIN                         */
 /* -------------------------------------------------------------------------- */
 
 export const getAllOrdersStore = async (
@@ -747,6 +856,28 @@ export const processOrder = async (
       return;
     }
 
+    // ---
+    const paymentProofCostumer = await prisma.order.findFirst({
+      where: {
+        id: Number(orderId),
+      },
+      select: {
+        paymentProof: true,
+      },
+    });
+
+    if (!paymentProofCostumer) {
+      res.status(404).json({ error: 'Order not found' });
+      return;
+    }
+
+    if (!paymentProofCostumer.paymentProof) {
+      res.status(404).json({ error: 'Customer payment proof not found' });
+      return;
+    }
+
+    // -----
+
     const orderCostumer = await prisma.order.findFirst({
       where: {
         id: Number(orderId),
@@ -783,7 +914,11 @@ export const processOrder = async (
       productId: item.storeProduct.product.id,
       stock: item.quantity,
       lastStock: item.storeProduct.stock,
+      difference: item.storeProduct.stock - item.quantity,
       typeOfChange: typeOfChange.PEMBELIAN,
+      role: Role.CUSTOMERS,
+      storeId: item.storeProduct.storeId,
+      finalStock: item.storeProduct.stock - item.quantity,
     }));
 
     await prisma.productChangeData.createMany({
@@ -905,6 +1040,45 @@ export const getAllOrderHistory = async (
     res.status(200).json({ ok: true, data: formatted });
   } catch (error) {
     console.error('Error getting order history:', error);
+    next(error);
+  }
+};
+
+export const confirmationOrderCostumer = async (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+): Promise<void> => {
+  try {
+    const { orderId } = req.params;
+    const userId = req.user?.id;
+
+    if (!userId) {
+      res.status(401).json({ error: 'Unauthorized' });
+      return;
+    }
+
+    const orderCostumer = await prisma.order.findFirst({
+      where: {
+        id: Number(orderId),
+      },
+    });
+
+    if (!orderCostumer) {
+      res.status(404).json({ error: 'Order not found' });
+      return;
+    }
+
+    await prisma.order.update({
+      where: { id: orderCostumer.id },
+      data: {
+        status: OrderStatus.COMPLETED,
+      },
+    });
+
+    res.status(200).json({ ok: true, message: 'Order confirmed' });
+  } catch (error) {
+    console.error(error);
     next(error);
   }
 };

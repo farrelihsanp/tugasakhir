@@ -22,6 +22,7 @@ import vouchersRouter from './routes/vouchers-router.js';
 import categoriesRouter from './routes/categories-router.js';
 import orderRouter from './routes/orders-router.js';
 import discountRouter from './routes/discounts-router.js';
+import reportRouter from './routes/reports-stock-router.js';
 
 const app: Application = express();
 const PORT = process.env.PORT || 8000;
@@ -53,6 +54,7 @@ app.use('/api/v1/', vouchersRouter);
 app.use('/api/v1/', categoriesRouter);
 app.use('/api/v1/', orderRouter);
 app.use('/api/v1/', discountRouter);
+app.use('/api/v1/report-stock', reportRouter);
 
 app.use(notFoundMiddleware);
 app.use(errorMiddleware);

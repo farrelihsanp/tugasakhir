@@ -3,14 +3,10 @@
 import React, { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { useStoreContext } from '@/utility/StoreContext';
-import { User } from '@prisma/client';
-
-interface Admin extends User {
-  StoreUser?: { store: { name: string } }[];
-}
+import { User } from '@/types/types';
 
 const ManageStoreAdmin: React.FC = () => {
-  const [admins, setAdmins] = useState<Admin[]>([]);
+  const [admins, setAdmins] = useState<User[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -105,8 +101,14 @@ const ManageStoreAdmin: React.FC = () => {
                         {new Date(admin.createdAt).toLocaleDateString()}
                       </td>
                       <td className="py-3 px-6 space-x-2">
+                        <Link
+                          href={`http://localhost:3000/dashboard/${user?.username}/edit-admin/${admin.id}`}
+                          className="bg-primary text-white py-2 px-4 rounded-md"
+                        >
+                          Edit
+                        </Link>
                         <button
-                          className="bg-red-600 text-white py-2 px-4 rounded-md hover:bg-red-700 transform transition duration-300"
+                          className="bg-primary text-white py-2 px-4 rounded-md"
                           onClick={() => handleDelete(admin.id)}
                         >
                           Delete

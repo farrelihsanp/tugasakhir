@@ -13,10 +13,10 @@ export default function Profile() {
   };
 
   return (
-    <section className="bg-gray-50 min-h-screen flex flex-col items-center justify-center py-10">
+    <section className=" min-h-screen flex flex-col items-center justify-center py-10">
       <div
         id="container"
-        className="mx-auto w-full sm:w-96 p-8 bg-white rounded-2xl shadow-xl max-w-2xl"
+        className="mx-auto w-full sm:w-96 p-8 bg-white rounded-2xl shadow-xl border-1 max-w-2xl"
       >
         <div className="flex flex-col items-center">
           <div className="relative w-60 h-60 mb-4">

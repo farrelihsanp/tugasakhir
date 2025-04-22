@@ -1,5 +1,6 @@
 import express from 'express';
 import {
+  getAllCustomers,
   getAllUsers,
   getUserById,
   deleteUser,
@@ -11,7 +12,17 @@ const router = express.Router();
 
 import { verifyToken, roleGuard } from '../middlewares/auth-middleware.js';
 
-router.route('/users').get(verifyToken, roleGuard(['SUPERADMIN']), getAllUsers);
+router
+  .route('/users')
+  .get(verifyToken, roleGuard(['SUPERADMIN']), getAllCustomers);
+
+router
+  .route('/all-users')
+  .get(verifyToken, roleGuard(['SUPERADMIN', 'STOREADMIN']), getAllUsers);
+
+router
+  .route('/customers')
+  .get(verifyToken, roleGuard(['SUPERADMIN']), getAllCustomers);
 
 router
   .route('/users/:id')

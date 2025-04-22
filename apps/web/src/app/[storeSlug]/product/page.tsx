@@ -5,6 +5,8 @@ import { useStoreContext } from '@/utility/StoreContext';
 import Image from 'next/image';
 import Link from 'next/link';
 import { FaChevronLeft, FaChevronRight } from 'react-icons/fa';
+import { Product } from '@/types/types';
+import { toast } from 'react-toastify';
 
 const AllProductsPage = () => {
   const { products, loading, error, nearestStore, categories } =
@@ -46,6 +48,35 @@ const AllProductsPage = () => {
         Tidak ada toko yang tersedia di lokasi kamu saat ini.
       </p>
     );
+
+  const handleAddToCart = async (product: Product) => {
+    try {
+      const response = await fetch(
+        `http://localhost:8000/api/v1/cart/add/${nearestStore.slug}`,
+        {
+          method: 'POST',
+          credentials: 'include',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            productId: product.id,
+            quantity: 1,
+          }),
+        },
+      );
+
+      const data = await response.json();
+      if (response.ok) {
+        toast.success('Product added to cart successfully!');
+      } else {
+        toast.error(data.error || 'Failed to add product to cart');
+      }
+    } catch (error) {
+      console.error('Error adding product to cart:', error);
+      toast.error('error:' + error);
+    }
+  };
 
   return (
     <div className="p-6 min-h-screen flex flex-col justify-center items-center bg-quaternary">
@@ -139,13 +170,20 @@ const AllProductsPage = () => {
                       )}
                     </div>
                     <div className="text-xs text-gray-600">
-                      Stok: {map.storeProducts[0].stock}
+                      {map.storeProducts[0].stock > 0
+                        ? `Stok: ${map.storeProducts[0].stock}`
+                        : `Out of stock`}
                     </div>
-                    {/* <div className="mt-3">
-                      <button className="bg-primary text-quaternary w-full text-sm font-medium py-2 px-4 rounded hover:bg-green-700 transition">
-                        + Add
-                      </button>
-                    </div> */}
+                    <div className="mt-3">
+                      <div className="mt-3">
+                        <button
+                          className="bg-primary text-quaternary w-full text-sm font-medium py-2 px-4 rounded hover:bg-green-700 transition"
+                          onClick={() => handleAddToCart(map)}
+                        >
+                          + Add
+                        </button>
+                      </div>
+                    </div>
                   </div>
                 </Link>
               </div>

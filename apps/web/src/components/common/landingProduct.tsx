@@ -129,9 +129,11 @@ export const ProductsPage = () => {
                       </div>
                       <div className="flex justify-between items-center mt-2">
                         <p className="text-gray-500 text-xs text-left mb-3">
-                          Stock: {map.stock}
+                          {map.stock > 0
+                            ? `Stock: ${map.stock}`
+                            : 'Out of stock'}
                         </p>
-                        {user?.role === Role.CUSTOMERS && (
+                        {user?.role === Role.CUSTOMERS && map.stock > 0 ? (
                           <div className="flex justify-start">
                             <button
                               onClick={() => handleAddToCart(map.product.id)}
@@ -140,7 +142,7 @@ export const ProductsPage = () => {
                               + Add
                             </button>
                           </div>
-                        )}
+                        ) : null}
                       </div>
                     </div>
                   </div>

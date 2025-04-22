@@ -11,14 +11,19 @@ const DiscountDetailPage = () => {
   const [discount, setDiscount] = useState<Discount | null>(null);
   const [loading, setLoading] = useState<boolean>(false);
 
-  const discountEdit = Number(discountId);
-
   useEffect(() => {
     const fetchDiscount = async () => {
       setLoading(true);
       try {
         const response = await fetch(
-          `http://localhost:8000/api/v1/get-discount/${discountEdit}`,
+          `http://localhost:8000/api/v1/get-discount/${discountId}`,
+          {
+            method: 'GET',
+            credentials: 'include',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+          },
         );
         const data = await response.json();
 
@@ -37,7 +42,7 @@ const DiscountDetailPage = () => {
     };
 
     fetchDiscount();
-  }, [discountEdit]);
+  }, [discountId]);
 
   return (
     <div className="min-h-screen flex justify-center items-center p-4">

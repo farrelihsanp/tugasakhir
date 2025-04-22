@@ -292,7 +292,7 @@ export const getAllStores = async (
 ) => {
   try {
     const stores = await prisma.store.findMany();
-    res.status(200).json(stores);
+    res.status(200).json({ ok: true, message: 'Stores found', data: stores });
   } catch (error) {
     console.error(error);
     next(error);

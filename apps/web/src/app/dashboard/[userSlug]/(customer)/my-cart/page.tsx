@@ -4,14 +4,24 @@ import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { useStoreContext } from '@/utility/StoreContext';
-import { Cart } from '@/types/types';
+import { Cart, Voucher } from '@/types/types';
 import { toast } from 'react-toastify';
-import { FaShippingFast, FaCreditCard, FaHeadset } from 'react-icons/fa';
+import {
+  FaShippingFast,
+  FaCreditCard,
+  FaHeadset,
+  FaTrashAlt,
+  FaRegCreditCard,
+} from 'react-icons/fa';
+import { CartItem } from '@/types/types';
+import { VoucherCategory } from '@prisma/client';
 
 export default function CartPage() {
   const [cart, setCart] = useState<Cart | null>(null);
   const [totalCart, setTotalCart] = useState<number>(0);
   const [loading, setLoading] = useState<boolean>(true);
+  const [vouchers, setVouchers] = useState<Voucher[]>([]);
+  const [selectedVoucher, setSelectedVoucher] = useState<number | null>(null);
   const { user } = useStoreContext();
 
   const fetchCart = async () => {
@@ -21,8 +31,14 @@ export default function CartPage() {
         credentials: 'include',
       });
       const data = await res.json();
-      if (data.ok) setCart(data.data as Cart);
-      else toast.error('Gagal memuat data keranjang');
+      if (data.ok) {
+        const sortedCartItems = data.data.cartItems.sort(
+          (a: CartItem, b: CartItem) => a.id - b.id,
+        );
+        setCart({ ...data.data, cartItems: sortedCartItems });
+      } else {
+        toast.error('Gagal memuat data keranjang');
+      }
     } catch (error) {
       console.error('Error fetching cart:', error);
     } finally {
@@ -36,6 +52,10 @@ export default function CartPage() {
         'http://localhost:8000/api/v1/cart/total-amount',
         {
           credentials: 'include',
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json',
+          },
         },
       );
       const data = await res.json();
@@ -46,18 +66,89 @@ export default function CartPage() {
     }
   };
 
+  const fetchVouchers = async () => {
+    try {
+      const res = await fetch('http://localhost:8000/api/v1/my-voucher', {
+        credentials: 'include',
+      });
+      const data = await res.json();
+      if (data.ok) setVouchers(data.data);
+      else toast.error('Gagal memuat voucher');
+    } catch (error) {
+      console.error('Error fetching vouchers:', error);
+    }
+  };
+
+  const handleApplyVoucher = async () => {
+    if (!selectedVoucher || !cart) return;
+    try {
+      const res = await fetch(
+        'http://localhost:8000/api/v1/apply-voucher-to-product',
+        {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          credentials: 'include',
+          body: JSON.stringify({ voucherId: selectedVoucher }),
+        },
+      );
+      const data = await res.json();
+      if (data.ok) {
+        toast.success('Voucher applied successfully!');
+        setTimeout(() => {
+          window.location.reload();
+        }, 1000);
+      } else {
+        toast.error('Failed to apply voucher');
+      }
+    } catch (error) {
+      console.error('Error applying voucher:', error);
+    }
+  };
+
+  const handleRemoveVoucher = async (cartItemId: number) => {
+    try {
+      const res = await fetch(
+        'http://localhost:8000/api/v1/remove-voucher-from-cart-item',
+        {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          credentials: 'include',
+          body: JSON.stringify({ cartItemId: cartItemId }),
+        },
+      );
+      const data = await res.json();
+      if (data.ok) {
+        toast.success('Voucher removed successfully!');
+        await fetchCart();
+        await fetchTotal();
+        setTimeout(() => {
+          window.location.reload();
+        }, 1000);
+      } else {
+        toast.error(`${data.error || 'Unknown error'}`);
+      }
+    } catch (error: unknown) {
+      console.error('Error removing voucher:', error);
+    }
+  };
+
   useEffect(() => {
     fetchCart();
     fetchTotal();
+    fetchVouchers();
   }, []);
 
   const handleIncrease = async (cartItemId: number) => {
-    await fetch('http://localhost:8000/api/v1/cart/plus', {
+    const res = await fetch('http://localhost:8000/api/v1/cart/plus', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       credentials: 'include',
       body: JSON.stringify({ cartItemId, quantity: 1 }),
     });
+    if (!res.ok) {
+      const errorData = await res.json();
+      toast.error(errorData.error || 'Unknown error');
+    }
     await fetchCart();
     await fetchTotal();
   };
@@ -102,9 +193,24 @@ export default function CartPage() {
   };
 
   if (loading) return <div className="text-center py-10">Loading...</div>;
+
   if (!cart || !cart.cartItems || cart.cartItems.length === 0)
     return (
-      <div className="text-center py-10 text-lg">Keranjang kamu kosong.</div>
+      <div className="flex flex-col items-center justify-center py-10 text-center min-h-screen">
+        <Image
+          src="https://i.pinimg.com/736x/c6/0f/ea/c60fea3ac3aab2e82c2f7ea901ef55f6.jpg"
+          width={2000}
+          height={2000}
+          alt="Keranjang Kosong"
+          className="w-100 h-100 mb-6"
+        />
+        <div className="text-xl font-semibold text-gray-800">
+          Keranjang kamu kosong.
+        </div>
+        <p className="text-md text-gray-600 mt-4">
+          Ayo tambahkan beberapa barang ke dalam keranjang!
+        </p>
+      </div>
     );
 
   return (
@@ -132,14 +238,10 @@ export default function CartPage() {
             <span>Quantity</span>
             <span>Amount</span>
           </div>
-
-          {cart.cartItems.map((item) => {
+          {cart.cartItems.map((item: CartItem) => {
             const isDiscounted =
               item.priceAfterDiscount && item.priceAfterDiscount > 0;
-            const totalPrice =
-              item.totalAfterDiscount && item.totalAfterDiscount > 0
-                ? item.totalAfterDiscount
-                : item.total;
+            // const isVoucherApplied = item.isVoucherApplied;
 
             return (
               <div
@@ -147,7 +249,7 @@ export default function CartPage() {
                 className="flex flex-col sm:flex-row items-center justify-between bg-white border rounded-lg p-4 shadow"
               >
                 {/* Product Info */}
-                <div className="flex items-center gap-4 w-full sm:w-1/3">
+                <div className="flex items-center justify-start text-left gap-4 w-full sm:w-1/3">
                   <Image
                     src={
                       item.storeProduct?.product?.ProductImages?.[0]
@@ -162,19 +264,40 @@ export default function CartPage() {
                     <div className="font-semibold">
                       {item.storeProduct?.product?.name}
                     </div>
-                    <div className="text-sm text-gray-600">
-                      {isDiscounted ? (
+                    <div className="text-sm text-left flex flex-col">
+                      {item.isVoucherApplied ? (
                         <>
                           <span className="line-through text-red-500">
                             Rp.{Number(item.price).toLocaleString()}
-                          </span>{' '}
-                          <span className="text-primary font-bold">
+                          </span>
+                          <span className="line-through text-red-500">
                             Rp.
                             {Number(item.priceAfterDiscount).toLocaleString()}
                           </span>
+                          <span className="text-primary font-bold">
+                            Rp.{Number(item.priceAfterVoucher).toLocaleString()}
+                          </span>
                         </>
                       ) : (
-                        <>Rp.{Number(item.price).toLocaleString()}</>
+                        <>
+                          {isDiscounted ? (
+                            <>
+                              <span className="line-through text-red-500">
+                                Rp.{Number(item.price).toLocaleString()}
+                              </span>
+                              <span className="text-primary font-bold">
+                                Rp.
+                                {Number(
+                                  item.priceAfterDiscount,
+                                ).toLocaleString()}
+                              </span>
+                            </>
+                          ) : (
+                            <span className="text-primary font-bold">
+                              Rp.{Number(item.price).toLocaleString()}
+                            </span>
+                          )}
+                        </>
                       )}
                     </div>
                   </div>
@@ -198,49 +321,119 @@ export default function CartPage() {
                 </div>
 
                 {/* Price */}
-                <div className="text-right sm:w-1/3 mt-4 sm:mt-0">
+                <div className="text-right flex flex-col justify-end sm:w-1/3 mt-4 sm:mt-0">
                   <div className="text-sm font-semibold text-primary">
-                    Rp.{Number(totalPrice).toLocaleString()}
+                    Rp.
+                    {(item.priceAfterVoucher ||
+                      item.priceAfterDiscount ||
+                      item.price) * item.quantity}
                   </div>
-                  <button
-                    onClick={() => handleDelete(item.id)}
-                    className="text-xs text-red-500 mt-1"
-                  >
-                    Hapus
-                  </button>
+                  <div className="flex flex-col justify-end mt-5">
+                    <div className="flex justify-end w-full">
+                      <button
+                        onClick={() => handleDelete(item.id)}
+                        className="flex items-center text-xs text-red-500 transition duration-200"
+                      >
+                        <FaTrashAlt className="mr-1" />
+                        Hapus
+                      </button>
+                    </div>
+
+                    {item.isVoucherApplied && (
+                      <div className="flex justify-end w-full">
+                        <button
+                          onClick={() => handleRemoveVoucher(item.id)}
+                          className="flex items-center text-xs text-red-500 transition duration-200"
+                        >
+                          <FaRegCreditCard className="mr-1" />
+                          Remove Voucher
+                        </button>
+                      </div>
+                    )}
+                  </div>
                 </div>
               </div>
             );
           })}
         </div>
 
-        {/* Summary */}
-        <div className="bg-white rounded-lg shadow-md p-6">
-          <h2 className="text-xl font-semibold mb-4">Order Summary</h2>
-          <div className="flex justify-between mb-2">
-            <span>Items</span>
-            <span>
-              {cart.cartItems.reduce((sum, item) => sum + item.quantity, 0)}
-            </span>
-          </div>
-          <div className="flex justify-between mb-4">
-            <span>Total</span>
-            <span>Rp.{totalCart.toLocaleString()}</span>
-          </div>
-          <Link href={`/dashboard/${user?.username}/checkout`}>
+        <div>
+          <div className="bg-white rounded-lg shadow-md p-6">
+            <h2 className="text-xl font-semibold mb-4">
+              Apply Voucher For Product
+            </h2>
+            <div className="mb-4">
+              <label
+                htmlFor="voucher"
+                className="block mb-2 text-sm text-gray-600"
+              >
+                Select Voucher
+              </label>
+              <select
+                id="voucher"
+                value={selectedVoucher || ''}
+                onChange={(e) => setSelectedVoucher(Number(e.target.value))}
+                className="w-full p-2 border rounded-lg"
+              >
+                <option value="">Choose a Voucher</option>
+                {vouchers
+                  .filter(
+                    (voucher) =>
+                      voucher.voucherCategory === VoucherCategory.PRODUCT,
+                  )
+                  .map((voucher) => (
+                    <option key={voucher.id} value={voucher.id}>
+                      {voucher.name} - {voucher.value} {voucher.voucherType}
+                    </option>
+                  ))}
+              </select>
+            </div>
             <button
-              onClick={handleCheckout}
-              className="w-full bg-primary text-white py-2 rounded hover:opacity-90"
+              onClick={handleApplyVoucher}
+              className={`w-full py-2 rounded hover:opacity-90 ${!selectedVoucher || !cart || cart.cartItems.length === 0 || cart.cartItems.some((item) => item.isVoucherApplied) ? 'bg-gray-400 cursor-not-allowed' : 'bg-primary text-white'}`}
+              disabled={
+                !selectedVoucher ||
+                !cart ||
+                cart.cartItems.length === 0 ||
+                cart.cartItems.some((item) => item.isVoucherApplied)
+              }
             >
-              Checkout
+              {!selectedVoucher ||
+              !cart ||
+              cart.cartItems.length === 0 ||
+              cart.cartItems.some((item) => item.isVoucherApplied)
+                ? 'Cannot apply for voucher'
+                : 'Apply Voucher'}
             </button>
-          </Link>
+          </div>
+          {/* Order Summary */}
+          <div className="bg-white rounded-lg shadow-md p-6">
+            <h2 className="text-xl font-semibold mb-4">Order Summary</h2>
+            <div className="flex justify-between mb-2">
+              <span>Items</span>
+              <span>
+                {cart.cartItems.reduce((sum, item) => sum + item.quantity, 0)}
+              </span>
+            </div>
+            <div className="flex justify-between mb-4">
+              <span>Total</span>
+              <span>Rp.{totalCart.toLocaleString()}</span>
+            </div>
+            <Link href={`/dashboard/${user?.username}/checkout`}>
+              <button
+                onClick={handleCheckout}
+                className="w-full bg-primary text-white py-2 rounded hover:opacity-90"
+              >
+                Checkout
+              </button>
+            </Link>
+          </div>
         </div>
       </div>
 
       {/* Features & Newsletter */}
       <div className="mt-16">
-        <div className="flex flex-col md:flex-row justify-around text-center gap-6 mb-12 ">
+        <div className="flex flex-col md:flex-row justify-around text-center gap-6 mb-12">
           <Feature
             icon={<FaShippingFast />}
             title="Free Shipping"

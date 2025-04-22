@@ -253,7 +253,7 @@ export default function Navbar() {
         {!user && (
           <div className="ml-4 flex gap-3">
             <Link href="/auth/login" className="text-sm text-gray-700">
-              Login
+              not log-in, login?
             </Link>
             <Link href="/auth/register" className="text-sm text-gray-700">
               Register

@@ -746,9 +746,9 @@ export const applyVoucherToProduct = async (
 ) => {
   try {
     const userId = req.user?.id;
-    const { voucherId, productId } = req.body;
+    const { voucherId } = req.body;
 
-    if (!voucherId || !productId || !userId) {
+    if (!voucherId || !userId) {
       res
         .status(400)
         .json({ error: 'Voucher ID, Product ID and user ID are required' });
@@ -765,15 +765,6 @@ export const applyVoucherToProduct = async (
       return;
     }
 
-    const cartItem = cartUser.cartItems.find(
-      (item) => item.productId === productId,
-    );
-
-    if (!cartItem) {
-      res.status(404).json({ error: 'Product not found in cart' });
-      return;
-    }
-
     const voucherSelectedToApply = await prisma.voucher.findFirst({
       where: {
         id: Number(voucherId),
@@ -783,14 +774,27 @@ export const applyVoucherToProduct = async (
           },
         },
       },
+      include: { VoucherProduct: true },
     });
 
     if (!voucherSelectedToApply) {
       res.status(404).json({ error: 'Voucher not found' });
       return;
     }
+    const productId = voucherSelectedToApply?.VoucherProduct[0].productId;
+
+    const cartItem = cartUser.cartItems.find(
+      (item) => item.productId === productId,
+    );
+
+    if (!cartItem) {
+      res.status(404).json({ error: 'Product not found in cartItems' });
+      return;
+    }
+
     // --------------------------------------------------------------------------
-    const productPrice = Number(cartItem.price);
+    const productPrice =
+      Number(cartItem.priceAfterDiscount) || Number(cartItem.price);
 
     let finalAmountAfterVoucher = 0;
 
@@ -823,14 +827,15 @@ export const applyVoucherToProduct = async (
       }
 
       await prisma.cartItem.update({
-        where: {
-          id: cartItem.id,
-        },
+        where: { id: cartItem.id },
         data: {
-          price: finalAmountAfterVoucher,
-          total: finalAmountAfterVoucher * cartItem.quantity,
+          priceAfterVoucher: finalAmountAfterVoucher,
+          valueVoucher: productPrice - finalAmountAfterVoucher,
+          isVoucherApplied: true,
         },
       });
+
+      // --------------------------------------------------------------------------
 
       const finalVoucher = await prisma.voucher.findFirst({
         where: {
@@ -857,16 +862,89 @@ export const applyVoucherToProduct = async (
         },
       });
 
-      const finalCartItem = await prisma.cartItem.findUnique({
-        where: { id: cartItem.id },
-      });
-
       res.status(200).json({
         ok: true,
         message: 'Voucher applied to cartitem total successfully',
-        data: finalCartItem,
       });
     }
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const removeVoucherFromCartItem = async (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) => {
+  try {
+    const { cartItemId } = req.body;
+
+    if (!cartItemId) {
+      res.status(400).json({ error: 'Cart item IDs are required' });
+      return;
+    }
+
+    const cartItem = await prisma.cartItem.findUnique({
+      where: { id: cartItemId },
+    });
+
+    if (!cartItem) {
+      res.status(404).json({ error: 'Cart item not found' });
+      return;
+    }
+
+    if (!cartItem.isVoucherApplied) {
+      res.status(400).json({ error: 'Voucher not applied to cart item' });
+      return;
+    }
+
+    await prisma.cartItem.update({
+      where: { id: cartItem.id },
+      data: {
+        priceAfterVoucher: null,
+        valueVoucher: 0,
+        isVoucherApplied: false,
+      },
+    });
+
+    // ---
+
+    const productId = cartItem.productId;
+
+    if (!productId) {
+      res.status(400).json({ error: 'Product ID is required' });
+      return;
+    }
+
+    const finalVoucher = await prisma.voucher.findFirst({
+      where: {
+        VoucherProduct: {
+          some: {
+            productId: productId,
+          },
+        },
+      },
+    });
+
+    if (!finalVoucher) {
+      res.status(404).json({ error: 'Voucher not found' });
+      return;
+    }
+
+    await prisma.voucherUser.updateMany({
+      where: { voucherId: finalVoucher.id },
+      data: {
+        stockCustomer: {
+          increment: 1,
+        },
+      },
+    });
+
+    res.status(200).json({
+      ok: true,
+      message: 'Voucher removed from cartitem total successfully',
+    });
   } catch (error) {
     next(error);
   }

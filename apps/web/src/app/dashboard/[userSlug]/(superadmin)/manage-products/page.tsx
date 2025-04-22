@@ -4,10 +4,8 @@ import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { Store } from '@prisma/client';
 
-type StoreData = Store;
-
 const ManageStoresPage: React.FC = () => {
-  const [stores, setStores] = useState<StoreData[]>([]);
+  const [stores, setStores] = useState<Store[]>([]);
   const [error, setError] = useState<string>('');
 
   useEffect(() => {
@@ -22,8 +20,8 @@ const ManageStoresPage: React.FC = () => {
         });
 
         if (response.ok) {
-          const data: StoreData[] = await response.json();
-          setStores(data);
+          const data = await response.json();
+          setStores(data.data);
         } else {
           setError('Failed to fetch stores');
         }

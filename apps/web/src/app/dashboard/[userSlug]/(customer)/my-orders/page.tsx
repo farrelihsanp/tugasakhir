@@ -5,15 +5,15 @@ import { toast } from 'react-toastify';
 import { OrderStatus } from '@prisma/client';
 import Link from 'next/link';
 import { useStoreContext } from '@/utility/StoreContext';
-
-export interface Order {
-  id: number;
-  status: string;
-  slug: string;
-}
+import { Order } from '@/types/types';
 
 const OrderStatusPage = () => {
   const [orders, setOrders] = useState<Order[]>([]);
+  const [searchTerm, setSearchTerm] = useState('');
+  const [selectedDate, setSelectedDate] = useState('');
+  const [selectedMonth, setSelectedMonth] = useState('');
+  const [selectedYear, setSelectedYear] = useState('');
+
   const { user } = useStoreContext();
   const fetchOrderStatus = OrderStatus;
   const orderStatus = Object.keys(fetchOrderStatus);
@@ -22,15 +22,18 @@ const OrderStatusPage = () => {
     const fetchOrders = async () => {
       try {
         const response = await fetch(
-          'http://localhost:8000/api/v1/order-customer',
+          'http://localhost:8000/api/v1/orders-customer',
           {
             method: 'GET',
             credentials: 'include',
+            headers: {
+              'Content-Type': 'application/json',
+            },
           },
         );
         if (!response.ok) throw new Error('Failed to fetch orders');
         const data = await response.json();
-        setOrders(data);
+        setOrders(data.data);
       } catch (error) {
         console.error('Error fetching orders:', error);
         toast.error('Error fetching orders');
@@ -38,7 +41,7 @@ const OrderStatusPage = () => {
     };
 
     fetchOrders();
-  }, []);
+  }, [user]);
 
   const handleCancelOrder = async (orderId: number) => {
     try {
@@ -98,10 +101,95 @@ const OrderStatusPage = () => {
 
   const getStatusIndex = (status: string) => orderStatus.indexOf(status);
 
+  const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setSearchTerm(e.target.value);
+  };
+
+  const handleDateFilter = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    setSelectedDate(e.target.value);
+  };
+
+  const handleMonthFilter = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    setSelectedMonth(e.target.value);
+  };
+
+  const handleYearFilter = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    setSelectedYear(e.target.value);
+  };
+
+  const filteredOrders = orders
+    .filter((order) => order.id.toString().includes(searchTerm))
+    .filter((order) => {
+      const orderDate = new Date(order.createdAt);
+      const selectedDateObj = new Date(selectedDate);
+      const selectedMonthObj = new Date(selectedMonth);
+      const selectedYearObj = new Date(selectedYear);
+
+      return (
+        (!selectedDate ||
+          orderDate.toLocaleDateString() ===
+            selectedDateObj.toLocaleDateString()) &&
+        (!selectedMonth ||
+          orderDate.getMonth() === selectedMonthObj.getMonth()) &&
+        (!selectedYear ||
+          orderDate.getFullYear() === selectedYearObj.getFullYear())
+      );
+    });
+
   return (
     <div className="mx-auto min-h-screen p-8 max-w-7xl">
-      {orders.length > 0 ? (
-        orders.map((order) => {
+      <div className="mb-6">
+        <input
+          type="text"
+          placeholder="Search by Order ID"
+          className="p-2 border rounded"
+          onChange={handleSearch}
+        />
+        <div className="flex gap-4 mt-4">
+          <select
+            className="p-2 border rounded"
+            value={selectedDate}
+            onChange={handleDateFilter}
+          >
+            <option value="">Filter by Date</option>
+            {orders.map((order) => (
+              <option
+                key={order.id}
+                value={new Date(order.createdAt).toLocaleDateString()}
+              >
+                {new Date(order.createdAt).toLocaleDateString()}
+              </option>
+            ))}
+          </select>
+          <select
+            className="p-2 border rounded"
+            value={selectedMonth}
+            onChange={handleMonthFilter}
+          >
+            <option value="">Filter by Month</option>
+            {Array.from({ length: 12 }, (_, i) => (
+              <option key={i} value={`${i + 1}`}>
+                {new Date(2020, i).toLocaleString('default', { month: 'long' })}
+              </option>
+            ))}
+          </select>
+          <select
+            className="p-2 border rounded"
+            value={selectedYear}
+            onChange={handleYearFilter}
+          >
+            <option value="">Filter by Year</option>
+            {Array.from({ length: 5 }, (_, i) => (
+              <option key={i} value={`${2025 - i}`}>
+                {2025 - i}
+              </option>
+            ))}
+          </select>
+        </div>
+      </div>
+
+      {filteredOrders.length > 0 ? (
+        filteredOrders.map((order) => {
           const currentStep = getStatusIndex(order.status);
           return (
             <div
@@ -115,8 +203,15 @@ const OrderStatusPage = () => {
                 </div>
                 <div className="text-right">
                   <div>
-                    <span className="font-medium">Tracking:</span>{' '}
-                    <span className="font-bold">{order.id}</span>
+                    <span className="font-medium">Created At:</span>{' '}
+                    <span className="font-bold">
+                      {new Date(order.createdAt).toLocaleDateString('id-ID', {
+                        weekday: 'long',
+                        year: 'numeric',
+                        month: 'long',
+                        day: 'numeric',
+                      })}
+                    </span>
                   </div>
                 </div>
               </div>
@@ -188,6 +283,13 @@ const OrderStatusPage = () => {
                 >
                   View Order Detail
                 </Link>
+              </div>
+              <div className="text-right">
+                {order.status === OrderStatus.PAYMENT_DECLINED && (
+                  <p className="text-red-500">
+                    Payment rejected, please make payment again
+                  </p>
+                )}
               </div>
             </div>
           );

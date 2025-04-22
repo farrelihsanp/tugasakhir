@@ -5,7 +5,7 @@ import cloudinary from '../configs/cloudinary.js';
 import fs from 'node:fs/promises';
 
 import { Role } from '@prisma/client';
-import { StoreAdminSchema } from '../schemas/auth-schemas.js';
+// import { StoreAdminSchema } from '../schemas/auth-schemas.js';
 
 // Create Admin
 export const createAdmin = async (
@@ -88,9 +88,7 @@ export const updateAdmin = async (
   next: NextFunction,
 ) => {
   try {
-    const { name, email, password, username, storeId } = StoreAdminSchema.parse(
-      req.body,
-    );
+    const { name, email, password, username, storeId } = req.body;
 
     if (!name || !email || !password || !username || !storeId) {
       res.status(400).json({ message: 'Missing required fields!' });

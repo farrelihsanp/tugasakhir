@@ -1,5 +1,7 @@
 import multer from 'multer';
 import path from 'path';
+import { Request } from 'express';
+import { FileFilterCallback } from 'multer';
 
 function generateRandomString(length: number) {
   let result: string = '';
@@ -14,19 +16,23 @@ const storage = multer.diskStorage({
   destination: function (_req, _file, cb) {
     cb(null, 'public/uploads');
   },
-  filename: (_req, file, cb) => {
+
+  filename: (_req, file: Express.Multer.File, cb) => {
     const uniquePrefix = `img-${Date.now()}-${generateRandomString(10)}`;
     cb(null, uniquePrefix + path.extname(file.originalname));
   },
 });
 
-// File filter untuk memastikan hanya gambar yang diunggah
-const fileFilter = (_req, file, cb) => {
+const fileFilter = (
+  _req: Request,
+  file: Express.Multer.File,
+  cb: FileFilterCallback,
+) => {
   const allowedMimes = ['image/jpeg', 'image/jpg', 'image/png', 'image/gif'];
   if (allowedMimes.includes(file.mimetype)) {
     cb(null, true);
   } else {
-    cb(new Error('Only image files are allowed!'), false);
+    cb(null, false);
   }
 };
 
@@ -34,7 +40,7 @@ export const uploadMany = multer({
   storage: storage,
   fileFilter: fileFilter,
   limits: {
-    fileSize: 10 * 1024 * 1024, // 10MB
+    fileSize: 1 * 1024 * 1024, // 1MB
     files: 5, // Maksimum 5 file
   },
 });

@@ -9,6 +9,7 @@ import {
   cancelOrder,
   orderConfirmed,
   getAllOrderCustomer,
+  getOrderCustomer,
   seePaymentProof,
   acceptPaymentProof,
   rejectPaymentProof,
@@ -57,8 +58,10 @@ router
   .put(verifyToken, roleGuard(['CUSTOMERS']), orderConfirmed);
 
 // get all orders customer
+router.route('/orders-customers').get(verifyToken, getAllOrderCustomer);
 
-router.route('/order-customer').get(verifyToken, getAllOrderCustomer);
+// get order customer
+router.route('/orders-customer').get(verifyToken, getOrderCustomer);
 
 // ---------------- ADMIN --------------
 // Get all orders with pending payment

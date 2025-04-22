@@ -76,9 +76,16 @@ export default function DashboardPage() {
 
     STOREADMIN: (
       <div className=" min-h-screen flex flex-col items-center justify-start py-16 px-10">
-        <h1 className="text-4xl font-bold text-tertiary mb-6 text-center">
-          Welcome Admin, {user?.name}!
-        </h1>
+        <div className="flex flex-col items-center">
+          <h1 className="text-4xl font-bold text-tertiar text-center">
+            Welcome Admin, {user?.name}!
+          </h1>
+          <p className="text-tertiary text-center text-lg mt-10">
+            responsibility in store
+          </p>
+          <p className="mb-20 text-2xl font-bold">{storeStoreAdmin?.name}</p>
+        </div>
+
         <div className="mb-12 relative w-60 h-60">
           {user?.profileImage && (
             <Image
@@ -112,7 +119,7 @@ export default function DashboardPage() {
             </div>
           </Link>
           <Link
-            href={`/dashboard/${user?.username}/reports-analysis`}
+            href={`/reports-stock/${storeStoreAdmin?.slug}`}
             className="bg-gradient-to-br from-green-500 to-green-600 text-white p-6 rounded-xl shadow-md hover:scale-105 transform transition duration-300"
           >
             <div className="flex flex-col justify-between h-full">
@@ -191,7 +198,7 @@ export default function DashboardPage() {
             <FaBoxOpen className="text-3xl" />
           </Link>
           <Link
-            href={`/dashboard/${user?.username}/report-analysis`}
+            href={`/reports-stock`}
             className="bg-gradient-to-br from-green-500 to-green-600 text-white p-6 rounded-xl shadow-md hover:scale-105 transform transition duration-300"
           >
             <div className="text-2xl font-bold mb-2">Reports</div>
@@ -207,6 +214,14 @@ export default function DashboardPage() {
               Control active discounts and campaigns.
             </p>
             <FaChartLine className="text-3xl" />
+          </Link>
+          <Link
+            href={`/dashboard/${user?.username}/view-orders-costumers`}
+            className="bg-gradient-to-br from-green-500 to-green-600 text-white p-6 rounded-xl shadow-md hover:scale-105 transform transition duration-300"
+          >
+            <div className="text-2xl font-bold mb-2">View Orders</div>
+            <p className="text-sm mb-4">View order status all stores.</p>
+            <FaStore className="text-3xl" />
           </Link>
         </div>
       </div>

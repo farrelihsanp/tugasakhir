@@ -362,6 +362,11 @@ const OrderForm = () => {
         );
         localStorage.removeItem('selectedVoucher');
         localStorage.removeItem('selectedShipping');
+        setSavedSelectedVoucher(null);
+        setSelectedShipping(null);
+        setSelectedVoucher(null);
+        setSelectedAddress(null);
+        setSavedSelectedVoucher(null);
       } else {
         throw new Error('Failed to create order');
       }
@@ -410,7 +415,7 @@ const OrderForm = () => {
       </div>
 
       <div className="flex justify-center items-center gap-10 ">
-        <div className="container max-w-lg mx-auto p-8 bg-white shadow-xl rounded-xl border border-gray-200 h-[550px]">
+        <div className="container max-w-lg mx-auto p-8 bg-white shadow-xl rounded-xl border border-gray-200 h-full">
           {error && <p className="text-red-600 mb-4 text-center">{error}</p>}
           <h3 className="text-2xl font-semibold mb-6 text-gray-900">
             Settings
@@ -537,7 +542,7 @@ const OrderForm = () => {
           </div>
         </div>
         {/* Display Total Amount */}
-        <div className="max-w-lg mx-auto p-6 bg-white shadow-lg rounded-2xl border border-gray-300 h-[550px]">
+        <div className="max-w-lg mx-auto p-6 bg-white shadow-lg rounded-2xl border border-gray-300 h-full">
           <h3 className="text-2xl font-semibold mb-6 text-gray-900">
             Result Order
           </h3>
@@ -619,7 +624,7 @@ const OrderForm = () => {
             </span>
           </div>
           {/* Submit Order Button */}
-          <div className="mt-15">
+          <div className="mt-5">
             <button
               onClick={handleOrderSubmit}
               className="w-full bg-primary text-white py-3 rounded-md hover:bg-green-400 transition duration-300"

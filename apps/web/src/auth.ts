@@ -7,7 +7,6 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
   providers: [Google],
   callbacks: {
     async signIn({ user }) {
-      console.log('isinya user ', user);
       try {
         const response = await fetch(
           'http://localhost:8000/api/v1/lookup-user',

@@ -5,7 +5,6 @@ import Link from 'next/link';
 import React, { useState } from 'react';
 import { ZodError } from 'zod';
 import { toast } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
 import { loginSchema } from '../../../schemas/auth-schemas';
 import { useRouter } from 'next/navigation';
 import { googleSignIn } from '@/actions/google-sign-in-action';

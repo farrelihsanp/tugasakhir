@@ -64,11 +64,6 @@ export const addToCart = async (
       return;
     }
 
-    // const priceToUse =
-    //   storeProduct.priceAfterDiscount.toNumber() > 0
-    //     ? storeProduct.priceAfterDiscount
-    //     : storeProduct.price;
-
     let cartItem = await prisma.cartItem.findFirst({
       where: {
         cartId: cart.id,
@@ -160,17 +155,15 @@ export const increaseQuantityProduct = async (
       return;
     }
 
-    const hasDiscount = Number(cartItem.storeProduct.priceAfterDiscount) > 0;
+    if (totalRequestedQuantity < 1) {
+      res.status(400).json({ error: 'Invalid quantity' });
+      return;
+    }
 
     const updatedItem = await prisma.cartItem.update({
       where: { id: cartItemId },
       data: {
         quantity: totalRequestedQuantity,
-        total: Number(cartItem.storeProduct.price) * totalRequestedQuantity,
-        totalAfterDiscount: hasDiscount
-          ? Number(cartItem.storeProduct.priceAfterDiscount) *
-            totalRequestedQuantity
-          : null,
       },
     });
 
@@ -215,21 +208,20 @@ export const decreaseQuantityProduct = async (
 
     const newQuantity = cartItem.quantity - quantity;
 
+    if (newQuantity > cartItem.storeProduct.stock) {
+      res.status(400).json({ error: 'Not enough stock available' });
+      return;
+    }
+
     if (newQuantity < 1) {
       res.status(400).json({ error: 'Quantity must be at least 1' });
       return;
     }
 
-    const hasDiscount = +cartItem.storeProduct.priceAfterDiscount > 0;
-
     const updatedCartItem = await prisma.cartItem.update({
       where: { id: cartItemId },
       data: {
         quantity: newQuantity,
-        total: Number(cartItem.storeProduct.price) * newQuantity,
-        totalAfterDiscount: hasDiscount
-          ? Number(cartItem.storeProduct.priceAfterDiscount) * newQuantity
-          : null,
       },
     });
 
@@ -300,34 +292,18 @@ export const getTotalAmountCart = async (
       return;
     }
 
-    let totalWithoutDiscount = 0;
-    let totalWithDiscount = 0;
+    const totalAmount = cart.cartItems.map(
+      (item) =>
+        (item.priceAfterVoucher || item.priceAfterDiscount || item.price) *
+        item.quantity,
+    );
 
-    cart.cartItems.map((item) => {
-      const price = Number(item.price);
-      const priceAfterDiscount = item.priceAfterDiscount
-        ? Number(item.priceAfterDiscount)
-        : null;
-
-      const quantity = item.quantity;
-
-      if (priceAfterDiscount !== null && priceAfterDiscount > 0) {
-        const totalAfterDisc = priceAfterDiscount * quantity;
-        totalWithDiscount += totalAfterDisc;
-      } else {
-        const total = price * quantity;
-        totalWithoutDiscount += total;
-      }
-
-      return item;
-    });
-
-    const finalTotal = totalWithoutDiscount + totalWithDiscount;
+    const totalAmountSum = totalAmount.reduce((a, b) => a + b, 0);
 
     res.status(200).json({
       ok: true,
       message: 'Total amount calculated successfully',
-      data: finalTotal,
+      data: totalAmountSum,
     });
   } catch (error) {
     console.error('Error calculating total amount:', error);
@@ -402,38 +378,24 @@ export const checkout = async (
       return;
     }
 
-    let totalWithoutDiscount = 0;
-    let totalWithDiscount = 0;
+    // ------------------------------------------------------------------------
 
-    cart.cartItems.map((item) => {
-      const price = Number(item.price);
-      const priceAfterDiscount = item.priceAfterDiscount
-        ? Number(item.priceAfterDiscount)
-        : null;
+    const totalAmount = cart.cartItems.map(
+      (item) =>
+        (item.priceAfterVoucher || item.priceAfterDiscount || item.price) *
+        item.quantity,
+    );
 
-      const quantity = item.quantity;
-
-      if (priceAfterDiscount !== null && priceAfterDiscount > 0) {
-        const totalAfterDisc = priceAfterDiscount * quantity;
-        totalWithDiscount += totalAfterDisc;
-      } else {
-        const total = price * quantity;
-        totalWithoutDiscount += total;
-      }
-
-      return item;
-    });
-
-    const finalTotal = totalWithoutDiscount + totalWithDiscount;
+    const totalAmountSum = totalAmount.reduce((a, b) => a + b, 0);
 
     await prisma.cartValueCalculation.upsert({
       where: { cartId: cart.id },
       update: {
-        totalAmountCart: finalTotal,
+        totalAmountCart: totalAmountSum,
       },
       create: {
         cartId: cart.id,
-        totalAmountCart: finalTotal,
+        totalAmountCart: totalAmountSum,
       },
     });
 

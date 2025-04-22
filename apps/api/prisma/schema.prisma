@@ -57,6 +57,7 @@ enum Provider {
 enum typeOfChange {
     PENAMBAHAN
     PEMBELIAN
+    PENGURANGAN
 }
 
 enum VoucherCategory {
@@ -80,8 +81,8 @@ model User {
     updatedAt           DateTime @updatedAt
     referralCount       Int      @default(0)
     provider            Provider
-    isVerified          Boolean  @default(false)
     passwordConfirmed   Boolean  @default(false)
+    isVerified          Boolean  @default(false)
     proofOfPaymentImage String?
 
     Addresses         Address[]
@@ -105,7 +106,6 @@ model Cart {
     user                 User                  @relation(fields: [userId], references: [id], onDelete: Cascade)
     cartItems            CartItem[]
     CartValueCalculation CartValueCalculation?
-    DiscountReport       DiscountReport[]
 }
 
 model CartValueCalculation {
@@ -134,10 +134,14 @@ model CartItem {
     productId      Int?
 
     quantity           Int
-    price              Decimal
-    priceAfterDiscount Decimal?
+    price              Int
+    priceAfterDiscount Int?
     total              Int
     totalAfterDiscount Int?
+
+    priceAfterVoucher Int?
+    valueVoucher      Int     @default(0)
+    isVoucherApplied  Boolean @default(false)
 
     createdAt    DateTime     @default(now())
     updatedAt    DateTime     @updatedAt
@@ -292,6 +296,7 @@ model Order {
     updatedAt              DateTime          @updatedAt
     shippingAt             DateTime?
     deliveredAt            DateTime?
+    continueToProcess      Boolean           @default(false)
 
     shippingAddress     Address              @relation(fields: [shippingAddressId], references: [id], onDelete: Cascade)
     store               Store                @relation(fields: [storeId], references: [id], onDelete: Cascade)
@@ -299,6 +304,7 @@ model Order {
     orderItems          OrderItem[]
     ProductChangeData   ProductChangeData[]
     shippingInformation ShippingInformation?
+    DiscountReport      DiscountReport[]
 }
 
 model OrderItem {
@@ -335,18 +341,26 @@ model ShippingInformation {
 }
 
 model ProductChangeData {
-    id           Int          @id @default(autoincrement())
-    orderId      Int?
-    userId       Int
-    productId    Int
+    id Int @id @default(autoincrement())
+
+    orderId   Int?
+    userId    Int
+    productId Int
+    storeId   Int
+
     stock        Int
     lastStock    Int
+    difference   Int?
+    finalStock   Int
     typeOfChange typeOfChange
-    updatedAt    DateTime     @updatedAt
-    createdAt    DateTime     @default(now())
-    order        Order?       @relation(fields: [orderId], references: [id], onDelete: Cascade)
-    product      Product      @relation(fields: [productId], references: [id])
-    User         User         @relation(fields: [userId], references: [id])
+    role         Role
+
+    updatedAt DateTime @updatedAt
+    createdAt DateTime @default(now())
+
+    order   Order?  @relation(fields: [orderId], references: [id], onDelete: Cascade)
+    product Product @relation(fields: [productId], references: [id])
+    User    User    @relation(fields: [userId], references: [id])
 }
 
 model Discount {
@@ -367,15 +381,13 @@ model Discount {
 model DiscountReport {
     id Int @id @default(autoincrement())
 
-    userId Int
-    cartId Int?
-
+    userId           Int
+    orderId          Int?
     customerBenefits Float
+    createdAt        DateTime @default(now())
 
-    createdAt DateTime @default(now())
-    updatedAt DateTime @updatedAt
-    User      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-    Cart      Cart?    @relation(fields: [cartId], references: [id])
+    User  User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+    Order Order? @relation(fields: [orderId], references: [id])
 }
 
 model DiscountProduct {

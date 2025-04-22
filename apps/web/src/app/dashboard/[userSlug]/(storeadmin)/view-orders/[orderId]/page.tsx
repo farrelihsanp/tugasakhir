@@ -5,9 +5,12 @@ import { useParams } from 'next/navigation';
 import { Order } from '@/types/types';
 import Image from 'next/image';
 import { toast } from 'react-toastify';
+import { useStoreContext } from '@/utility/StoreContext';
 
 const StoreAdminActionPage = () => {
   const { orderId } = useParams();
+  const { user } = useStoreContext();
+
   const [order, setOrder] = useState<Order | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [paymentProofUrl, setPaymentProofUrl] = useState<string | null>(null);
@@ -79,7 +82,7 @@ const StoreAdminActionPage = () => {
     <section className="flex justify-center items-center min-h-screen my-20">
       <div className="w-full max-w-xl mx-auto py-10 px-6 bg-white shadow-xl rounded-xl">
         <h1 className="text-3xl font-bold mb-4 text-center text-gray-900">
-          Pembayaran
+          Order Detail Customers
         </h1>
         <p className="text-lg font-semibold text-gray-800">
           Total Pembayaran:{' '}
@@ -155,97 +158,105 @@ const StoreAdminActionPage = () => {
           </p>
         </div>
 
-        {/* Action Buttons */}
-        <div className="mt-6">
-          <h2 className="font-semibold text-xl text-gray-800 mb-4">ACTION</h2>
-          <div className="flex flex-col gap-4">
-            <button
-              onClick={handleSeeProof}
-              className="bg-gradient-to-r bg-primary text-white py-3 rounded-lg font-semibold transition hover:opacity-90"
-            >
-              LIHAT BUKTI TRANSFER
-            </button>
-            <button
-              onClick={() =>
-                handleAction('reject-payment-proof', 'Pembayaran ditolak')
-              }
-              className={`bg-gradient-to-r bg-primary text-white py-3 rounded-lg font-semibold transition hover:opacity-90 ${
-                order.status === 'PROCESSING' ||
-                order.status === 'SHIPPED' ||
-                order.status === 'DELIVERED' ||
-                order.status === 'COMPLETED'
-                  ? 'opacity-50 cursor-not-allowed'
-                  : ''
-              }`}
-              disabled={
-                order.status === 'PROCESSING' ||
-                order.status === 'SHIPPED' ||
-                order.status === 'DELIVERED' ||
-                order.status === 'COMPLETED'
-              }
-            >
-              TOLAK PEMBAYARAN
-            </button>
-            <button
-              onClick={() =>
-                handleAction('accept-payment-proof', 'Pembayaran diterima')
-              }
-              className={`bg-gradient-to-r bg-primary text-white py-3 rounded-lg font-semibold transition hover:opacity-90 ${
-                order.status === 'PROCESSING' ||
-                order.status === 'SHIPPED' ||
-                order.status === 'DELIVERED' ||
-                order.status === 'COMPLETED'
-                  ? 'opacity-50 cursor-not-allowed'
-                  : ''
-              }`}
-              disabled={
-                order.status === 'PROCESSING' ||
-                order.status === 'SHIPPED' ||
-                order.status === 'DELIVERED' ||
-                order.status === 'COMPLETED'
-              }
-            >
-              TERIMA PEMBAYARAN
-            </button>
-            <button
-              onClick={() =>
-                handleAction('process-order', 'Order sedang diproses')
-              }
-              className={`bg-gradient-to-r bg-primary text-white py-3 rounded-lg font-semibold transition hover:opacity-90 ${
-                order.status === 'PROCESSING' ||
-                order.status === 'SHIPPED' ||
-                order.status === 'DELIVERED' ||
-                order.status === 'COMPLETED'
-                  ? 'opacity-50 cursor-not-allowed'
-                  : ''
-              }`}
-              disabled={
-                order.status === 'PROCESSING' ||
-                order.status === 'SHIPPED' ||
-                order.status === 'DELIVERED' ||
-                order.status === 'COMPLETED'
-              }
-            >
-              PROSES ORDERAN
-            </button>
-            <button
-              onClick={() => handleAction('sent-order', 'Order telah dikirim')}
-              className={`bg-gradient-to-r bg-primary text-white py-3 rounded-lg font-semibold transition hover:opacity-90 ${
-                order.status === 'SHIPPED' ||
-                order.status === 'DELIVERED' ||
-                order.status === 'COMPLETED'
-                  ? 'opacity-50 cursor-not-allowed'
-                  : ''
-              }`}
-              disabled={
-                order.status === 'SHIPPED' ||
-                order.status === 'DELIVERED' ||
-                order.status === 'COMPLETED'
-              }
-            >
-              KIRIM ORDERAN
-            </button>
-          </div>
+        {/* ACTION CONTAINER */}
+        <div>
+          {user?.role === 'STOREADMIN' && (
+            <div className="mt-6">
+              <h2 className="font-semibold text-xl text-gray-800 mb-4">
+                ACTION
+              </h2>
+              <div className="flex flex-col gap-4">
+                <button
+                  onClick={handleSeeProof}
+                  className="bg-gradient-to-r bg-primary text-white py-3 rounded-lg font-semibold transition hover:opacity-90"
+                >
+                  LIHAT BUKTI TRANSFER
+                </button>
+                <button
+                  onClick={() =>
+                    handleAction('reject-payment-proof', 'Pembayaran ditolak')
+                  }
+                  className={`bg-gradient-to-r bg-primary text-white py-3 rounded-lg font-semibold transition hover:opacity-90 ${
+                    order.status === 'PROCESSING' ||
+                    order.status === 'SHIPPED' ||
+                    order.status === 'DELIVERED' ||
+                    order.status === 'COMPLETED'
+                      ? 'opacity-50 cursor-not-allowed'
+                      : ''
+                  }`}
+                  disabled={
+                    order.status === 'PROCESSING' ||
+                    order.status === 'SHIPPED' ||
+                    order.status === 'DELIVERED' ||
+                    order.status === 'COMPLETED'
+                  }
+                >
+                  TOLAK PEMBAYARAN
+                </button>
+                <button
+                  onClick={() =>
+                    handleAction('accept-payment-proof', 'Pembayaran diterima')
+                  }
+                  className={`bg-gradient-to-r bg-primary text-white py-3 rounded-lg font-semibold transition hover:opacity-90 ${
+                    order.status === 'PROCESSING' ||
+                    order.status === 'SHIPPED' ||
+                    order.status === 'DELIVERED' ||
+                    order.status === 'COMPLETED'
+                      ? 'opacity-50 cursor-not-allowed'
+                      : ''
+                  }`}
+                  disabled={
+                    order.status === 'PROCESSING' ||
+                    order.status === 'SHIPPED' ||
+                    order.status === 'DELIVERED' ||
+                    order.status === 'COMPLETED'
+                  }
+                >
+                  TERIMA PEMBAYARAN
+                </button>
+                <button
+                  onClick={() =>
+                    handleAction('process-order', 'Order sedang diproses')
+                  }
+                  className={`bg-gradient-to-r bg-primary text-white py-3 rounded-lg font-semibold transition hover:opacity-90 ${
+                    order.status === 'PROCESSING' ||
+                    order.status === 'SHIPPED' ||
+                    order.status === 'DELIVERED' ||
+                    order.status === 'COMPLETED'
+                      ? 'opacity-50 cursor-not-allowed'
+                      : ''
+                  }`}
+                  disabled={
+                    order.status === 'PROCESSING' ||
+                    order.status === 'SHIPPED' ||
+                    order.status === 'DELIVERED' ||
+                    order.status === 'COMPLETED'
+                  }
+                >
+                  PROSES ORDERAN
+                </button>
+                <button
+                  onClick={() =>
+                    handleAction('sent-order', 'Order telah dikirim')
+                  }
+                  className={`bg-gradient-to-r bg-primary text-white py-3 rounded-lg font-semibold transition hover:opacity-90 ${
+                    order.status === 'SHIPPED' ||
+                    order.status === 'DELIVERED' ||
+                    order.status === 'COMPLETED'
+                      ? 'opacity-50 cursor-not-allowed'
+                      : ''
+                  }`}
+                  disabled={
+                    order.status === 'SHIPPED' ||
+                    order.status === 'DELIVERED' ||
+                    order.status === 'COMPLETED'
+                  }
+                >
+                  KIRIM ORDERAN
+                </button>
+              </div>
+            </div>
+          )}
         </div>
 
         {/* MODAL POPUP */}

@@ -8,6 +8,19 @@ import {
   DiscountType,
 } from '@prisma/client';
 
+export interface StockData {
+  id: number;
+  productId: number;
+  userId: number;
+  storeId: number;
+  stock: number;
+  lastStock: number;
+  difference: number;
+  finalStock: number;
+  typeOfChange: string;
+  createdAt: string;
+}
+
 export interface User {
   id: number;
   name: string;
@@ -24,6 +37,7 @@ export interface User {
   isVerified: boolean;
   passwordConfirmed: boolean;
   proofOfPaymentImage?: string;
+  storeId?: number;
   StoreUser: StoreUser[];
 }
 
@@ -198,6 +212,7 @@ export interface Order {
   shippingInformation?: ShippingInformation;
   orderItems: OrderItem[];
   user: User;
+  store: Store;
 }
 
 export interface OrderItem {
@@ -268,9 +283,12 @@ export interface CartItem {
   cartId: number;
   quantity: number;
   price: number;
+  isVoucherApplied: boolean;
   priceAfterDiscount: number;
+  priceAfterVoucher: number;
   total: number;
   totalAfterDiscount: number;
+  valueVoucher: number;
   storeProduct: StoreProduct;
   Product: Product;
 }

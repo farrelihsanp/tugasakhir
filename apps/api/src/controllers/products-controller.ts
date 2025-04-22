@@ -2,7 +2,7 @@ import { NextFunction, Request, Response } from 'express';
 import { prisma } from '../configs/prisma.js';
 import cloudinary from '../configs/cloudinary.js';
 import fs from 'node:fs/promises';
-import { typeOfChange } from '@prisma/client';
+import { typeOfChange, Role } from '@prisma/client';
 
 export const createProduct = async (
   req: Request,
@@ -269,7 +269,7 @@ export const updateProductInSomeStore = async (
   next: NextFunction,
 ) => {
   const { storeSlug } = req.params;
-  const { stock, price, productId } = req.body;
+  const { editStock, price, productId } = req.body;
 
   const userId = req.user?.id;
 
@@ -320,21 +320,42 @@ export const updateProductInSomeStore = async (
         id: storeProduct.id,
       },
       data: {
-        stock: stock ?? storeProduct.stock,
+        stock: editStock ?? storeProduct.stock,
         price: parseFloat(price),
       },
     });
 
-    await prisma.productChangeData.create({
-      data: {
-        productId: Number(productId),
-        userId,
-        orderId: null,
-        stock: stock,
-        lastStock: storeProduct.stock,
-        typeOfChange: typeOfChange.PENAMBAHAN,
-      },
-    });
+    if (editStock > storeProduct.stock) {
+      await prisma.productChangeData.create({
+        data: {
+          productId: Number(productId),
+          userId,
+          orderId: null,
+          stock: editStock,
+          lastStock: storeProduct.stock,
+          difference: editStock - storeProduct.stock,
+          finalStock: editStock,
+          typeOfChange: typeOfChange.PENAMBAHAN,
+          role: Role.SUPERADMIN,
+          storeId: store.id,
+        },
+      });
+    } else if (editStock < storeProduct.stock) {
+      await prisma.productChangeData.create({
+        data: {
+          productId: Number(productId),
+          userId,
+          orderId: null,
+          stock: editStock,
+          lastStock: storeProduct.stock,
+          difference: storeProduct.stock - editStock,
+          finalStock: editStock,
+          typeOfChange: typeOfChange.PENGURANGAN,
+          role: Role.SUPERADMIN,
+          storeId: store.id,
+        },
+      });
+    }
 
     res.status(200).json({
       ok: true,

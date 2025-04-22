@@ -22,13 +22,13 @@ export async function updateOrderStatus(data: OrderStatusData) {
   if (transactionStatus === 'capture') {
     if (fraudStatus === 'accept') {
       await prisma.order.update({
-        where: { id: data.order_id },
+        where: { id: +data.order_id },
         data: { status: 'PAID' },
       });
     }
   } else if (transactionStatus === 'settlement') {
     await prisma.order.update({
-      where: { id: data.order_id },
+      where: { id: +data.order_id },
       data: { status: OrderStatus.PAID },
     });
   } else if (
@@ -38,12 +38,12 @@ export async function updateOrderStatus(data: OrderStatusData) {
     transactionStatus === 'failure'
   ) {
     await prisma.order.update({
-      where: { id: data.order_id },
+      where: { id: +data.order_id },
       data: { status: OrderStatus.PAYMENT_DECLINED },
     });
   } else if (transactionStatus === 'pending') {
     await prisma.order.update({
-      where: { id: data.order_id },
+      where: { id: +data.order_id },
       data: { status: OrderStatus.PENDING_PAYMENT },
     });
   }

@@ -3,8 +3,14 @@
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { Store } from '@prisma/client';
+import { useStoreContext } from '@/utility/StoreContext';
+import { useRouter } from 'next/navigation';
+import AccessDenied from '@/components/access-denied';
 
 const ManageStoresPage: React.FC = () => {
+  const { user } = useStoreContext();
+  const router = useRouter();
+
   const [stores, setStores] = useState<Store[]>([]);
   const [error, setError] = useState<string>('');
 
@@ -32,41 +38,25 @@ const ManageStoresPage: React.FC = () => {
       }
     };
 
-    fetchStores();
-  }, []);
-
-  const deleteStore = async (id: number) => {
-    if (window.confirm('Are you sure you want to delete this store?')) {
-      try {
-        const response = await fetch(
-          `http://localhost:8000/api/v1/stores/${id}`,
-          {
-            method: 'DELETE',
-            headers: {
-              'Content-Type': 'application/json',
-            },
-            credentials: 'include',
-          },
-        );
-
-        if (response.ok) {
-          setStores(stores.filter((store) => store.id !== id));
-        } else {
-          setError('Failed to delete store');
-        }
-      } catch (err) {
-        if (err instanceof Error) {
-          setError(`Error deleting store: ${err.message}`);
-        }
-      }
+    if (user?.role !== 'SUPERADMIN') {
+      setTimeout(() => {
+        router.push('/');
+      }, 3000);
+      return;
     }
-  };
+
+    fetchStores();
+  }, [router, user?.role]);
+
+  if (user?.role !== 'SUPERADMIN') {
+    return <AccessDenied />;
+  }
 
   return (
-    <section className="min-h-screen flex items-center justify-center  py-8">
+    <section className="min-h-screen flex items-center justify-center py-8">
       <div className="w-full max-w-4xl p-8 bg-white rounded-lg shadow-lg">
         <h2 className="text-3xl font-semibold text-center text-gray-900 mb-6">
-          Manage Stores
+          Stocks Report
         </h2>
         {error && <p className="text-red-500 text-center mb-4">{error}</p>}
         <table className="min-w-full table-auto border-separate border-spacing-0 rounded-lg overflow-hidden shadow-md">
@@ -92,27 +82,11 @@ const ManageStoresPage: React.FC = () => {
                     <div className="flex space-x-4">
                       <div>
                         <Link
-                          href={`manage-store/${store.id}`}
+                          href={`/reports-stock/${store.slug}`}
                           className="text-blue-500 hover:text-blue-700 transition-colors"
                         >
                           View
                         </Link>
-                      </div>
-                      <div>
-                        <Link
-                          href={`manage-store/edit-store/${store.id}`}
-                          className="text-green-500 hover:text-green-700 transition-colors"
-                        >
-                          Edit
-                        </Link>
-                      </div>
-                      <div>
-                        <button
-                          onClick={() => deleteStore(store.id)}
-                          className="text-red-500 hover:text-red-700 transition-colors"
-                        >
-                          Delete
-                        </button>
                       </div>
                     </div>
                   </td>

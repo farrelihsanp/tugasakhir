@@ -4,11 +4,8 @@ import { OrderStatus } from '@prisma/client';
 
 const autoCompletedOrder = async () => {
   try {
-    // Calculate the date 7 days ago from now
     const sevenDaysAgo = new Date();
     sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
-
-    // Update orders that have been delivered more than 7 days ago
     await prisma.order.updateMany({
       where: {
         status: OrderStatus.DELIVERED,
@@ -25,7 +22,6 @@ const autoCompletedOrder = async () => {
   }
 };
 
-// Schedule the cron job to run daily at midnight (0 0 * * *)
 cron.schedule('0 0 * * *', autoCompletedOrder, {
   scheduled: true,
   timezone: 'Asia/Jakarta',

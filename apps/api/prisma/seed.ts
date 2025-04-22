@@ -8,6 +8,7 @@ import {
   PaymentMethodType,
   DiscountType,
 } from '@prisma/client';
+import { Role, typeOfChange } from '@prisma/client';
 
 async function main() {
   try {
@@ -50,7 +51,7 @@ async function main() {
         emailConfirmed: true,
         role: 'SUPERADMIN',
         profileImage:
-          'https://res.cloudinary.com/dm1cnsldc/image/upload/v1739627186/education-confrence_jujt4f.jpg',
+          'https://images.unsplash.com/photo-1722322426803-101270837197?q=80&w=1170&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
         referralNumber: 'REF123456',
         provider: 'CREDENTIALS',
       },
@@ -148,7 +149,7 @@ async function main() {
         emailConfirmed: true,
         role: 'CUSTOMERS',
         profileImage:
-          'https://res.cloudinary.com/dm1cnsldc/image/upload/v1739728940/event/images/s6x3zkhiibcahfndhmxe.jpg',
+          'https://images.unsplash.com/photo-1695927621677-ec96e048dce2?q=80&w=1035&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
         referralNumber: 'REF112295',
         provider: 'CREDENTIALS',
       },
@@ -460,6 +461,16 @@ async function main() {
         isCheap: true,
       },
     });
+
+    await prisma.storeProduct.create({
+      data: {
+        storeId: store4.id,
+        productId: tomat.id,
+        price: 10000,
+        stock: 150,
+        isCheap: true,
+      },
+    });
     await prisma.categoryProduct.create({
       data: {
         productId: tomat.id,
@@ -508,6 +519,15 @@ async function main() {
     await prisma.storeProduct.create({
       data: {
         storeId: store2.id,
+        productId: semangka.id,
+        price: 45000,
+        stock: 150,
+        isCheap: true,
+      },
+    });
+    await prisma.storeProduct.create({
+      data: {
+        storeId: store4.id,
         productId: semangka.id,
         price: 45000,
         stock: 150,
@@ -618,7 +638,7 @@ async function main() {
         storeId: store4.id,
         productId: airAqua.id,
         price: 3000,
-        stock: 200,
+        stock: 1,
         isCheap: true,
       },
     });
@@ -2075,7 +2095,7 @@ async function main() {
       // {
       //   product: tomat,
       //   storeProduct: tomatStoreProduct,
-      //   quantity: 2,
+      //   quantity: 50,
       // },
       {
         product: sabunMandi,
@@ -2097,7 +2117,7 @@ async function main() {
             storeProductId: item.storeProduct.id,
             productId: item.product.id,
             quantity: item.quantity,
-            price: item.storeProduct.price,
+            price: +item.storeProduct.price,
             total: Number(item.storeProduct.price) * item.quantity,
           },
         });
@@ -2172,14 +2192,14 @@ async function main() {
         stockVoucherAdmin: 100,
         voucherCategory: VoucherCategory.PRODUCT,
         voucherType: VoucherType.AMOUNT,
-        value: 1000,
+        value: 50,
         startDate: new Date(),
         endDate: new Date(new Date().setDate(new Date().getDate() + 30)),
         isActive: true,
-        minPurchase: 100,
+        minPurchase: 1,
         maxPriceReduction: 1000000,
         voucherImage:
-          'https://images.unsplash.com/photo-1732155512296-58a6d9d96bcd?q=80&w=1750&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
+          'https://images.unsplash.com/photo-1582284540020-8acbe03f4924?q=80&w=1635&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
       },
     });
 
@@ -2250,6 +2270,7 @@ async function main() {
           'https://dummyimage.com/600x400/90ee90/fff&text=bukti+transfer+1',
         paymentProofUploadedAt: new Date(),
         orderConfirmationAt: new Date(),
+        createdAt: new Date('2023-04-22'),
         shippingInformation: {
           create: {
             courierName: 'JNE',
@@ -2312,6 +2333,7 @@ async function main() {
           'https://dummyimage.com/600x400/90ee90/fff&text=bukti+transfer+2',
         paymentProofUploadedAt: new Date(),
         orderConfirmationAt: new Date(),
+        createdAt: new Date('2024-05-22'),
         shippingInformation: {
           create: {
             courierName: 'JNE',
@@ -2374,6 +2396,7 @@ async function main() {
           'https://dummyimage.com/600x400/90ee90/fff&text=bukti+transfer+3',
         paymentProofUploadedAt: new Date(),
         orderConfirmationAt: new Date(),
+        createdAt: new Date('2024-05-23'),
         shippingInformation: {
           create: {
             courierName: 'JNE',
@@ -2508,6 +2531,293 @@ async function main() {
           priceAfterDiscount: updatedPrice,
           backupPrice: updatedPrice,
         },
+      });
+    }
+
+    /* -------------------------------------------------------------------------- */
+
+    const productChangeData = [
+      {
+        productId: tomat.id,
+        userId: customer1.id,
+        stock: 125,
+        lastStock: 200,
+        difference: 75,
+        typeOfChange: typeOfChange.PENGURANGAN,
+        role: Role.SUPERADMIN,
+        storeId: store1.id,
+        finalStock: 125,
+        createdAt: new Date(2025, 0, 15), // January
+      },
+      {
+        productId: sabunMandi.id,
+        userId: customer1.id,
+        stock: 500,
+        lastStock: 60,
+        difference: 440,
+        typeOfChange: typeOfChange.PENAMBAHAN,
+        role: Role.SUPERADMIN,
+        storeId: store1.id,
+        finalStock: 500,
+        createdAt: new Date(2025, 1, 20), // February
+      },
+      {
+        productId: jeruk.id,
+        userId: customer1.id,
+        stock: 50,
+        lastStock: 80,
+        difference: 30,
+        typeOfChange: typeOfChange.PEMBELIAN,
+        role: Role.CUSTOMERS,
+        storeId: store1.id,
+        finalStock: 30,
+        createdAt: new Date(2025, 2, 10), // March
+      },
+      {
+        productId: jeruk.id,
+        userId: superadmin.id,
+        stock: 20,
+        lastStock: 500,
+        difference: 20,
+        typeOfChange: typeOfChange.PENAMBAHAN,
+        role: Role.SUPERADMIN,
+        storeId: store1.id,
+        finalStock: 520,
+        createdAt: new Date(2023, 3, 5), // April
+      },
+      {
+        productId: panci.id,
+        userId: superadmin.id,
+        stock: 20,
+        lastStock: 500,
+        difference: 20,
+        typeOfChange: typeOfChange.PENAMBAHAN,
+        role: Role.SUPERADMIN,
+        storeId: store1.id,
+        finalStock: 520,
+        createdAt: new Date(2024, 4, 12), // May
+      },
+      {
+        productId: tomat.id,
+        userId: customer1.id,
+        stock: 110,
+        lastStock: 125,
+        difference: 15,
+        typeOfChange: typeOfChange.PENGURANGAN,
+        role: Role.CUSTOMERS,
+        storeId: store1.id,
+        finalStock: 110,
+        createdAt: new Date(2025, 4, 10), // May
+      },
+      {
+        productId: sabunMandi.id,
+        userId: customer1.id,
+        stock: 450,
+        lastStock: 500,
+        difference: 50,
+        typeOfChange: typeOfChange.PENGURANGAN,
+        role: Role.CUSTOMERS,
+        storeId: store1.id,
+        finalStock: 450,
+        createdAt: new Date(2025, 5, 12), // June
+      },
+      {
+        productId: jeruk.id,
+        userId: customer1.id,
+        stock: 100,
+        lastStock: 50,
+        difference: 50,
+        typeOfChange: typeOfChange.PENAMBAHAN,
+        role: Role.CUSTOMERS,
+        storeId: store1.id,
+        finalStock: 100,
+        createdAt: new Date(2025, 6, 15), // July
+      },
+      {
+        productId: panci.id,
+        userId: superadmin.id,
+        stock: 100,
+        lastStock: 20,
+        difference: 80,
+        typeOfChange: typeOfChange.PENAMBAHAN,
+        role: Role.SUPERADMIN,
+        storeId: store1.id,
+        finalStock: 120,
+        createdAt: new Date(2025, 7, 20), // August
+      },
+      {
+        productId: tomat.id,
+        userId: storeadmin1.id,
+        stock: 200,
+        lastStock: 180,
+        difference: 20,
+        typeOfChange: typeOfChange.PENAMBAHAN,
+        role: Role.STOREADMIN,
+        storeId: store1.id,
+        finalStock: 200,
+        createdAt: new Date(2025, 8, 25), // September
+      },
+      {
+        productId: semangka.id,
+        userId: storeadmin2.id,
+        stock: 300,
+        lastStock: 250,
+        difference: 50,
+        typeOfChange: typeOfChange.PENAMBAHAN,
+        role: Role.STOREADMIN,
+        storeId: store2.id,
+        finalStock: 300,
+        createdAt: new Date(2025, 9, 30), // October
+      },
+      {
+        productId: wortel.id,
+        userId: customer1.id,
+        stock: 50,
+        lastStock: 100,
+        difference: -50,
+        typeOfChange: typeOfChange.PENGURANGAN,
+        role: Role.CUSTOMERS,
+        storeId: store1.id,
+        finalStock: 50,
+        createdAt: new Date(2025, 10, 5), // November
+      },
+      {
+        productId: bayam.id,
+        userId: superadmin.id,
+        stock: 150,
+        lastStock: 100,
+        difference: 50,
+        typeOfChange: typeOfChange.PENAMBAHAN,
+        role: Role.SUPERADMIN,
+        storeId: store1.id,
+        finalStock: 150,
+        createdAt: new Date(2025, 11, 10), // December
+      },
+      {
+        productId: kol.id,
+        userId: storeadmin3.id,
+        stock: 200,
+        lastStock: 150,
+        difference: 50,
+        typeOfChange: typeOfChange.PENAMBAHAN,
+        role: Role.STOREADMIN,
+        storeId: store3.id,
+        finalStock: 200,
+        createdAt: new Date(2025, 0, 1), // January 2026
+      },
+      {
+        productId: kangkung.id,
+        userId: storeadmin4.id,
+        stock: 120,
+        lastStock: 100,
+        difference: 20,
+        typeOfChange: typeOfChange.PENAMBAHAN,
+        role: Role.STOREADMIN,
+        storeId: store4.id,
+        finalStock: 120,
+        createdAt: new Date(2026, 1, 10), // February 2026
+      },
+      {
+        productId: anggur.id,
+        userId: customer1.id,
+        stock: 70,
+        lastStock: 80,
+        difference: 10,
+        typeOfChange: typeOfChange.PENGURANGAN,
+        role: Role.CUSTOMERS,
+        storeId: store1.id,
+        finalStock: 70,
+        createdAt: new Date(2025, 2, 20), // March 2026
+      },
+      {
+        productId: apel.id,
+        userId: superadmin.id,
+        stock: 130,
+        lastStock: 100,
+        difference: 30,
+        typeOfChange: typeOfChange.PENAMBAHAN,
+        role: Role.SUPERADMIN,
+        storeId: store1.id,
+        finalStock: 130,
+        createdAt: new Date(2025, 3, 25), // April 2026
+      },
+      {
+        productId: taro.id,
+        userId: storeadmin1.id,
+        stock: 250,
+        lastStock: 200,
+        difference: 50,
+        typeOfChange: typeOfChange.PENAMBAHAN,
+        role: Role.STOREADMIN,
+        storeId: store1.id,
+        finalStock: 250,
+        createdAt: new Date(2025, 4, 1), // May 2026
+      },
+      {
+        productId: qtela.id,
+        userId: customer1.id,
+        stock: 60,
+        lastStock: 100,
+        difference: 40,
+        typeOfChange: typeOfChange.PENGURANGAN,
+        role: Role.CUSTOMERS,
+        storeId: store1.id,
+        finalStock: 60,
+        createdAt: new Date(2025, 5, 15), // June 2026
+      },
+      {
+        productId: nabati.id,
+        userId: storeadmin2.id,
+        stock: 300,
+        lastStock: 250,
+        difference: 50,
+        typeOfChange: typeOfChange.PENAMBAHAN,
+        role: Role.STOREADMIN,
+        storeId: store2.id,
+        finalStock: 300,
+        createdAt: new Date(2025, 6, 20),
+      },
+      {
+        productId: oreo.id,
+        userId: storeadmin3.id,
+        stock: 150,
+        lastStock: 100,
+        difference: 50,
+        typeOfChange: typeOfChange.PENAMBAHAN,
+        role: Role.STOREADMIN,
+        storeId: store3.id,
+        finalStock: 150,
+        createdAt: new Date(2025, 7, 25),
+      },
+      {
+        productId: teh_botol.id,
+        userId: customer1.id,
+        stock: 200,
+        lastStock: 250,
+        difference: 50,
+        typeOfChange: typeOfChange.PENGURANGAN,
+        role: Role.CUSTOMERS,
+        storeId: store1.id,
+        finalStock: 200,
+        createdAt: new Date(2024, 8, 5),
+      },
+      {
+        productId: jus_mangga.id,
+        userId: superadmin.id,
+        stock: 150,
+        lastStock: 200,
+        difference: 50,
+        typeOfChange: typeOfChange.PENGURANGAN,
+        role: Role.SUPERADMIN,
+        storeId: store1.id,
+        finalStock: 150,
+        createdAt: new Date(2023, 9, 10),
+      },
+    ];
+
+    for (const change of productChangeData) {
+      await prisma.productChangeData.create({
+        data: change,
       });
     }
 

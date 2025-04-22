@@ -44,7 +44,12 @@ router.get(
   getAllDiscounts,
 );
 
-router.get('/get-discount/:discountId', getDiscountById);
+router.get(
+  '/get-discount/:discountId',
+  verifyToken,
+  roleGuard(['SUPERADMIN']),
+  getDiscountById,
+);
 
 router.post('/discount-for-product', verifyToken, getDiscountForProduct);
 

@@ -1,7 +1,10 @@
 import Image from 'next/image';
 import { FaFacebook, FaTwitter, FaInstagram } from 'react-icons/fa';
+import { useStoreContext } from '@/utility/StoreContext';
 
 export default function Footer() {
+  const { categories } = useStoreContext();
+
   return (
     <footer className="bg-color-lagoon text-gray-700 pt-10 pb-6 px-4 mt-12">
       {/* Grid Konten Utama */}
@@ -9,16 +12,14 @@ export default function Footer() {
         {/* Categories */}
         <div>
           <h3 className="font-semibold mb-3">Categories</h3>
-          <ul className="space-y-1">
-            <li>Vegetables & Fruits</li>
-            <li>Breakfast & instant food</li>
-            <li>Bakery & Biscuits</li>
-            <li>Atta, rice & dal</li>
-            <li>Sauces & spreads</li>
-            <li>Organic & gourmet</li>
-            <li>Baby care</li>
-            <li>Cleaning essentials</li>
-            <li>Personal care</li>
+          <ul className="space-y-2">
+            {categories?.map((category) => (
+              <li key={category.id} className="text-gray-700">
+                <a href={`/${category.slug}`} className="hover:text-green-600">
+                  {category.name}
+                </a>
+              </li>
+            ))}
           </ul>
         </div>
 

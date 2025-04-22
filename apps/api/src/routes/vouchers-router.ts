@@ -10,7 +10,7 @@ import {
   applyVoucherToCart,
   applyVoucherToShippingCost,
   applyVoucherToProduct,
-  // updateVoucherStock,
+  removeVoucherFromCartItem,
   claimVoucher,
   getVoucherByCode,
   removeVoucher,
@@ -101,6 +101,13 @@ router.post(
   verifyToken,
   roleGuard(['CUSTOMERS']),
   applyVoucherToProduct,
+);
+
+router.post(
+  '/remove-voucher-from-cart-item',
+  verifyToken,
+  roleGuard(['CUSTOMERS']),
+  removeVoucherFromCartItem,
 );
 
 router.post(
