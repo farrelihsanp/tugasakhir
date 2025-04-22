@@ -151,7 +151,8 @@ model CartItem {
 }
 
 model Address {
-    id         Int      @id @default(autoincrement())
+    id Int @id @default(autoincrement())
+
     userId     Int
     street     String
     city       String
@@ -285,18 +286,19 @@ model Order {
     storeId           Int
     shippingAddressId Int
 
-    slug                   String
-    paymentMethodType      PaymentMethodType
-    totalAmount            Float
-    status                 OrderStatus       @default(PENDING_PAYMENT)
-    paymentProof           String?
-    paymentProofUploadedAt DateTime?
-    orderConfirmationAt    DateTime?
-    createdAt              DateTime          @default(now())
-    updatedAt              DateTime          @updatedAt
-    shippingAt             DateTime?
-    deliveredAt            DateTime?
-    continueToProcess      Boolean           @default(false)
+    slug                       String
+    paymentMethodType          PaymentMethodType
+    totalAmount                Float
+    status                     OrderStatus       @default(PENDING_PAYMENT)
+    paymentProof               String?
+    paymentProofUploadedAt     DateTime?
+    orderConfirmationAt        DateTime?
+    createdAt                  DateTime          @default(now())
+    updatedAt                  DateTime          @updatedAt
+    shippingAt                 DateTime?
+    deliveredAt                DateTime?
+    acceptedProcessByAdmin     Boolean           @default(false)
+    acceptedProcessByCustomers Boolean           @default(false)
 
     shippingAddress     Address              @relation(fields: [shippingAddressId], references: [id], onDelete: Cascade)
     store               Store                @relation(fields: [storeId], references: [id], onDelete: Cascade)

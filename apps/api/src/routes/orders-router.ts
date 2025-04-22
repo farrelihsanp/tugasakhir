@@ -14,6 +14,7 @@ import {
   acceptPaymentProof,
   rejectPaymentProof,
   processOrder,
+  confirmProcessOrderByCustomers,
   sentOrder,
   getAllOrderHistory,
   getOrderById,
@@ -86,6 +87,10 @@ router
 router
   .route('/process-order/:orderId')
   .put(verifyToken, roleGuard(['STOREADMIN']), processOrder);
+
+router
+  .route('/confirm-process-order/:orderId')
+  .put(verifyToken, roleGuard(['CUSTOMERS']), confirmProcessOrderByCustomers);
 
 router
   .route('/sent-order/:orderId')

@@ -928,11 +928,74 @@ export const processOrder = async (
     await prisma.order.update({
       where: { id: orderCostumer.id },
       data: {
-        status: 'PROCESSING',
+        acceptedProcessByAdmin: true,
       },
     });
 
+    if (
+      orderCostumer.acceptedProcessByAdmin &&
+      orderCostumer.acceptedProcessByCustomers
+    ) {
+      await prisma.order.update({
+        where: { id: orderCostumer.id },
+        data: {
+          status: OrderStatus.PROCESSING,
+        },
+      });
+    }
+
     res.status(200).json({ message: 'Order processed successfully' });
+  } catch (error) {
+    console.error(error);
+    next(error);
+  }
+};
+
+export const confirmProcessOrderByCustomers = async (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) => {
+  try {
+    const { orderId } = req.params;
+    const userId = req.user?.id;
+
+    if (!userId) {
+      res.status(401).json({ error: 'Unauthorized' });
+      return;
+    }
+
+    const orderCostumer = await prisma.order.findFirst({
+      where: {
+        id: Number(orderId),
+      },
+    });
+
+    if (!orderCostumer) {
+      res.status(404).json({ error: 'Order not found' });
+      return;
+    }
+
+    await prisma.order.update({
+      where: { id: orderCostumer.id },
+      data: {
+        acceptedProcessByCustomers: true,
+      },
+    });
+
+    if (
+      orderCostumer.acceptedProcessByAdmin &&
+      orderCostumer.acceptedProcessByCustomers
+    ) {
+      await prisma.order.update({
+        where: { id: orderCostumer.id },
+        data: {
+          status: OrderStatus.PROCESSING,
+        },
+      });
+    }
+
+    res.status(200).json({ ok: true, message: 'Order processed successfully' });
   } catch (error) {
     console.error(error);
     next(error);
@@ -1134,17 +1197,6 @@ export const getOrderById = async (
       };
     });
 
-    // res.status(200).json({
-    //   ok: true,
-    //   data: {
-    //     customerName: order.user.name,
-    //     storeName: order.store.name,
-    //     status: order.status,
-    //     totalAmount: order.totalAmount,
-    //     totalCalculated: totalFromItems,
-    //     items: formattedItems,
-    //   },
-    // });
     res.status(200).json({ ok: true, message: 'Success', data: order });
   } catch (error) {
     console.error('Error getting order detail:', error);

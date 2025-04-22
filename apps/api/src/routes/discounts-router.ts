@@ -54,7 +54,7 @@ router.get(
 router.post('/discount-for-product', verifyToken, getDiscountForProduct);
 
 router.get(
-  '/report',
+  '/discount-reports',
   verifyToken,
   roleGuard(['SUPERADMIN']),
   getDiscountReport,

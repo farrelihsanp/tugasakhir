@@ -1,3 +1,4 @@
+import { Order } from '@/types/types';
 import { JwtPayload } from 'jsonwebtoken';
 
 interface CustomJWTPayload extends JwtPayload {
@@ -65,4 +66,24 @@ export interface Product {
   date: Date;
   weight: number;
   price: number;
+}
+
+export interface Order {
+  id: number;
+  userId: number;
+  storeId: number;
+  shippingAddressId: number;
+  slug: string;
+  paymentMethodType: string;
+  totalAmount: number;
+  status: string;
+  paymentProof?: string;
+  paymentProofUploadedAt?: Date;
+  orderConfirmationAt?: Date;
+  createdAt: Date;
+  updatedAt: Date;
+  shippingAt?: Date;
+  deliveredAt?: Date;
+  acceptedProcessByAdmin: boolean;
+  acceptedProcessByCustomers: boolean;
 }

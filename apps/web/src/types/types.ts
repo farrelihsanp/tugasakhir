@@ -8,6 +8,13 @@ import {
   DiscountType,
 } from '@prisma/client';
 
+export interface DiscountReport {
+  id: number;
+  userId: number;
+  customerBenefits: number;
+  createdAt: string;
+  User: User;
+}
 export interface StockData {
   id: number;
   productId: number;

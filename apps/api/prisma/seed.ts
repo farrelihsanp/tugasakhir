@@ -172,7 +172,7 @@ async function main() {
     // });
 
     const customerPassword2 = await hash('fauzan123', salt);
-    await prisma.user.create({
+    const customer2 = await prisma.user.create({
       data: {
         name: 'Fauzan Rianda',
         username: 'fauzanrianda',
@@ -2327,7 +2327,7 @@ async function main() {
         storeId: store1.id,
         shippingAddressId: customerAddress.id,
         totalAmount: 800000,
-        status: OrderStatus.WAITING_FOR_PAYMENT,
+        status: OrderStatus.PAID,
         paymentMethodType: PaymentMethodType.BANK_TRANSFER,
         paymentProof:
           'https://dummyimage.com/600x400/90ee90/fff&text=bukti+transfer+2',
@@ -2433,6 +2433,69 @@ async function main() {
         await prisma.orderItem.create({
           data: {
             orderId: orderSiCustomerFarrel_three.id,
+            productId: item.product.id,
+            storeProductId: item.storeProduct.id,
+            quantity: item.quantity,
+            price: +item.storeProduct.price,
+            total: Number(item.storeProduct.price) * item.quantity,
+          },
+        });
+      }
+    }
+
+    // ORDER FAUZAN
+
+    const orderSiCustomerFauzan = await prisma.order.create({
+      data: {
+        id: 155125,
+        userId: customer2.id,
+        slug: 'ORDER-789',
+        storeId: store1.id,
+        shippingAddressId: customerAddress.id,
+        totalAmount: 800000,
+        status: OrderStatus.DELIVERED,
+        paymentMethodType: PaymentMethodType.BANK_TRANSFER,
+        paymentProof:
+          'https://dummyimage.com/600x400/90ee90/fff&text=bukti+transfer+3',
+        paymentProofUploadedAt: new Date(),
+        orderConfirmationAt: new Date(),
+        createdAt: new Date('2024-05-23'),
+        shippingInformation: {
+          create: {
+            courierName: 'JNE',
+            code: 'JNE123456',
+            serviceType: 'REGULER',
+            description: 'JNE Reguler',
+            shippingCost: 60000,
+            estimatedTime: 3,
+          },
+        },
+      },
+    });
+
+    const orderItemsFauzan = [
+      {
+        product: tomat,
+        storeProduct: tomatStoreProduct,
+        quantity: 10,
+      },
+      {
+        product: sabunMandi,
+        storeProduct: sabunStoreProduct,
+        quantity: 10,
+      },
+      {
+        product: jeruk,
+        storeProduct: jerukStoreProduct,
+        quantity: 10,
+      },
+    ];
+
+    for (const item of orderItemsFauzan) {
+      if (item.storeProduct) {
+        await prisma.orderItem.create({
+          data: {
+            orderId: orderSiCustomerFauzan.id,
             productId: item.product.id,
             storeProductId: item.storeProduct.id,
             quantity: item.quantity,
@@ -2822,6 +2885,46 @@ async function main() {
     }
 
     /* -------------------------------------------------------------------------- */
+    /*                              DiscountReport Seed                          */
+    /* -------------------------------------------------------------------------- */
+
+    await prisma.discountReport.create({
+      data: {
+        userId: customer1.id,
+        orderId: orderSiCustomerFarrel_one.id,
+        customerBenefits: 5000,
+        createdAt: new Date(2023, 9, 10),
+      },
+    });
+
+    await prisma.discountReport.create({
+      data: {
+        userId: customer1.id,
+        orderId: orderSiCustomerFarrel_two.id,
+        customerBenefits: 7000,
+        createdAt: new Date(2024, 9, 10),
+      },
+    });
+
+    await prisma.discountReport.create({
+      data: {
+        userId: customer1.id,
+        orderId: orderSiCustomerFarrel_three.id,
+        customerBenefits: 10000,
+        createdAt: new Date(2023, 10, 10),
+      },
+    });
+
+    await prisma.discountReport.create({
+      data: {
+        userId: customer2.id,
+        orderId: orderSiCustomerFauzan.id,
+        customerBenefits: 5000,
+        createdAt: new Date(2023, 2, 1),
+      },
+    });
+
+    // --------------------------------------------------------------------------
 
     console.info(`Penyisipan data berhasil 🌱`);
   } catch (error) {
