@@ -266,18 +266,18 @@ async function main() {
 
     const store4 = await prisma.store.create({
       data: {
-        name: 'SPBU Kemang Store',
+        name: 'Kalibata City Store',
         storeImage:
           'https://res.cloudinary.com/dm1cnsldc/image/upload/v1745114101/TOKO-KEMANG_owqyjl.webp',
-        address: 'Jl. Makmur No. 321',
-        city: 'Surabaya',
-        province: 'Jawa Timur',
+        address: 'Jl. Raya Kalibata',
+        city: 'Jakarta',
+        province: 'DKI Jakarta',
         country: 'Indonesia',
         postalCode: '60111',
         phoneNumber: '081234567893',
-        slug: 'toko-kelontong-makmur',
-        latitude: -6.266846372000018,
-        longitude: 106.81561643680142,
+        slug: 'kalibata-city',
+        latitude: -6.257074239689717,
+        longitude: 106.8521185213056,
         maxServiceDistance: 50000.0,
         isActive: true,
       },

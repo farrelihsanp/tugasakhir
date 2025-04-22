@@ -70,11 +70,7 @@ router
 // get all products by category
 router
   .route('/productsBycategories/:storeSlug/:categorySlug')
-  .get(
-    verifyToken,
-    roleGuard(['CUSTOMERS', 'SUPERADMIN', 'STOREADMIN']),
-    getAllProductsByCategoryByStoreSlug,
-  );
+  .get(getAllProductsByCategoryByStoreSlug);
 
 // get all cheap products
 router.route('/cheap-products-store/:storeId').get(getCheapProductsByStoreId);
