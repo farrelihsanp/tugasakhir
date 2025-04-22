@@ -31,7 +31,7 @@ const CreateAdminForm: React.FC = () => {
           throw new Error('Failed to fetch stores');
         }
         const data = await response.json();
-        setStores(data);
+        setStores(data.data);
       } catch (err) {
         console.error('Error fetching stores:', err);
       }

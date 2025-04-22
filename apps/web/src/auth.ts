@@ -40,7 +40,10 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
               }),
             },
           );
+
           if (!response.ok) {
+            const data = await response.json();
+            console.log(data);
             console.error('Failed to create user');
             return false;
           }

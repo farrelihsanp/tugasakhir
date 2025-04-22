@@ -31,6 +31,6 @@ router
 
 router.route('/lookup-user').post(lookupUser);
 
-router.route('/create-user').post(roleGuard(['CUSTOMERS']), createUser);
+router.route('/create-user').post(createUser);
 
 export default router;
