@@ -7,6 +7,8 @@ import React from 'react';
 
 const CategoryPage: React.FC = () => {
   const { categories, loading, error, nearestStore } = useStoreContext();
+  console.log('categories', categories);
+
   if (loading) return <p>Loading categories...</p>;
   if (error) return <p>Error: {error}</p>;
 

@@ -18,14 +18,6 @@ import {
   FaUserShield,
 } from 'react-icons/fa';
 
-interface UserInfo {
-  id: number;
-  name: string;
-  username: string;
-  role: 'CUSTOMERS' | 'STOREADMIN' | 'SUPERADMIN' | null;
-  profileImage?: string;
-}
-
 interface LocationResult {
   formatted: string;
 }
@@ -33,7 +25,8 @@ interface LocationResult {
 import { convertCoordinatesToAddress } from '@/utility/geocode';
 
 export default function Navbar() {
-  const [user, setUser] = useState<UserInfo | null>(null);
+  const { user } = useStoreContext();
+
   const [locationUser, setLocationUser] = useState<{
     results: LocationResult[];
   } | null>(null);
@@ -44,6 +37,7 @@ export default function Navbar() {
 
   useEffect(() => {
     const fetchLocation = async () => {
+      setLoadingUser(true);
       window.navigator.geolocation.getCurrentPosition(
         async (position) => {
           const { latitude, longitude } = position.coords;
@@ -53,6 +47,7 @@ export default function Navbar() {
               longitude,
             );
             setLocationUser(address);
+            setLoadingUser(false);
           } catch (error) {
             console.error('Error fetching location:', error);
           }
@@ -63,26 +58,6 @@ export default function Navbar() {
       );
     };
     fetchLocation();
-  }, []);
-
-  useEffect(() => {
-    const fetchUser = async () => {
-      setLoadingUser(true);
-      try {
-        const res = await fetch('http://localhost:8000/api/v1/auth/me', {
-          method: 'GET',
-          credentials: 'include',
-        });
-        if (!res.ok) return;
-        const data = await res.json();
-        setUser(data);
-      } catch (error) {
-        console.error('Error fetching user:', error);
-      } finally {
-        setLoadingUser(false);
-      }
-    };
-    fetchUser();
   }, []);
 
   const LogoWebsite = () => (
@@ -244,18 +219,31 @@ export default function Navbar() {
       </div>
 
       <div className="flex items-center">
-        {user && (
-          <>
+        {user?.role === 'SUPERADMIN' ||
+        user?.role === 'STOREADMIN' ||
+        user?.role === 'CUSTOMERS' ? (
+          <div>
             <RoleDropdown />
             <UserSection />
-          </>
-        )}
-        {!user && (
-          <div className="ml-4 flex gap-3">
-            <Link href="/auth/login" className="text-sm text-gray-700">
-              not log-in, login?
+          </div>
+        ) : (
+          <div className="flex items-center gap-3">
+            <Link
+              href={`/${nearestStore?.slug}/product`}
+              className="text-sm text-gray-700 hover:text-green-700"
+            >
+              Products
             </Link>
-            <Link href="/auth/register" className="text-sm text-gray-700">
+            <Link
+              href="/auth/login"
+              className="text-sm text-gray-700 hover:text-green-700"
+            >
+              Login
+            </Link>
+            <Link
+              href="/auth/register"
+              className="text-sm text-gray-700 hover:text-green-700"
+            >
               Register
             </Link>
           </div>

@@ -36,33 +36,6 @@ export const StoreProvider: React.FC<{ children: React.ReactNode }> = ({
     user && user.StoreUser ? user?.StoreUser[0]?.storeId : null;
 
   /* -------------------------------------------------------------------------- */
-  /*                           FETCH YANG SEDAN
-  G LOGIN                          */
-  /* -------------------------------------------------------------------------- */
-  useEffect(() => {
-    setLoading(true);
-    setError(null);
-
-    const fetchAuthMe = async () => {
-      try {
-        const res = await fetch('http://localhost:8000/api/v1/auth/me', {
-          method: 'GET',
-          credentials: 'include',
-        });
-        const data = await res.json();
-        setUser(data);
-      } catch (error: unknown) {
-        console.error('Fetch error (user):', error);
-        setError(`Failed to fetch user data: ${error}`);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchAuthMe();
-  }, []);
-
-  /* -------------------------------------------------------------------------- */
   /*                              FETCH CATEGORIES                              */
   /* -------------------------------------------------------------------------- */
 
@@ -72,6 +45,9 @@ export const StoreProvider: React.FC<{ children: React.ReactNode }> = ({
         const res = await fetch('http://localhost:8000/api/v1/all-categories', {
           method: 'GET',
           credentials: 'include',
+          headers: {
+            'Content-Type': 'application/json',
+          },
         });
         const data = await res.json();
         setCategories(data.data);
@@ -153,6 +129,36 @@ export const StoreProvider: React.FC<{ children: React.ReactNode }> = ({
       fetchStore();
     }
   }, [storeIdStoreAdmin, user]);
+
+  /* -------------------------------------------------------------------------- */
+  /*                           FETCH YANG SEDAN
+  G LOGIN                          */
+  /* -------------------------------------------------------------------------- */
+  useEffect(() => {
+    setLoading(true);
+    setError(null);
+
+    const fetchAuthMe = async () => {
+      try {
+        const res = await fetch('http://localhost:8000/api/v1/auth/me', {
+          method: 'GET',
+          credentials: 'include',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+        });
+        const data = await res.json();
+        setUser(data);
+      } catch (error: unknown) {
+        console.error('Fetch error (user):', error);
+        setError(`Failed to fetch user data: ${error}`);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchAuthMe();
+  }, []);
 
   const handleLogout = async () => {
     try {
