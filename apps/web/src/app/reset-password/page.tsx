@@ -16,7 +16,7 @@ const RequestPasswordReset = () => {
 
     try {
       const response = await fetch(
-        'http://localhost:8000/api/v1/auth/reset-password',
+        `${process.env.NEXT_PUBLIC_API_DOMAIN}/api/v1/auth/reset-password`,
         {
           method: 'POST',
           headers: {

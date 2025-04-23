@@ -53,7 +53,7 @@ const UpdateProfileForm = () => {
     setIsLoading(true);
     try {
       const response = await fetch(
-        `http://localhost:8000/api/v1/auth/update-profile/${user?.id}`,
+        `${process.env.NEXT_PUBLIC_API_DOMAIN}/api/v1/auth/update-profile/${user?.id}`,
         {
           method: 'PUT',
           body: formData,

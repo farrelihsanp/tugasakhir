@@ -33,7 +33,7 @@ const OrderPaymentPage = () => {
     const fetchOrder = async () => {
       try {
         const res = await fetch(
-          `http://localhost:8000/api/v1/order-detail/${orderId}`,
+          `${process.env.NEXT_PUBLIC_API_DOMAIN}/api/v1/order-detail/${orderId}`,
           {
             method: 'GET',
             credentials: 'include',
@@ -55,7 +55,7 @@ const OrderPaymentPage = () => {
   const handleManualTransfer = async () => {
     try {
       const res = await fetch(
-        `http://localhost:8000/api/v1/manual-transfer/${orderId}`,
+        `${process.env.NEXT_PUBLIC_API_DOMAIN}/api/v1/manual-transfer/${orderId}`,
         {
           method: 'PUT',
           credentials: 'include',
@@ -66,7 +66,7 @@ const OrderPaymentPage = () => {
         throw new Error(data.error || 'Failed to update payment method');
       toast.success('Payment method updated successfully');
       router.push(
-        `http://localhost:3000/dashboard/${userSlug}/${orderId}/manual-transfer`,
+        `${process.env.NEXT_PUBLIC_WEB_DOMAIN}/dashboard/${userSlug}/${orderId}/manual-transfer`,
       );
     } catch (error: unknown) {
       toast.error((error as Error).message);
@@ -77,7 +77,7 @@ const OrderPaymentPage = () => {
     e.preventDefault();
     try {
       const res = await fetch(
-        `http://localhost:8000/api/v1/create-order-midtrans/${orderId}`,
+        `${process.env.NEXT_PUBLIC_API_DOMAIN}/api/v1/create-order-midtrans/${orderId}`,
         {
           method: 'PUT',
           credentials: 'include',

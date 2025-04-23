@@ -70,11 +70,14 @@ const CreateStorePage: React.FC = () => {
     });
 
     try {
-      const response = await fetch('http://localhost:8000/api/v1/stores', {
-        method: 'POST',
-        body: formDataWithFile,
-        credentials: 'include',
-      });
+      const response = await fetch(
+        `${process.env.NEXT_PUBLIC_API_DOMAIN}/api/v1/stores`,
+        {
+          method: 'POST',
+          body: formDataWithFile,
+          credentials: 'include',
+        },
+      );
 
       if (response.ok) {
         // Show success toast notification

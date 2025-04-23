@@ -21,7 +21,7 @@ const DiscountReportPage = () => {
     const fetchDiscountReports = async () => {
       try {
         const res = await fetch(
-          'http://localhost:8000/api/v1/discount-reports',
+          `${process.env.NEXT_PUBLIC_API_DOMAIN}/api/v1/discount-reports`,
           {
             method: 'GET',
             credentials: 'include',
@@ -44,13 +44,16 @@ const DiscountReportPage = () => {
 
     const fetchUser = async () => {
       try {
-        const res = await fetch('http://localhost:8000/api/v1/users', {
-          method: 'GET',
-          credentials: 'include',
-          headers: {
-            'Content-Type': 'application/json',
+        const res = await fetch(
+          `${process.env.NEXT_PUBLIC_API_DOMAIN}/api/v1/users`,
+          {
+            method: 'GET',
+            credentials: 'include',
+            headers: {
+              'Content-Type': 'application/json',
+            },
           },
-        });
+        );
         const data = await res.json();
         if (!data) throw new Error(data.message);
         setUser(data);

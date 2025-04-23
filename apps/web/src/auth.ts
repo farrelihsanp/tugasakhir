@@ -9,7 +9,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
     async signIn({ user }) {
       try {
         const response = await fetch(
-          'http://localhost:8000/api/v1/lookup-user',
+          `${process.env.NEXT_PUBLIC_API_DOMAIN}/api/v1/lookup-user`,
           {
             method: 'POST',
             headers: {
@@ -23,7 +23,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
 
         if (!userData.data) {
           const response = await fetch(
-            'http://localhost:8000/api/v1/create-user',
+            `${process.env.NEXT_PUBLIC_API_DOMAIN}/api/v1/create-user`,
             {
               method: 'POST',
               headers: {
@@ -57,7 +57,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
     async jwt({ token, user }) {
       if (user) {
         const response = await fetch(
-          'http://localhost:8000/api/v1/lookup-user',
+          `${process.env.NEXT_PUBLIC_API_DOMAIN}/api/v1/lookup-user`,
           {
             method: 'POST',
             headers: {

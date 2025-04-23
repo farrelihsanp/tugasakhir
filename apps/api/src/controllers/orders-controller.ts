@@ -343,7 +343,7 @@ export const payWithMidTrans = async (
         email: customer.email,
       },
       callbacks: {
-        finish: `http://localhost:3000`,
+        finish: `${process.env.WEB_DOMAIN}`,
       },
     };
 
@@ -925,12 +925,12 @@ export const processOrder = async (
       data: productChangesData,
     });
 
-    await prisma.order.update({
-      where: { id: orderCostumer.id },
-      data: {
-        acceptedProcessByAdmin: true,
-      },
-    });
+    // await prisma.order.update({
+    //   where: { id: orderCostumer.id },
+    //   data: {
+    //     acceptedProcessByAdmin: true,
+    //   },
+    // });
 
     await prisma.order.update({
       where: { id: orderCostumer.id },

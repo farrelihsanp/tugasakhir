@@ -52,7 +52,7 @@ const AllProductsPage = () => {
   const handleAddToCart = async (product: Product) => {
     try {
       const response = await fetch(
-        `http://localhost:8000/api/v1/cart/add/${nearestStore.slug}`,
+        `${process.env.NEXT_PUBLIC_API_DOMAIN}/api/v1/cart/add/${nearestStore.slug}`,
         {
           method: 'POST',
           credentials: 'include',

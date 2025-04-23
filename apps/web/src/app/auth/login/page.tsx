@@ -25,12 +25,15 @@ export default function LoginPage() {
       const formData = { emailOrUsername, password };
       loginSchema.parse(formData);
 
-      const response = await fetch('http://localhost:8000/api/v1/auth/login', {
-        credentials: 'include',
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(formData),
-      });
+      const response = await fetch(
+        `${process.env.NEXT_PUBLIC_API_DOMAIN}/api/v1/auth/login`,
+        {
+          credentials: 'include',
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(formData),
+        },
+      );
 
       if (!response.ok) {
         throw new Error('Login failed');
@@ -38,7 +41,7 @@ export default function LoginPage() {
       toast.success('Login successful!');
 
       const fetchUserLogin = await fetch(
-        'http://localhost:8000/api/v1/auth/me',
+        `${process.env.NEXT_PUBLIC_API_DOMAIN}/api/v1/auth/me`,
         {
           method: 'GET',
           credentials: 'include',

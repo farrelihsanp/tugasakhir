@@ -26,7 +26,9 @@ const CreateAdminForm: React.FC = () => {
   useEffect(() => {
     const fetchStores = async () => {
       try {
-        const response = await fetch('http://localhost:8000/api/v1/stores');
+        const response = await fetch(
+          `${process.env.NEXT_PUBLIC_API_DOMAIN}/api/v1/stores`,
+        );
         if (!response.ok) {
           throw new Error('Failed to fetch stores');
         }
@@ -87,7 +89,7 @@ const CreateAdminForm: React.FC = () => {
 
     try {
       const response = await fetch(
-        'http://localhost:8000/api/v1/admins/create',
+        `${process.env.NEXT_PUBLIC_API_DOMAIN}/api/v1/admins/create`,
         {
           method: 'POST',
           credentials: 'include',
@@ -106,7 +108,7 @@ const CreateAdminForm: React.FC = () => {
           adminImage: null,
         });
         router.push(
-          `http://localhost:3000/dashboard/${userSlug}/manage-store-admin`,
+          `${process.env.NEXT_PUBLIC_WEB_DOMAIN}/dashboard/${userSlug}/manage-store-admin`,
         );
         setTimeout(() => {
           window.location.reload();

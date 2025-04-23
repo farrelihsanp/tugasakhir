@@ -18,7 +18,7 @@ const ManageStoreAdmin: React.FC = () => {
       setLoading(true);
       try {
         const response = await fetch(
-          'http://localhost:8000/api/v1/admins/getAllAdmins',
+          `${process.env.NEXT_PUBLIC_API_DOMAIN}/api/v1/admins/getAllAdmins`,
           {
             method: 'GET',
             credentials: 'include',
@@ -41,7 +41,7 @@ const ManageStoreAdmin: React.FC = () => {
 
   const handleDelete = async (id: number) => {
     const response = await fetch(
-      `http://localhost:8000/api/v1/admins/delete/${id}`,
+      `${process.env.NEXT_PUBLIC_API_DOMAIN}/api/v1/admins/delete/${id}`,
       {
         method: 'DELETE',
         credentials: 'include',
@@ -109,7 +109,7 @@ const ManageStoreAdmin: React.FC = () => {
                       </td>
                       <td className="py-3 px-6 space-x-2">
                         <Link
-                          href={`http://localhost:3000/dashboard/${user?.username}/edit-admin/${admin.id}`}
+                          href={`${process.env.NEXT_PUBLIC_WEB_DOMAIN}/dashboard/${user?.username}/edit-admin/${admin.id}`}
                           className="bg-primary text-white py-2 px-4 rounded-md"
                         >
                           Edit

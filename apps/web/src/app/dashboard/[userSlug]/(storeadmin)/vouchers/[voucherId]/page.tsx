@@ -17,7 +17,7 @@ export default function VouchersStore() {
       setLoading(true);
       try {
         const res = await fetch(
-          `http://localhost:8000/api/v1/detail-voucher/${voucherId}`,
+          `${process.env.NEXT_PUBLIC_API_DOMAIN}/api/v1/detail-voucher/${voucherId}`,
           {
             method: 'GET',
             credentials: 'include',

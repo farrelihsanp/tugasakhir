@@ -12,13 +12,16 @@ const AllUsersPage: React.FC = () => {
   useEffect(() => {
     const fetchUsers = async () => {
       try {
-        const response = await fetch('http://localhost:8000/api/v1/users', {
-          method: 'GET',
-          headers: {
-            'Content-Type': 'application/json',
+        const response = await fetch(
+          `${process.env.NEXT_PUBLIC_API_DOMAIN}/api/v1/users`,
+          {
+            method: 'GET',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            credentials: 'include',
           },
-          credentials: 'include',
-        });
+        );
 
         if (response.ok) {
           const data: User[] = await response.json();
@@ -41,7 +44,7 @@ const AllUsersPage: React.FC = () => {
       setLoading((prev) => ({ ...prev, [id]: true })); // Set loading true for the specific user
       try {
         const response = await fetch(
-          `http://localhost:8000/api/v1/users/${id}`,
+          `${process.env.NEXT_PUBLIC_API_DOMAIN}/api/v1/users/${id}`,
           {
             method: 'DELETE',
             headers: {

@@ -45,7 +45,7 @@ export async function confirmEmail(
     const compiledTemplate = Handlebars.compile(templateSource.toString());
     const htmlTemplate = compiledTemplate({
       email: userEmail?.email,
-      confirmationLink: `http://localhost:3000/fill-data-registration?email=${userEmail?.email}`,
+      confirmationLink: `${process.env.WEB_DOMAIN}/fill-data-registration?email=${userEmail?.email}`,
     });
 
     res.status(200).send(htmlTemplate);

@@ -16,7 +16,7 @@ export default function AllOrdersPage() {
     const fetchOrders = async () => {
       try {
         const res = await fetch(
-          `http://localhost:8000/api/v1/orders-customers`,
+          `${process.env.NEXT_PUBLIC_API_DOMAIN}/api/v1/orders-customers`,
           {
             method: 'GET',
             credentials: 'include',
@@ -36,13 +36,16 @@ export default function AllOrdersPage() {
 
     const fetchStore = async () => {
       try {
-        const res = await fetch(`http://localhost:8000/api/v1/stores`, {
-          method: 'GET',
-          credentials: 'include',
-          headers: {
-            'Content-Type': 'application/json',
+        const res = await fetch(
+          `${process.env.NEXT_PUBLIC_API_DOMAIN}/api/v1/stores`,
+          {
+            method: 'GET',
+            credentials: 'include',
+            headers: {
+              'Content-Type': 'application/json',
+            },
           },
-        });
+        );
         if (!res.ok) throw new Error('Failed to fetch store');
         const data = await res.json();
         setStore(data.data);

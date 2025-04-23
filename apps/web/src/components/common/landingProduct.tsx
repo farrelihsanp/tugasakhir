@@ -31,7 +31,7 @@ export const ProductsPage = () => {
 
     try {
       const response = await fetch(
-        `http://localhost:8000/api/v1/cart/add/${storeSlugToUse}`,
+        `${process.env.NEXT_PUBLIC_API_DOMAIN}/api/v1/cart/add/${storeSlugToUse}`,
         {
           method: 'POST',
           headers: {

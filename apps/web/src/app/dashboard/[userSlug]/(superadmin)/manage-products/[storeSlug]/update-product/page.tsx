@@ -25,7 +25,7 @@ const UpdateProductForm: React.FC = () => {
     const fetchProducts = async () => {
       try {
         const res = await fetch(
-          `http://localhost:8000/api/v1/products-store-slug/${storeSlug}`,
+          `${process.env.NEXT_PUBLIC_API_DOMAIN}/api/v1/products-store-slug/${storeSlug}`,
           {
             method: 'GET',
             credentials: 'include',
@@ -47,7 +47,7 @@ const UpdateProductForm: React.FC = () => {
     const fetchStore = async () => {
       try {
         const res = await fetch(
-          `http://localhost:8000/api/v1/stores/store-slug/${storeSlug}`,
+          `${process.env.NEXT_PUBLIC_API_DOMAIN}/api/v1/stores/store-slug/${storeSlug}`,
           {
             method: 'GET',
             credentials: 'include',
@@ -74,7 +74,7 @@ const UpdateProductForm: React.FC = () => {
     try {
       setLoading(true);
       const response = await fetch(
-        `http://localhost:8000/api/v1/update-product-in-store/${storeSlug}`,
+        `${process.env.NEXT_PUBLIC_API_DOMAIN}/api/v1/update-product-in-store/${storeSlug}`,
         {
           method: 'PUT',
           credentials: 'include',

@@ -26,7 +26,7 @@ const StockReportPage = () => {
     const fetchStockData = async () => {
       try {
         const response = await fetch(
-          `http://localhost:8000/api/v1/report-stock/store/${storeSlug}`,
+          `${process.env.NEXT_PUBLIC_API_DOMAIN}/api/v1/report-stock/store/${storeSlug}`,
           {
             method: 'GET',
             headers: {
@@ -49,7 +49,7 @@ const StockReportPage = () => {
     const fetchProducts = async () => {
       try {
         const response = await fetch(
-          `http://localhost:8000/api/v1/products-store-slug/${storeSlug}`,
+          `${process.env.NEXT_PUBLIC_API_DOMAIN}/api/v1/products-store-slug/${storeSlug}`,
           {
             method: 'GET',
             headers: {
@@ -71,13 +71,16 @@ const StockReportPage = () => {
 
     const fetchUser = async () => {
       try {
-        const response = await fetch('http://localhost:8000/api/v1/all-users', {
-          method: 'GET',
-          credentials: 'include',
-          headers: {
-            'Content-Type': 'application/json',
+        const response = await fetch(
+          `${process.env.NEXT_PUBLIC_API_DOMAIN}/api/v1/all-users`,
+          {
+            method: 'GET',
+            credentials: 'include',
+            headers: {
+              'Content-Type': 'application/json',
+            },
           },
-        });
+        );
         if (response.ok) {
           const data = await response.json();
           setUsers(data.data);
@@ -92,7 +95,7 @@ const StockReportPage = () => {
     const fetchStores = async () => {
       try {
         const response = await fetch(
-          `http://localhost:8000/api/v1/stores/store-slug/${storeSlug}`,
+          `${process.env.NEXT_PUBLIC_API_DOMAIN}/api/v1/stores/store-slug/${storeSlug}`,
           {
             method: 'GET',
             credentials: 'include',

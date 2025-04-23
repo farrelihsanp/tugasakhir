@@ -43,7 +43,7 @@ export const confirmPasswordReset = async (
     );
     const compiledTemplate = Handlebars.compile(templateSource.toString());
     const htmlTemplate = compiledTemplate({
-      nextLink: `http://localhost:3000/recovery-password?token=${querytoken}`,
+      nextLink: `${process.env.WEB_DOMAIN}/recovery-password?token=${querytoken}`,
     });
 
     res.status(200).send(htmlTemplate);

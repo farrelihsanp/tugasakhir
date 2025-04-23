@@ -27,9 +27,12 @@ export default function CartPage() {
   const fetchCart = async () => {
     try {
       setLoading(true);
-      const res = await fetch('http://localhost:8000/api/v1/cart/my-cart', {
-        credentials: 'include',
-      });
+      const res = await fetch(
+        `${process.env.NEXT_PUBLIC_API_DOMAIN}/api/v1/cart/my-cart`,
+        {
+          credentials: 'include',
+        },
+      );
       const data = await res.json();
       if (data.ok) {
         const sortedCartItems = data.data.cartItems.sort(
@@ -49,7 +52,7 @@ export default function CartPage() {
   const fetchTotal = async () => {
     try {
       const res = await fetch(
-        'http://localhost:8000/api/v1/cart/total-amount',
+        `${process.env.NEXT_PUBLIC_API_DOMAIN}/api/v1/cart/total-amount`,
         {
           credentials: 'include',
           method: 'GET',
@@ -68,9 +71,12 @@ export default function CartPage() {
 
   const fetchVouchers = async () => {
     try {
-      const res = await fetch('http://localhost:8000/api/v1/my-voucher', {
-        credentials: 'include',
-      });
+      const res = await fetch(
+        `${process.env.NEXT_PUBLIC_API_DOMAIN}/api/v1/my-voucher`,
+        {
+          credentials: 'include',
+        },
+      );
       const data = await res.json();
       if (data.ok) setVouchers(data.data);
       else toast.error('Gagal memuat voucher');
@@ -83,7 +89,7 @@ export default function CartPage() {
     if (!selectedVoucher || !cart) return;
     try {
       const res = await fetch(
-        'http://localhost:8000/api/v1/apply-voucher-to-product',
+        `${process.env.NEXT_PUBLIC_API_DOMAIN}/api/v1/apply-voucher-to-product`,
         {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
@@ -108,7 +114,7 @@ export default function CartPage() {
   const handleRemoveVoucher = async (cartItemId: number) => {
     try {
       const res = await fetch(
-        'http://localhost:8000/api/v1/remove-voucher-from-cart-item',
+        `${process.env.NEXT_PUBLIC_API_DOMAIN}/api/v1/remove-voucher-from-cart-item`,
         {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
@@ -139,12 +145,15 @@ export default function CartPage() {
   }, []);
 
   const handleIncrease = async (cartItemId: number) => {
-    const res = await fetch('http://localhost:8000/api/v1/cart/plus', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      credentials: 'include',
-      body: JSON.stringify({ cartItemId, quantity: 1 }),
-    });
+    const res = await fetch(
+      `${process.env.NEXT_PUBLIC_API_DOMAIN}/api/v1/cart/plus`,
+      {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
+        body: JSON.stringify({ cartItemId, quantity: 1 }),
+      },
+    );
     if (!res.ok) {
       const errorData = await res.json();
       toast.error(errorData.error || 'Unknown error');
@@ -154,7 +163,7 @@ export default function CartPage() {
   };
 
   const handleDecrease = async (cartItemId: number) => {
-    await fetch('http://localhost:8000/api/v1/cart/minus', {
+    await fetch(`${process.env.NEXT_PUBLIC_API_DOMAIN}/api/v1/cart/minus`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       credentials: 'include',
@@ -165,7 +174,7 @@ export default function CartPage() {
   };
 
   const handleDelete = async (cartItemId: number) => {
-    await fetch('http://localhost:8000/api/v1/cart/remove', {
+    await fetch(`${process.env.NEXT_PUBLIC_API_DOMAIN}/api/v1/cart/remove`, {
       method: 'DELETE',
       headers: { 'Content-Type': 'application/json' },
       credentials: 'include',
@@ -177,11 +186,14 @@ export default function CartPage() {
 
   const handleCheckout = async () => {
     try {
-      const res = await fetch('http://localhost:8000/api/v1/cart/checkout', {
-        method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
-        credentials: 'include',
-      });
+      const res = await fetch(
+        `${process.env.NEXT_PUBLIC_API_DOMAIN}/api/v1/cart/checkout`,
+        {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          credentials: 'include',
+        },
+      );
       const data = await res.json();
       if (!res.ok) throw new Error(data.message);
       setCart(data.data);

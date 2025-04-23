@@ -25,7 +25,7 @@ export default function ProductDetailPage() {
       setIsLoading(true);
       try {
         const res = await fetch(
-          `http://localhost:8000/api/v1/detail-product/${storeSlug}/${productSlug}`,
+          `${process.env.NEXT_PUBLIC_API_DOMAIN}/api/v1/detail-product/${storeSlug}/${productSlug}`,
           {
             method: 'GET',
             credentials: 'include',
@@ -52,7 +52,7 @@ export default function ProductDetailPage() {
         setIsLoading(true);
         try {
           const res = await fetch(
-            'http://localhost:8000/api/v1/discount-for-product',
+            `${process.env.NEXT_PUBLIC_API_DOMAIN}/api/v1/discount-for-product`,
             {
               method: 'POST',
               credentials: 'include',
@@ -106,7 +106,7 @@ export default function ProductDetailPage() {
   const addToCartHandler = async () => {
     try {
       const res = await fetch(
-        `http://localhost:8000/api/v1/cart/add/${storeSlug}`,
+        `${process.env.NEXT_PUBLIC_API_DOMAIN}/api/v1/cart/add/${storeSlug}`,
         {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },

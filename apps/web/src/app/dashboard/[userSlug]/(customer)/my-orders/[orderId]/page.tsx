@@ -17,7 +17,7 @@ const OrderDetail = () => {
       setLoading(true);
       try {
         const response = await fetch(
-          `http://localhost:8000/api/v1/order-detail/${orderId}`,
+          `${process.env.NEXT_PUBLIC_API_DOMAIN}/api/v1/order-detail/${orderId}`,
           {
             method: 'GET',
             credentials: 'include',

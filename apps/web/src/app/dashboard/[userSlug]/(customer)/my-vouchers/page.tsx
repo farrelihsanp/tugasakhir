@@ -15,12 +15,15 @@ export default function MyVouchersPage() {
   const claimVoucherByUser = async () => {
     setIsClaiming(true);
     try {
-      const res = await fetch(`http://localhost:8000/api/v1/claim-voucher`, {
-        method: 'POST',
-        credentials: 'include',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ claimVoucher }),
-      });
+      const res = await fetch(
+        `${process.env.NEXT_PUBLIC_API_DOMAIN}/api/v1/claim-voucher`,
+        {
+          method: 'POST',
+          credentials: 'include',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ claimVoucher }),
+        },
+      );
 
       if (!res.ok) {
         throw new Error(`Error ${res.status}: ${res.statusText}`);
@@ -45,10 +48,13 @@ export default function MyVouchersPage() {
     const fetchVouchers = async () => {
       setLoading(true);
       try {
-        const res = await fetch('http://localhost:8000/api/v1/my-voucher', {
-          method: 'GET',
-          credentials: 'include',
-        });
+        const res = await fetch(
+          `${process.env.NEXT_PUBLIC_API_DOMAIN}/api/v1/my-voucher`,
+          {
+            method: 'GET',
+            credentials: 'include',
+          },
+        );
 
         if (!res.ok) {
           throw new Error(`Error ${res.status}: ${res.statusText}`);

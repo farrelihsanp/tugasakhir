@@ -91,7 +91,7 @@ const OrderForm = () => {
       setError(null);
       try {
         const response = await fetch(
-          `http://localhost:8000/api/v1/shipping-cost/calculate/${storeSlug}`,
+          `${process.env.NEXT_PUBLIC_API_DOMAIN}/api/v1/shipping-cost/calculate/${storeSlug}`,
           { credentials: 'include' },
         );
         if (!response.ok) throw new Error('Failed to fetch shipping cost');
@@ -111,7 +111,7 @@ const OrderForm = () => {
     const fetchVouchers = async () => {
       try {
         const response = await fetch(
-          'http://localhost:8000/api/v1/my-voucher',
+          `${process.env.NEXT_PUBLIC_API_DOMAIN}/api/v1/my-voucher`,
           { credentials: 'include' },
         );
         const data = await response.json();
@@ -129,7 +129,7 @@ const OrderForm = () => {
     const fetchAddresses = async () => {
       try {
         const response = await fetch(
-          'http://localhost:8000/api/v1/addresses/user-addresses',
+          `${process.env.NEXT_PUBLIC_API_DOMAIN}/api/v1/addresses/user-addresses`,
           { credentials: 'include' },
         );
         const data = await response.json();
@@ -147,7 +147,7 @@ const OrderForm = () => {
     const fetchCartItems = async () => {
       try {
         const response = await fetch(
-          'http://localhost:8000/api/v1/cart/my-cart',
+          `${process.env.NEXT_PUBLIC_API_DOMAIN}/api/v1/cart/my-cart`,
           { credentials: 'include' },
         );
         const data = await response.json();
@@ -190,7 +190,7 @@ const OrderForm = () => {
         VoucherCategory.SHOPPING_RESULT
       ) {
         const response = await fetch(
-          'http://localhost:8000/api/v1/apply-voucher-to-cart',
+          `${process.env.NEXT_PUBLIC_API_DOMAIN}/api/v1/apply-voucher-to-cart`,
           {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
@@ -216,7 +216,7 @@ const OrderForm = () => {
           VoucherCategory.SHIPPING_COST
       ) {
         const response = await fetch(
-          'http://localhost:8000/api/v1/apply-voucher-to-shipping-cost',
+          `${process.env.NEXT_PUBLIC_API_DOMAIN}/api/v1/apply-voucher-to-shipping-cost`,
           {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
@@ -264,7 +264,7 @@ const OrderForm = () => {
 
     try {
       const response = await fetch(
-        'http://localhost:8000/api/v1/addresses/set-primary',
+        `${process.env.NEXT_PUBLIC_API_DOMAIN}/api/v1/addresses/set-primary`,
         {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
@@ -296,7 +296,7 @@ const OrderForm = () => {
 
     try {
       const response = await fetch(
-        'http://localhost:8000/api/v1/remove-voucher',
+        `${process.env.NEXT_PUBLIC_API_DOMAIN}/api/v1/remove-voucher`,
         {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
@@ -345,7 +345,7 @@ const OrderForm = () => {
 
     try {
       const response = await fetch(
-        `http://localhost:8000/api/v1/create-order/${storeSlug}`,
+        `${process.env.NEXT_PUBLIC_API_DOMAIN}/api/v1/create-order/${storeSlug}`,
         {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
@@ -358,7 +358,7 @@ const OrderForm = () => {
       if (data.ok) {
         toast.success('Order created successfully');
         router.push(
-          `http://localhost:3000/dashboard/${user?.username}/${data.data.id}/payment`,
+          `${process.env.NEXT_PUBLIC_WEB_DOMAIN}/dashboard/${user?.username}/${data.data.id}/payment`,
         );
         localStorage.removeItem('selectedVoucher');
         localStorage.removeItem('selectedShipping');

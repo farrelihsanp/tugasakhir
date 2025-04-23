@@ -25,7 +25,7 @@ export default function CreateDiscountPage() {
 
   useEffect(() => {
     setLoading(true); // Set loading to true when fetching data
-    fetch('http://localhost:8000/api/v1/all-products', {
+    fetch(`${process.env.NEXT_PUBLIC_API_DOMAIN}/api/v1/all-products`, {
       credentials: 'include',
     })
       .then((res) => res.json())
@@ -60,27 +60,30 @@ export default function CreateDiscountPage() {
     e.preventDefault();
     setLoading(true); // Set loading to true when submitting the form
     try {
-      const res = await fetch('http://localhost:8000/api/v1/create-discount', {
-        method: 'POST',
-        credentials: 'include',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          productId: Number(form.productId),
-          name: form.name,
-          type: form.type,
-          value: Number(form.value),
-          minPurchase: Number(form.minPurchase),
-          maxDiscount: Number(form.maxDiscount),
-          expiredAt: form.expiredAt,
-          buyOneGetOne: form.buyOneGetOne,
-        }),
-      });
+      const res = await fetch(
+        `${process.env.NEXT_PUBLIC_API_DOMAIN}/api/v1/create-discount`,
+        {
+          method: 'POST',
+          credentials: 'include',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            productId: Number(form.productId),
+            name: form.name,
+            type: form.type,
+            value: Number(form.value),
+            minPurchase: Number(form.minPurchase),
+            maxDiscount: Number(form.maxDiscount),
+            expiredAt: form.expiredAt,
+            buyOneGetOne: form.buyOneGetOne,
+          }),
+        },
+      );
       const data = await res.json();
       setLoading(false); // Set loading to false after the response
       if (!res.ok) throw new Error(data.message);
       toast.success(data.message);
       router.push(
-        `http://localhost:3000/dashboard/${userSlug}/discount-manager`,
+        `${process.env.NEXT_PUBLIC_WEB_DOMAIN}/dashboard/${userSlug}/discount-manager`,
       );
     } catch (error: unknown) {
       const err = error as Error;

@@ -24,7 +24,7 @@ export default function PaymentPage() {
     async function fetchOrder() {
       try {
         const res = await fetch(
-          `http://localhost:8000/api/v1/order-detail/${orderId}`,
+          `${process.env.NEXT_PUBLIC_API_DOMAIN}/api/v1/order-detail/${orderId}`,
           {
             method: 'GET',
             credentials: 'include',
@@ -48,7 +48,7 @@ export default function PaymentPage() {
 
     try {
       const res = await fetch(
-        `http://localhost:8000/api/v1/upload-payment-proof/${orderId}`,
+        `${process.env.NEXT_PUBLIC_API_DOMAIN}/api/v1/upload-payment-proof/${orderId}`,
         {
           method: 'POST',
           body: formData,
@@ -58,7 +58,9 @@ export default function PaymentPage() {
       const json = await res.json();
       if (json.ok) {
         alert('Bukti pembayaran berhasil diupload.');
-        router.push(`http://localhost:3000/dashboard/${userSlug}/my-orders`);
+        router.push(
+          `${process.env.NEXT_PUBLIC_WEB_DOMAIN}/dashboard/${userSlug}/my-orders`,
+        );
       } else {
         alert(json.error || 'Gagal upload');
       }

@@ -27,7 +27,7 @@ const UpdateAdminPage = () => {
       setLoading(true);
       try {
         const res = await fetch(
-          `http://localhost:8000/api/v1/admins/${userId}`,
+          `${process.env.NEXT_PUBLIC_API_DOMAIN}/api/v1/admins/${userId}`,
           {
             method: 'GET',
             credentials: 'include',
@@ -61,13 +61,16 @@ const UpdateAdminPage = () => {
     const fetchStores = async () => {
       setLoading(true);
       try {
-        const res = await fetch(`http://localhost:8000/api/v1/stores`, {
-          method: 'GET',
-          credentials: 'include',
-          headers: {
-            'Content-Type': 'application/json',
+        const res = await fetch(
+          `${process.env.NEXT_PUBLIC_API_DOMAIN}/api/v1/stores`,
+          {
+            method: 'GET',
+            credentials: 'include',
+            headers: {
+              'Content-Type': 'application/json',
+            },
           },
-        });
+        );
         const data = await res.json();
         if (data.ok) {
           setStores(data.data);

@@ -38,14 +38,17 @@ const CreateStorePage = () => {
         maxServiceDistance: parseFloat(formData.maxServiceDistance),
       };
 
-      const response = await fetch('http://localhost:8000/api/v1/stores', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
+      const response = await fetch(
+        `${process.env.NEXT_PUBLIC_API_DOMAIN}/api/v1/stores`,
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(parsedFormData),
+          credentials: 'include',
         },
-        body: JSON.stringify(parsedFormData),
-        credentials: 'include',
-      });
+      );
 
       if (!response.ok) {
         const errorData = await response.json();

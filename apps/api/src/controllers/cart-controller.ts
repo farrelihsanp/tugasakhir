@@ -405,7 +405,6 @@ export const checkout = async (
       where: { userId },
       include: {
         CartValueCalculation: true,
-        DiscountReport: true,
       },
     });
 

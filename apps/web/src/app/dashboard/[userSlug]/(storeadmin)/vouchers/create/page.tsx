@@ -20,7 +20,7 @@ const CreateVoucher = () => {
       try {
         if (storeId) {
           const response = await fetch(
-            `http://localhost:8000/api/v1/products-store/${storeId}`,
+            `${process.env.NEXT_PUBLIC_API_DOMAIN}/api/v1/products-store/${storeId}`,
             {
               method: 'GET',
               credentials: 'include',
@@ -114,7 +114,7 @@ const CreateVoucher = () => {
 
     try {
       const response = await fetch(
-        'http://localhost:8000/api/v1/create-voucher',
+        `${process.env.NEXT_PUBLIC_API_DOMAIN}/api/v1/create-voucher`,
         {
           method: 'POST',
           credentials: 'include',
@@ -125,7 +125,7 @@ const CreateVoucher = () => {
       if (result.ok) {
         toast.success('Voucher created successfully!');
         router.push(
-          `http://localhost:3000/dashboard/${user?.username}/vouchers`,
+          `${process.env.NEXT_PUBLIC_WEB_DOMAIN}/dashboard/${user?.username}/vouchers`,
         );
       } else {
         toast.error('Error creating voucher');

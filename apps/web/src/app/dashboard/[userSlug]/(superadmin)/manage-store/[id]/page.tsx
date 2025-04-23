@@ -15,7 +15,7 @@ const StoreDetail = () => {
     const fetchStore = async () => {
       try {
         const response = await fetch(
-          `http://localhost:8000/api/v1/stores/someStore/${id}`,
+          `${process.env.NEXT_PUBLIC_API_DOMAIN}/api/v1/stores/someStore/${id}`,
         );
         if (!response.ok) {
           throw new Error(`HTTP error! Status: ${response.status}`);

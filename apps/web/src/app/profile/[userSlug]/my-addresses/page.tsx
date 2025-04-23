@@ -20,7 +20,7 @@ const AddressPage = () => {
       try {
         // Fetch all addresses
         const addressRes = await fetch(
-          'http://localhost:8000/api/v1/addresses/user-addresses',
+          `${process.env.NEXT_PUBLIC_API_DOMAIN}/api/v1/addresses/user-addresses`,
           {
             method: 'GET',
             credentials: 'include',
@@ -37,7 +37,7 @@ const AddressPage = () => {
 
         // Fetch primary address
         const primaryRes = await fetch(
-          `http://localhost:8000/api/v1/addresses/get-primary`,
+          `${process.env.NEXT_PUBLIC_API_DOMAIN}/api/v1/addresses/get-primary`,
           {
             method: 'GET',
             credentials: 'include',
@@ -64,13 +64,16 @@ const AddressPage = () => {
   }, [user?.id]);
 
   const handleDeleteAddress = async (id: number) => {
-    const res = await fetch(`http://localhost:8000/api/v1/addresses/${id}`, {
-      method: 'DELETE',
-      credentials: 'include',
-      headers: {
-        'Content-Type': 'application/json',
+    const res = await fetch(
+      `${process.env.NEXT_PUBLIC_API_DOMAIN}/api/v1/addresses/${id}`,
+      {
+        method: 'DELETE',
+        credentials: 'include',
+        headers: {
+          'Content-Type': 'application/json',
+        },
       },
-    });
+    );
 
     if (res.ok) {
       setAddresses((prev) => prev.filter((address) => address.id !== id));
@@ -86,7 +89,7 @@ const AddressPage = () => {
 
   const handleSetPrimary = async (id: number) => {
     const res = await fetch(
-      `http://localhost:8000/api/v1/addresses/set-primary`,
+      `${process.env.NEXT_PUBLIC_API_DOMAIN}/api/v1/addresses/set-primary`,
       {
         method: 'POST',
         headers: {

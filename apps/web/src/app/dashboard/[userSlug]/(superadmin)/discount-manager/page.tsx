@@ -14,13 +14,16 @@ export default function DiscountsPage() {
   const fetchDiscounts = async () => {
     setLoading(true);
     try {
-      const res = await fetch('http://localhost:8000/api/v1/all-discounts', {
-        credentials: 'include',
-        method: 'GET',
-        headers: {
-          'Content-Type': 'application/json',
+      const res = await fetch(
+        `${process.env.NEXT_PUBLIC_API_DOMAIN}/api/v1/all-discounts`,
+        {
+          credentials: 'include',
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json',
+          },
         },
-      });
+      );
       const json = await res.json();
       if (json.ok) {
         setDiscounts(json.data);
@@ -39,7 +42,7 @@ export default function DiscountsPage() {
     setLoading(true);
     try {
       const res = await fetch(
-        `http://localhost:8000/api/v1/${isActive ? 'deactivate' : 'activate'}/${id}`,
+        `${process.env.NEXT_PUBLIC_API_DOMAIN}/api/v1/${isActive ? 'deactivate' : 'activate'}/${id}`,
         {
           method: 'PUT',
           credentials: 'include',

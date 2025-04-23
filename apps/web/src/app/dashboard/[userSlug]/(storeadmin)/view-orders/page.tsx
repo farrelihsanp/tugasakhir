@@ -23,7 +23,7 @@ export default function PendingOrdersPage() {
     const fetchPendingOrders = async () => {
       try {
         const res = await fetch(
-          `http://localhost:8000/api/v1/orders-store/${storeId}`,
+          `${process.env.NEXT_PUBLIC_API_DOMAIN}/api/v1/orders-store/${storeId}`,
           {
             method: 'GET',
             credentials: 'include',
@@ -45,7 +45,7 @@ export default function PendingOrdersPage() {
     const fetchStore = async () => {
       try {
         const res = await fetch(
-          `http://localhost:8000/api/v1/stores/someStore/${storeId}`,
+          `${process.env.NEXT_PUBLIC_API_DOMAIN}/api/v1/stores/someStore/${storeId}`,
           {
             method: 'GET',
             credentials: 'include',

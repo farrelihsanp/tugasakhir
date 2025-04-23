@@ -37,7 +37,7 @@ const CreateProductPage = () => {
     const fetchCategories = async () => {
       try {
         const response = await fetch(
-          'http://localhost:8000/api/v1/all-categories',
+          `${process.env.NEXT_PUBLIC_API_DOMAIN}/api/v1/all-categories`,
         );
         const data = await response.json();
         if (data.ok) {
@@ -134,7 +134,7 @@ const CreateProductPage = () => {
 
     try {
       const response = await fetch(
-        'http://localhost:8000/api/v1/create-product',
+        `${process.env.NEXT_PUBLIC_API_DOMAIN}/api/v1/create-product`,
         {
           method: 'POST',
           body: formDataToSend,

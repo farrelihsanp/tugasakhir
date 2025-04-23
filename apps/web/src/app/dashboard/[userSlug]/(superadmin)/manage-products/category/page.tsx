@@ -15,7 +15,7 @@ const ManageCategoriesPage: React.FC = () => {
     const fetchCategories = async () => {
       try {
         const response = await fetch(
-          'http://localhost:8000/api/v1/all-categories',
+          `${process.env.NEXT_PUBLIC_API_DOMAIN}/api/v1/all-categories`,
           {
             method: 'GET',
             headers: {
@@ -46,7 +46,7 @@ const ManageCategoriesPage: React.FC = () => {
   const deleteCategory = async (id: number) => {
     try {
       const response = await fetch(
-        `http://localhost:8000/api/v1/delete-category/${id}`,
+        `${process.env.NEXT_PUBLIC_API_DOMAIN}/api/v1/delete-category/${id}`,
         {
           method: 'DELETE',
           headers: {

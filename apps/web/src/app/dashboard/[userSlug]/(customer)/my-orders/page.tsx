@@ -22,7 +22,7 @@ const OrderStatusPage = () => {
     const fetchOrders = async () => {
       try {
         const response = await fetch(
-          'http://localhost:8000/api/v1/orders-customer',
+          `${process.env.NEXT_PUBLIC_API_DOMAIN}/api/v1/orders-customer`,
           {
             method: 'GET',
             credentials: 'include',
@@ -46,7 +46,7 @@ const OrderStatusPage = () => {
   const handleCancelOrder = async (orderId: number) => {
     try {
       const response = await fetch(
-        `http://localhost:8000/api/v1/cancel-order/${orderId}`,
+        `${process.env.NEXT_PUBLIC_API_DOMAIN}/api/v1/cancel-order/${orderId}`,
         {
           method: 'DELETE',
           credentials: 'include',
@@ -71,31 +71,10 @@ const OrderStatusPage = () => {
     }
   };
 
-  // const handleProcessOrder = async (orderId: number) => {
-  //   try {
-  //     const response = await fetch(
-  //       `http://localhost:8000/api/v1/confirm-process-order/${orderId}`,
-  //       {
-  //         method: 'PUT',
-  //         credentials: 'include',
-  //         headers: { 'Content-Type': 'application/json' },
-  //       },
-  //     );
-  //     if (response.ok) {
-  //       toast.success('Order processed successfully');
-  //     } else {
-  //       toast.error('Error processing the order');
-  //     }
-  //   } catch (error) {
-  //     console.error('Error processing order:', error);
-  //     toast.error('Error processing the order');
-  //   }
-  // };
-
   const handleConfirmOrder = async (orderId: number) => {
     try {
       const response = await fetch(
-        `http://localhost:8000/api/v1/order-confirmed/${orderId}`,
+        `${process.env.NEXT_PUBLIC_API_DOMAIN}/api/v1/order-confirmed/${orderId}`,
         {
           method: 'PUT',
           credentials: 'include',

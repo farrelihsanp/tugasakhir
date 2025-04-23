@@ -22,7 +22,7 @@ export default function ProdukPage() {
     const fetchProducts = async () => {
       try {
         const res = await fetch(
-          `http://localhost:8000/api/v1/productsBycategories/${storeSlug}/${categorySlug}`,
+          `${process.env.NEXT_PUBLIC_API_DOMAIN}/api/v1/productsBycategories/${storeSlug}/${categorySlug}`,
           {
             credentials: 'include',
             method: 'GET',
@@ -84,7 +84,7 @@ export default function ProdukPage() {
                 </div>
               )}
               <Link
-                href={`http://localhost:3000/${storeSlug}/product/${item.product.slug}`}
+                href={`${process.env.NEXT_PUBLIC_WEB_DOMAIN}/${storeSlug}/product/${item.product.slug}`}
                 className="block"
               >
                 <div className="relative w-full h-52">

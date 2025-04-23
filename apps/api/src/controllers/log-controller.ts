@@ -150,7 +150,7 @@ export const sendEmailresetPassword = async (
     }
 
     const confirmToken = crypto.randomBytes(20).toString('hex');
-    const passwordResetLink = `http://localhost:8000/api/v1/confirm/reset-password?token=${confirmToken}`;
+    const passwordResetLink = `${process.env.API_DOMAIN}/api/v1/confirm/reset-password?token=${confirmToken}`;
 
     await prisma.confirmToken.create({
       data: {
@@ -303,7 +303,7 @@ export const updateUserProfile = async (
     if (email) {
       data.email = email;
       const confirmToken = crypto.randomBytes(20).toString('hex');
-      const confirmationLink = `http://localhost:8000/api/v1/confirm/update-email?token=${confirmToken}`;
+      const confirmationLink = `${process.env.API_DOMAIN}/api/v1/confirm/update-email?token=${confirmToken}`;
 
       await prisma.confirmToken.create({
         data: {

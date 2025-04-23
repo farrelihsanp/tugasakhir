@@ -26,7 +26,7 @@ export default function AllProductsPage() {
 
       try {
         const response = await fetch(
-          'http://localhost:8000/api/v1/all-products',
+          `${process.env.NEXT_PUBLIC_API_DOMAIN}/api/v1/all-products`,
           {
             method: 'GET',
             credentials: 'include',

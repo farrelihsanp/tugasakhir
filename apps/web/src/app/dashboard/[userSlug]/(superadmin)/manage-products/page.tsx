@@ -11,13 +11,16 @@ const ManageStoresPage: React.FC = () => {
   useEffect(() => {
     const fetchStores = async () => {
       try {
-        const response = await fetch('http://localhost:8000/api/v1/stores', {
-          method: 'GET',
-          headers: {
-            'Content-Type': 'application/json',
+        const response = await fetch(
+          `${process.env.NEXT_PUBLIC_API_DOMAIN}/api/v1/stores`,
+          {
+            method: 'GET',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            credentials: 'include',
           },
-          credentials: 'include',
-        });
+        );
 
         if (response.ok) {
           const data = await response.json();

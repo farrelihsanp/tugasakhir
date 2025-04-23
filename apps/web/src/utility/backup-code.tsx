@@ -38,7 +38,7 @@
 //     setLoading(true);
 //     setError(null);
 
-//     fetch('http://localhost:8000/api/v1/auth/me', {
+//     fetch('${process.env.NEXT_PUBLIC_API_DOMAIN}/api/v1/auth/me', {
 //       method: 'GET',
 //       credentials: 'include',
 //       headers: {
@@ -62,7 +62,7 @@
 //     setLoading(true);
 //     setError(null);
 
-//     fetch('http://localhost:8000/api/v1/all-categories')
+//     fetch('${process.env.NEXT_PUBLIC_API_DOMAIN}/api/v1/all-categories')
 //       .then((res) => res.json())
 //       .then((data) => {
 //         setCategories(data.data);
@@ -83,15 +83,15 @@
 //     setError(null);
 
 //     const fetchProducts = fetch(
-//       `http://localhost:8000/api/v1/products-store/${nearestStore.id}`,
+//       `${process.env.NEXT_PUBLIC_API_DOMAIN}/api/v1/products-store/${nearestStore.id}`,
 //     ).then((res) => res.json());
 
 //     const fetchCheapProducts = fetch(
-//       `http://localhost:8000/api/v1/cheap-products-store/${nearestStore.id}`,
+//       `${process.env.NEXT_PUBLIC_API_DOMAIN}/api/v1/cheap-products-store/${nearestStore.id}`,
 //     ).then((res) => res.json());
 
 //     const fetchStore = fetch(
-//       `http://localhost:8000/api/v1/stores/someStore/${storeIdStoreAdmin}`,
+//       `${process.env.NEXT_PUBLIC_API_DOMAIN}/api/v1/stores/someStore/${storeIdStoreAdmin}`,
 //     ).then((res) => res.json());
 
 //     Promise.all([fetchProducts, fetchCheapProducts, fetchStore])
@@ -118,7 +118,7 @@
 //   // Handle logout within the context
 //   const handleLogout = async () => {
 //     try {
-//       const response = await fetch('http://localhost:8000/api/v1/auth/logout', {
+//       const response = await fetch('${process.env.NEXT_PUBLIC_API_DOMAIN}/api/v1/auth/logout', {
 //         method: 'POST',
 //         credentials: 'include',
 //       });

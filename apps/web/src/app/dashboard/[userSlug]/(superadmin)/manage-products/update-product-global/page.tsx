@@ -28,7 +28,7 @@ const UpdateProductPage = () => {
     const fetchCategories = async () => {
       try {
         const response = await fetch(
-          'http://localhost:8000/api/v1/all-categories',
+          `${process.env.NEXT_PUBLIC_API_DOMAIN}/api/v1/all-categories`,
         );
         const data = await response.json();
         if (data.ok) {
@@ -44,7 +44,7 @@ const UpdateProductPage = () => {
     const fetchProducts = async () => {
       try {
         const response = await fetch(
-          'http://localhost:8000/api/v1/all-products',
+          `${process.env.NEXT_PUBLIC_API_DOMAIN}/api/v1/all-products`,
           {
             method: 'GET',
             credentials: 'include',
@@ -136,7 +136,7 @@ const UpdateProductPage = () => {
 
     try {
       const response = await fetch(
-        'http://localhost:8000/api/v1/update-product-global',
+        `${process.env.NEXT_PUBLIC_API_DOMAIN}/api/v1/update-product-global`,
         {
           method: 'PUT',
           body: formDataToSend,
@@ -149,7 +149,7 @@ const UpdateProductPage = () => {
       }
       toast.success('Product updated successfully!');
       router.push(
-        `http://localhost:3000/dashboard/${userSlug}/manage-products`,
+        `${process.env.NEXT_PUBLIC_WEB_DOMAIN}/dashboard/${userSlug}/manage-products`,
       );
     } catch (error) {
       console.error('Error updating product:', error);

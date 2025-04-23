@@ -68,7 +68,7 @@ export const Geolocation = () => {
 
     const fetchNearestStore = async () => {
       try {
-        let url = `http://localhost:8000/api/v1/stores/nearest-store`;
+        let url = `${process.env.NEXT_PUBLIC_API_DOMAIN}/api/v1/stores/nearest-store`;
 
         if (latitude !== null && longitude !== null) {
           url += `?latitudeUser=${latitude}&longitudeUser=${longitude}`;

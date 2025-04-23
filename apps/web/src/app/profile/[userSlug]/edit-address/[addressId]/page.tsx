@@ -27,7 +27,7 @@ const EditAddressForm = () => {
         try {
           setLoading(true); // Start loading
           const response = await fetch(
-            `http://localhost:8000/api/v1/addresses/${addressId}`,
+            `${process.env.NEXT_PUBLIC_API_DOMAIN}/api/v1/addresses/${addressId}`,
             {
               method: 'GET',
               credentials: 'include',
@@ -81,7 +81,7 @@ const EditAddressForm = () => {
     try {
       setLoading(true); // Start loading
       const response = await fetch(
-        `http://localhost:8000/api/v1/addresses/${addressId}`,
+        `${process.env.NEXT_PUBLIC_API_DOMAIN}/api/v1/addresses/${addressId}`,
         {
           method: 'PUT',
           headers: {
@@ -95,7 +95,7 @@ const EditAddressForm = () => {
       if (response.ok) {
         toast.success('Address updated successfully!'); // Show success toast
         router.push(
-          `http://localhost:3000/profile/${user?.username}/my-addresses`,
+          `${process.env.NEXT_PUBLIC_WEB_DOMAIN}/profile/${user?.username}/my-addresses`,
         );
       } else {
         const data = await response.json();

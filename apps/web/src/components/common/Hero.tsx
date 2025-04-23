@@ -21,7 +21,7 @@ export default function Hero({ heightClass = 'h-[50vh]' }: HeroProps) {
     const fetchVouchers = async () => {
       try {
         const response = await fetch(
-          'http://localhost:8000/api/v1/all-vouchers',
+          `${process.env.NEXT_PUBLIC_API_DOMAIN}/api/v1/all-vouchers`,
         );
         if (!response.ok) {
           throw new Error('Failed to fetch vouchers');

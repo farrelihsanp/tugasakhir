@@ -20,7 +20,7 @@ const StoreAdminActionPage = () => {
     const fetchOrder = async () => {
       try {
         const res = await fetch(
-          `http://localhost:8000/api/v1/order-detail/${orderId}`,
+          `${process.env.NEXT_PUBLIC_API_DOMAIN}/api/v1/order-detail/${orderId}`,
           {
             method: 'GET',
             credentials: 'include',
@@ -42,7 +42,7 @@ const StoreAdminActionPage = () => {
   const handleSeeProof = async () => {
     try {
       const res = await fetch(
-        `http://localhost:8000/api/v1/see-payment-proof/${orderId}`,
+        `${process.env.NEXT_PUBLIC_API_DOMAIN}/api/v1/see-payment-proof/${orderId}`,
         {
           method: 'GET',
           credentials: 'include',
@@ -60,7 +60,7 @@ const StoreAdminActionPage = () => {
   const handleAction = async (endpoint: string, successMessage: string) => {
     try {
       const res = await fetch(
-        `http://localhost:8000/api/v1/${endpoint}/${orderId}`,
+        `${process.env.NEXT_PUBLIC_API_DOMAIN}/api/v1/${endpoint}/${orderId}`,
         {
           method: 'PUT',
           credentials: 'include',

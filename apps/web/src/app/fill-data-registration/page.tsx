@@ -72,7 +72,7 @@ const CompleteRegisterForm = () => {
 
     try {
       const response = await fetch(
-        'http://localhost:8000/api/v1/auth/fill-data',
+        `${process.env.NEXT_PUBLIC_API_DOMAIN}/api/v1/auth/fill-data`,
         {
           method: 'POST',
           body: form,

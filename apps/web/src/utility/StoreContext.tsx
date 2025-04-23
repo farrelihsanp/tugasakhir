@@ -42,13 +42,16 @@ export const StoreProvider: React.FC<{ children: React.ReactNode }> = ({
   useEffect(() => {
     const fetchCategories = async () => {
       try {
-        const res = await fetch('http://localhost:8000/api/v1/all-categories', {
-          method: 'GET',
-          credentials: 'include',
-          headers: {
-            'Content-Type': 'application/json',
+        const res = await fetch(
+          `${process.env.NEXT_PUBLIC_API_DOMAIN}/api/v1/all-categories`,
+          {
+            method: 'GET',
+            credentials: 'include',
+            headers: {
+              'Content-Type': 'application/json',
+            },
           },
-        });
+        );
         const data = await res.json();
         setCategories(data.data);
       } catch (error: unknown) {
@@ -68,7 +71,7 @@ export const StoreProvider: React.FC<{ children: React.ReactNode }> = ({
       const fetchProduct = async () => {
         try {
           const res = await fetch(
-            `http://localhost:8000/api/v1/products-store/${nearestStore.id}`,
+            `${process.env.NEXT_PUBLIC_API_DOMAIN}/api/v1/products-store/${nearestStore.id}`,
             {
               method: 'GET',
               credentials: 'include',
@@ -85,7 +88,7 @@ export const StoreProvider: React.FC<{ children: React.ReactNode }> = ({
       const fetchCheapProduct = async () => {
         try {
           const res = await fetch(
-            `http://localhost:8000/api/v1/cheap-products-store/${nearestStore.id}`,
+            `${process.env.NEXT_PUBLIC_API_DOMAIN}/api/v1/cheap-products-store/${nearestStore.id}`,
             {
               method: 'GET',
               credentials: 'include',
@@ -112,7 +115,7 @@ export const StoreProvider: React.FC<{ children: React.ReactNode }> = ({
       const fetchStore = async () => {
         try {
           const res = await fetch(
-            `http://localhost:8000/api/v1/stores/someStore/${storeIdStoreAdmin}`,
+            `${process.env.NEXT_PUBLIC_API_DOMAIN}/api/v1/stores/someStore/${storeIdStoreAdmin}`,
             {
               method: 'GET',
               credentials: 'include',
@@ -140,13 +143,16 @@ export const StoreProvider: React.FC<{ children: React.ReactNode }> = ({
 
     const fetchAuthMe = async () => {
       try {
-        const res = await fetch('http://localhost:8000/api/v1/auth/me', {
-          method: 'GET',
-          credentials: 'include',
-          headers: {
-            'Content-Type': 'application/json',
+        const res = await fetch(
+          `${process.env.NEXT_PUBLIC_API_DOMAIN}/api/v1/auth/me`,
+          {
+            method: 'GET',
+            credentials: 'include',
+            headers: {
+              'Content-Type': 'application/json',
+            },
           },
-        });
+        );
         const data = await res.json();
         setUser(data);
       } catch (error: unknown) {
@@ -162,10 +168,13 @@ export const StoreProvider: React.FC<{ children: React.ReactNode }> = ({
 
   const handleLogout = async () => {
     try {
-      const response = await fetch('http://localhost:8000/api/v1/auth/logout', {
-        method: 'POST',
-        credentials: 'include',
-      });
+      const response = await fetch(
+        `${process.env.NEXT_PUBLIC_API_DOMAIN}/api/v1/auth/logout`,
+        {
+          method: 'POST',
+          credentials: 'include',
+        },
+      );
       if (response.ok) {
         setUser(null);
         window.location.href = '/';

@@ -43,7 +43,7 @@ const UpdateVoucher = () => {
       const fetchVoucherData = async (voucherCode: string) => {
         try {
           const response = await fetch(
-            `http://localhost:8000/api/v1/get-voucher-by-code/${voucherCode}`,
+            `${process.env.NEXT_PUBLIC_API_DOMAIN}/api/v1/get-voucher-by-code/${voucherCode}`,
             {
               method: 'GET',
               credentials: 'include',
@@ -125,7 +125,7 @@ const UpdateVoucher = () => {
 
     try {
       const response = await fetch(
-        `http://localhost:8000/api/v1/update-voucher/${voucherCode}`,
+        `${process.env.NEXT_PUBLIC_API_DOMAIN}/api/v1/update-voucher/${voucherCode}`,
         {
           method: 'PUT',
           credentials: 'include',
@@ -136,7 +136,7 @@ const UpdateVoucher = () => {
       if (result.ok) {
         toast.success('Voucher updated successfully');
         router.push(
-          `http://localhost:3000/dashboard/${user?.username}/vouchers`,
+          `${process.env.NEXT_PUBLIC_WEB_DOMAIN}/dashboard/${user?.username}/vouchers`,
         );
       } else {
         toast.error('Error updating voucher');

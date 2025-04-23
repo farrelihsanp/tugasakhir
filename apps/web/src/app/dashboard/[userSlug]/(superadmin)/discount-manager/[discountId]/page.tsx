@@ -16,7 +16,7 @@ const DiscountDetailPage = () => {
       setLoading(true);
       try {
         const response = await fetch(
-          `http://localhost:8000/api/v1/get-discount/${discountId}`,
+          `${process.env.NEXT_PUBLIC_API_DOMAIN}/api/v1/get-discount/${discountId}`,
           {
             method: 'GET',
             credentials: 'include',

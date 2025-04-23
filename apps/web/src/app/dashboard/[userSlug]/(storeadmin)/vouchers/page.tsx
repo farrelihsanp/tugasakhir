@@ -21,7 +21,7 @@ const VoucherPage = () => {
 
     try {
       const response = await fetch(
-        'http://localhost:8000/api/v1/all-vouchers',
+        `${process.env.NEXT_PUBLIC_API_DOMAIN}/api/v1/all-vouchers`,
         {
           method: 'GET',
           credentials: 'include',
@@ -61,7 +61,7 @@ const VoucherPage = () => {
 
     try {
       const response = await fetch(
-        'http://localhost:8000/api/v1/delete-voucher',
+        `${process.env.NEXT_PUBLIC_API_DOMAIN}/api/v1/delete-voucher`,
         {
           method: 'DELETE',
           credentials: 'include',

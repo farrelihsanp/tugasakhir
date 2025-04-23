@@ -29,7 +29,7 @@ export default function RegisterPage() {
 
     try {
       const response = await fetch(
-        'http://localhost:8000/api/v1/auth/register',
+        `${process.env.NEXT_PUBLIC_API_DOMAIN}/api/v1/auth/register`,
         {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
@@ -42,7 +42,7 @@ export default function RegisterPage() {
         setErrorMessage('');
         toast.success('Registration successful!');
         setTimeout(() => {
-          window.location.href = 'http://localhost:3000';
+          window.location.href = process.env.NEXT_PUBLIC_WEB_DOMAIN as string;
         }, 3000);
       } else {
         const data = await response.json();

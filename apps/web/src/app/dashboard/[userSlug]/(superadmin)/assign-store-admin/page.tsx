@@ -22,13 +22,16 @@ export default function AssignAdminPage() {
     const fetchStores = async () => {
       setLoading(true); // Show loading when fetching stores
       try {
-        const res = await fetch('http://localhost:8000/api/v1/stores', {
-          method: 'GET',
-          credentials: 'include',
-          headers: {
-            'Content-Type': 'application/json',
+        const res = await fetch(
+          `${process.env.NEXT_PUBLIC_API_DOMAIN}/api/v1/stores`,
+          {
+            method: 'GET',
+            credentials: 'include',
+            headers: {
+              'Content-Type': 'application/json',
+            },
           },
-        });
+        );
         if (!res.ok) throw new Error('Failed to fetch stores');
         const data = await res.json();
         setStores(data.data);
@@ -48,7 +51,7 @@ export default function AssignAdminPage() {
       setLoading(true); // Show loading when fetching admins
       try {
         const res = await fetch(
-          'http://localhost:8000/api/v1/admins/getAllAdmins',
+          `${process.env.NEXT_PUBLIC_API_DOMAIN}/api/v1/admins/getAllAdmins`,
           {
             method: 'GET',
             credentials: 'include',
@@ -84,7 +87,7 @@ export default function AssignAdminPage() {
     try {
       setLoading(true); // Show loading when assigning admin
       const res = await fetch(
-        'http://localhost:8000/api/v1/admins/assign-store-admin',
+        `${process.env.NEXT_PUBLIC_API_DOMAIN}/api/v1/admins/assign-store-admin`,
         {
           method: 'POST',
           credentials: 'include',
@@ -100,7 +103,7 @@ export default function AssignAdminPage() {
       if (!res.ok) throw new Error(data.message);
       toast.success(data.message);
       router.push(
-        `http://localhost:3000/dashboard/${userSlug}/manage-store-admin`,
+        `${process.env.NEXT_PUBLIC_WEB_DOMAIN}/dashboard/${userSlug}/manage-store-admin`,
       );
       setTimeout(() => {
         window.location.reload();

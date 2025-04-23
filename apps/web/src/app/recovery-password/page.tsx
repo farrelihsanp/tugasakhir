@@ -1,11 +1,11 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { Suspense, useState } from 'react';
 import { useSearchParams } from 'next/navigation';
 import { useRouter } from 'next/navigation';
 import { toast } from 'react-toastify';
 
-const ResetPasswordForm = () => {
+const ResetPasswordFormContent = () => {
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [error, setError] = useState('');
@@ -35,7 +35,7 @@ const ResetPasswordForm = () => {
 
     try {
       const response = await fetch(
-        `http://localhost:8000/api/v1/auth/submit-new-password?token=${token}`,
+        `${process.env.NEXT_PUBLIC_API_DOMAIN}/api/v1/auth/submit-new-password?token=${token}`,
         {
           method: 'POST',
           headers: {
@@ -58,7 +58,7 @@ const ResetPasswordForm = () => {
       toast.success(data.message || 'Password reset successfully.');
       setLoading(false);
       setTimeout(() => {
-        router.push('http://localhost:3000/auth/login');
+        router.push(`${process.env.NEXT_PUBLIC_WEB_DOMAIN}/auth/login`);
       }, 3000);
     } catch (err) {
       if (err instanceof Error) {
@@ -122,4 +122,10 @@ const ResetPasswordForm = () => {
   );
 };
 
-export default ResetPasswordForm;
+export default function ResetPasswordForm() {
+  return (
+    <Suspense>
+      <ResetPasswordFormContent />
+    </Suspense>
+  );
+}
