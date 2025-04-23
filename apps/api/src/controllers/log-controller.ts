@@ -12,6 +12,7 @@ import { UserData } from '../types/express.d.js';
 import Handlebars from 'handlebars';
 
 const resend = new Resend(process.env.RESEND_API_KEY);
+// const resend = new Resend(process.env.RESEND_API_KEY_KAYLA);
 
 export async function login(req: Request, res: Response, next: NextFunction) {
   try {

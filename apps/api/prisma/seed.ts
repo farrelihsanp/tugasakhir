@@ -145,38 +145,38 @@ async function main() {
     });
 
     // Customer User
-    const customerPassword = await hash('farrel123', salt);
-    const customer1 = await prisma.user.create({
-      data: {
-        name: 'Farrel Ihsan Prahaditya',
-        username: 'farrelihsanp',
-        password: customerPassword,
-        email: 'farrel.prahaditya@gmail.com',
-        emailConfirmed: true,
-        isVerified: true,
-        role: 'CUSTOMERS',
-        profileImage:
-          'https://images.unsplash.com/photo-1695927621677-ec96e048dce2?q=80&w=1035&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
-        referralNumber: 'REF112295',
-        provider: 'CREDENTIALS',
-      },
-    });
-
-    // const customerPassword = await hash('caca123', salt);
+    // const customerPassword = await hash('farrel123', salt);
     // const customer1 = await prisma.user.create({
     //   data: {
-    //     name: 'salsabila yara',
-    //     username: 'salsabilayara',
+    //     name: 'Farrel Ihsan Prahaditya',
+    //     username: 'farrelihsanp',
     //     password: customerPassword,
-    //     email: 'caca@gmail.com',
+    //     email: 'farrel.prahaditya2@gmail.com',
     //     emailConfirmed: true,
+    //     isVerified: true,
     //     role: 'CUSTOMERS',
     //     profileImage:
-    //       'https://res.cloudinary.com/dm1cnsldc/image/upload/v1739728940/event/images/s6x3zkhiibcahfndhmxe.jpg',
+    //       'https://images.unsplash.com/photo-1695927621677-ec96e048dce2?q=80&w=1035&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
     //     referralNumber: 'REF112295',
     //     provider: 'CREDENTIALS',
     //   },
     // });
+
+    const customerPassword = await hash('caca123', salt);
+    const customer1 = await prisma.user.create({
+      data: {
+        name: 'salsabila yara',
+        username: 'salsabilayara',
+        password: customerPassword,
+        email: 'caca@gmail.com',
+        emailConfirmed: true,
+        role: 'CUSTOMERS',
+        profileImage:
+          'https://res.cloudinary.com/dm1cnsldc/image/upload/v1739728940/event/images/s6x3zkhiibcahfndhmxe.jpg',
+        referralNumber: 'REF112295',
+        provider: 'CREDENTIALS',
+      },
+    });
 
     const customerPassword2 = await hash('fauzan123', salt);
     const customer2 = await prisma.user.create({
