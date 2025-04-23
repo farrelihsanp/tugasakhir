@@ -1,12 +1,70 @@
-import {
-  Role,
-  PaymentMethodType,
-  OrderStatus,
-  VoucherType,
-  VoucherCategory,
-  Provider,
-  DiscountType,
-} from '@prisma/client';
+// import {
+//   Role,
+//   PaymentMethodType,
+//   OrderStatus,
+//   VoucherType,
+//   VoucherCategory,
+//   Provider,
+//   DiscountType,
+// } from '@prisma/client';
+
+// -----------------------------
+
+// Manual enum definitions
+export enum Role {
+  CUSTOMERS = 'CUSTOMERS',
+  SUPERADMIN = 'SUPERADMIN',
+  STOREADMIN = 'STOREADMIN',
+  UNSET = 'UNSET',
+}
+
+export enum DiscountType {
+  AMOUNT = 'AMOUNT',
+  PERCENTAGE = 'PERCENTAGE',
+  BUY_1_GET_1 = 'BUY_1_GET_1',
+}
+
+export enum VoucherType {
+  PERCENTAGE = 'PERCENTAGE',
+  AMOUNT = 'AMOUNT',
+}
+
+export enum OrderStatus {
+  WAITING_FOR_PAYMENT = 'WAITING_FOR_PAYMENT',
+  PENDING_PAYMENT = 'PENDING_PAYMENT',
+  PAYMENT_DECLINED = 'PAYMENT_DECLINED',
+  PAID = 'PAID',
+  PROCESSING = 'PROCESSING',
+  SHIPPED = 'SHIPPED',
+  DELIVERED = 'DELIVERED',
+  COMPLETED = 'COMPLETED',
+  CANCELLED = 'CANCELLED',
+}
+
+export enum PaymentMethodType {
+  UNSET = 'UNSET',
+  MIDTRANS = 'MIDTRANS',
+  BANK_TRANSFER = 'BANK_TRANSFER',
+}
+
+export enum Provider {
+  GOOGLE = 'GOOGLE',
+  CREDENTIALS = 'CREDENTIALS',
+}
+
+export enum TypeOfChange {
+  PENAMBAHAN = 'PENAMBAHAN',
+  PEMBELIAN = 'PEMBELIAN',
+  PENGURANGAN = 'PENGURANGAN',
+}
+
+export enum VoucherCategory {
+  SHOPPING_RESULT = 'SHOPPING_RESULT',
+  SHIPPING_COST = 'SHIPPING_COST',
+  PRODUCT = 'PRODUCT',
+}
+
+// -----------------------------
 
 export interface DiscountReport {
   id: number;
