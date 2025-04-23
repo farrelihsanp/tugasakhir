@@ -39,7 +39,6 @@ export default function LoginPage() {
         throw new Error('Login failed');
       }
       toast.success('Login successful!');
-
       const fetchUserLogin = await fetch(
         `${process.env.NEXT_PUBLIC_API_DOMAIN}/api/v1/auth/me`,
         {

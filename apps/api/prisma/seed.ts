@@ -49,6 +49,7 @@ async function main() {
         password: superadminPassword,
         email: 'johndoe@example.com',
         emailConfirmed: true,
+        isVerified: true,
         role: 'SUPERADMIN',
         profileImage:
           'https://images.unsplash.com/photo-1722322426803-101270837197?q=80&w=1170&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
@@ -66,6 +67,7 @@ async function main() {
         password: storeadminPassword1,
         email: 'janesmith@example.com',
         emailConfirmed: true,
+        isVerified: true,
         role: 'STOREADMIN',
         profileImage:
           'https://res.cloudinary.com/dm1cnsldc/image/upload/v1739627186/education-confrence_jujt4f.jpg',
@@ -82,6 +84,7 @@ async function main() {
         password: storeadminPassword2,
         email: 'dianasiregar@example.com',
         emailConfirmed: true,
+        isVerified: true,
         role: 'STOREADMIN',
         profileImage:
           'https://res.cloudinary.com/dm1cnsldc/image/upload/v1739627186/education-confrence_jujt4f.jpg',
@@ -98,6 +101,7 @@ async function main() {
         password: storeadminPassword3,
         email: 'purnomo@example.com',
         emailConfirmed: true,
+        isVerified: true,
         role: 'STOREADMIN',
         profileImage:
           'https://res.cloudinary.com/dm1cnsldc/image/upload/v1739627186/education-confrence_jujt4f.jpg',
@@ -114,6 +118,7 @@ async function main() {
         password: storeadminPassword4,
         email: 'budigunawan@example.com',
         emailConfirmed: true,
+        isVerified: true,
         role: 'STOREADMIN',
         profileImage:
           'https://res.cloudinary.com/dm1cnsldc/image/upload/v1739627186/education-confrence_jujt4f.jpg',
@@ -130,6 +135,7 @@ async function main() {
         password: storeadminPassword5,
         email: 'bagussaragih@example.com',
         emailConfirmed: true,
+        isVerified: true,
         role: 'STOREADMIN',
         profileImage:
           'https://res.cloudinary.com/dm1cnsldc/image/upload/v1739627186/education-confrence_jujt4f.jpg',
@@ -147,6 +153,7 @@ async function main() {
         password: customerPassword,
         email: 'farrel.prahaditya@gmail.com',
         emailConfirmed: true,
+        isVerified: true,
         role: 'CUSTOMERS',
         profileImage:
           'https://images.unsplash.com/photo-1695927621677-ec96e048dce2?q=80&w=1035&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',

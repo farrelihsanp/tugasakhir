@@ -72,10 +72,19 @@ export async function login(req: Request, res: Response, next: NextFunction) {
       expiresIn: '24h',
     });
 
+    // res
+    //   .cookie('accessToken', token, {
+    //     httpOnly: true,
+    //     sameSite: 'none',
+    //     path: '/',
+    //     secure: process.env.NODE_ENV === 'production',
+    //   })
     res
       .cookie('accessToken', token, {
         httpOnly: true,
-        sameSite: 'none',
+        sameSite: 'lax',
+        domain:
+          process.env.NODE_ENV === 'development' ? 'localhost' : 'quickmart',
         path: '/',
         secure: process.env.NODE_ENV === 'production',
       })
