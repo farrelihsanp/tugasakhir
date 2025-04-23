@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { toast } from 'react-toastify';
-import { Voucher } from '@/types/types';
+import { Voucher, VoucherType, VoucherCategory } from '@/types/types';
 import { useParams } from 'next/navigation';
 import Image from 'next/image';
 import { useStoreContext } from '@/utility/StoreContext';
@@ -18,8 +18,8 @@ const UpdateVoucher = () => {
     name: '',
     description: '',
     code: voucherCode as string,
-    voucherType: 'AMOUNT',
-    voucherCategory: 'SHOPPING_RESULT',
+    voucherType: VoucherType.AMOUNT,
+    voucherCategory: VoucherCategory.SHOPPING_RESULT,
     value: 0,
     startDate: '',
     endDate: '',

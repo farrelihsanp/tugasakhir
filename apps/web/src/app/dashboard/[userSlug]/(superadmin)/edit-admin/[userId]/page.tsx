@@ -92,7 +92,7 @@ const UpdateAdminPage = () => {
 
     fetchAdminData();
     fetchStores();
-  }, []);
+  }, [userId, adminData]);
 
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>,
