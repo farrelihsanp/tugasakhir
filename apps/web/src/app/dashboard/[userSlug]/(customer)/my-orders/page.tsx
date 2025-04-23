@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react';
 import { toast } from 'react-toastify';
 import Link from 'next/link';
 import { useStoreContext } from '@/utility/StoreContext';
-import { Order } from '@/types/types';
+import { Order, OrderStatus } from '@/types/types';
 
 const OrderStatusPage = () => {
   const [orders, setOrders] = useState<Order[]>([]);
@@ -14,18 +14,7 @@ const OrderStatusPage = () => {
   const [selectedYear, setSelectedYear] = useState('');
 
   const { user } = useStoreContext();
-  const fetchOrderStatus = {
-    WAITING_FOR_PAYMENT: 'WAITING_FOR_PAYMENT',
-    PENDING_PAYMENT: 'PENDING_PAYMENT',
-    PAYMENT_DECLINED: 'PAYMENT_DECLINED',
-    PAID: 'PAID',
-    PROCESSING: 'PROCESSING',
-    SHIPPED: 'SHIPPED',
-    DELIVERED: 'DELIVERED',
-    COMPLETED: 'COMPLETED',
-    CANCELLED: 'CANCELLED',
-  };
-  const orderStatus = Object.keys(fetchOrderStatus);
+  const orderStatus = Object.keys(OrderStatus);
 
   useEffect(() => {
     const fetchOrders = async () => {
@@ -68,7 +57,9 @@ const OrderStatusPage = () => {
       toast.success('Order cancelled successfully');
       setOrders(
         orders.map((order) =>
-          order.id === orderId ? { ...order, status: 'CANCELLED' } : order,
+          order.id === orderId
+            ? { ...order, status: OrderStatus.CANCELLED }
+            : order,
         ),
       );
       setTimeout(() => window.location.reload(), 2000);
@@ -94,7 +85,9 @@ const OrderStatusPage = () => {
       toast.success('Order confirmed successfully');
       setOrders(
         orders.map((order) =>
-          order.id === orderId ? { ...order, status: 'COMPLETED' } : order,
+          order.id === orderId
+            ? { ...order, status: OrderStatus.COMPLETED }
+            : order,
         ),
       );
       setTimeout(() => window.location.reload(), 2000);
