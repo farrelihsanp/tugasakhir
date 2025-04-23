@@ -10,11 +10,12 @@ import {
   FaShoppingCart,
   FaChartLine,
 } from 'react-icons/fa';
+import { JSX } from 'react';
 
 export default function DashboardPage() {
   const { user, storeStoreAdmin } = useStoreContext();
 
-  const roleComponents = {
+  const roleComponents: { [key: string]: JSX.Element } = {
     CUSTOMERS: (
       <div className="bg-gradient-to-r min-h-screen flex flex-col items-center justify-start py-16 px-10">
         <h1 className="text-4xl font-bold text-black mb-6 text-center">
