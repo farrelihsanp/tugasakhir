@@ -5,7 +5,6 @@ import { useParams } from 'next/navigation';
 import Image from 'next/image';
 import { Product, Discount } from '@/types/types';
 import { useStoreContext } from '@/utility/StoreContext';
-import { Role } from '@prisma/client';
 import { toast } from 'react-toastify';
 
 export default function ProductDetailPage() {
@@ -197,7 +196,7 @@ export default function ProductDetailPage() {
           </div>
         )}
 
-        {user?.role === Role.CUSTOMERS && (
+        {user?.role === 'CUSTOMERS' && (
           <div className="flex gap-6 items-center mt-4">
             <div className="flex items-center border rounded-md overflow-hidden">
               <button
@@ -232,7 +231,7 @@ export default function ProductDetailPage() {
           </div>
         )}
 
-        {user?.role === Role.CUSTOMERS && (
+        {user?.role === 'CUSTOMERS' && (
           <button
             onClick={addToCartHandler}
             className="mt-4 w-full bg-primary text-white py-3 rounded-md hover:scale-105 transition-all font-semibold"

@@ -75,9 +75,7 @@ export async function login(req: Request, res: Response, next: NextFunction) {
     res
       .cookie('accessToken', token, {
         httpOnly: true,
-        sameSite: 'lax',
-        domain:
-          process.env.NODE_ENV === 'development' ? 'localhost' : 'quickmart',
+        sameSite: 'none',
         path: '/',
         secure: process.env.NODE_ENV === 'production',
       })
