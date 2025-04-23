@@ -283,7 +283,7 @@ async function main() {
       },
     });
 
-    await prisma.store.create({
+    const store5 = await prisma.store.create({
       data: {
         name: 'Ampera Store',
         storeImage:
@@ -695,7 +695,43 @@ async function main() {
         storeId: store1.id,
         productId: sabunMandi.id,
         price: 7000,
-        stock: 120,
+        stock: 100,
+        isCheap: true,
+      },
+    });
+    await prisma.storeProduct.create({
+      data: {
+        storeId: store2.id,
+        productId: sabunMandi.id,
+        price: 7000,
+        stock: 100,
+        isCheap: true,
+      },
+    });
+    await prisma.storeProduct.create({
+      data: {
+        storeId: store3.id,
+        productId: sabunMandi.id,
+        price: 7000,
+        stock: 100,
+        isCheap: true,
+      },
+    });
+    await prisma.storeProduct.create({
+      data: {
+        storeId: store4.id,
+        productId: sabunMandi.id,
+        price: 7000,
+        stock: 100,
+        isCheap: true,
+      },
+    });
+    await prisma.storeProduct.create({
+      data: {
+        storeId: store5.id,
+        productId: sabunMandi.id,
+        price: 7000,
+        stock: 100,
         isCheap: true,
       },
     });
@@ -1017,6 +1053,43 @@ async function main() {
         isCheap: true,
       },
     });
+    await prisma.storeProduct.create({
+      data: {
+        storeId: store2.id,
+        productId: jeruk.id,
+        price: 14000,
+        stock: 100,
+        isCheap: true,
+      },
+    });
+    await prisma.storeProduct.create({
+      data: {
+        storeId: store3.id,
+        productId: jeruk.id,
+        price: 14000,
+        stock: 100,
+        isCheap: true,
+      },
+    });
+    await prisma.storeProduct.create({
+      data: {
+        storeId: store4.id,
+        productId: jeruk.id,
+        price: 14000,
+        stock: 100,
+        isCheap: true,
+      },
+    });
+    await prisma.storeProduct.create({
+      data: {
+        storeId: store5.id,
+        productId: jeruk.id,
+        price: 14000,
+        stock: 100,
+        isCheap: true,
+      },
+    });
+
     await prisma.categoryProduct.create({
       data: {
         productId: jeruk.id,
