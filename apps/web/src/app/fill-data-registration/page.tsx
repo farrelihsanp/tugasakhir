@@ -21,7 +21,6 @@ const CompleteRegisterForm = () => {
 
   const router = useRouter();
 
-  // Ambil email dari query string di URL
   useEffect(() => {
     const queryParams = new URLSearchParams(window.location.search);
     const emailFromUrl = queryParams.get('email');
@@ -99,7 +98,7 @@ const CompleteRegisterForm = () => {
   };
 
   return (
-    <section className="bg-gray-100 min-h-screen flex items-center justify-center">
+    <section className=" min-h-screen flex items-center justify-center">
       <div className="max-w-md mx-auto p-4 bg-white rounded-lg shadow-lg">
         <h2 className="text-2xl font-bold text-center mb-4">
           Complete Your Registration
@@ -205,7 +204,7 @@ const CompleteRegisterForm = () => {
           <button
             type="submit"
             disabled={loading}
-            className={`w-full py-2 bg-blue-500 text-white rounded-md ${loading && 'opacity-50'}`}
+            className={`w-full py-2 bg-primary text-white rounded-md ${loading && 'opacity-50'}`}
           >
             {loading ? 'Registering...' : 'Complete Registration'}
           </button>

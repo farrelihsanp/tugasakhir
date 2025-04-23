@@ -42,19 +42,14 @@ router.put(
 router.get(
   '/my-voucher',
   verifyToken,
-  roleGuard(['STOREADMIN', 'CUSTOMERS']),
+  roleGuard(['CUSTOMERS']),
   getAllVouchersUser,
 );
 
 router.get('/all-vouchers', getAllVouchersAdmin);
 
 // Get a voucher by ID
-router.get(
-  '/my-voucher/:id',
-  verifyToken,
-  roleGuard(['CUSTOMERS', 'STOREADMIN']),
-  getVoucherById,
-);
+router.get('/detail-voucher/:id', getVoucherById);
 
 // Delete a voucher
 router.delete(

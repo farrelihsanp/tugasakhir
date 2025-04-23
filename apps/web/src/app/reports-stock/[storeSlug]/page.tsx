@@ -246,13 +246,14 @@ const StockReportPage = () => {
         </select>
       </div>
 
-      <table className="min-w-full bg-white border border-gray-200 rounded-lg shadow-lg">
+      <table className="min-w-full bg-white border border-gray-200 rounded-lg shadow-lg text-center">
         <thead>
           <tr>
             <th className="px-4 py-2 border-b">ID</th>
             <th className="px-4 py-2 border-b">Product Name</th>
-            <th className="px-4 py-2 border-b">Initial Stock</th>
-            <th className="px-4 py-2 border-b">Change</th>
+            <th className="px-4 py-2 border-b">Input Value Stock</th>
+            <th className="px-4 py-2 border-b">Last Stock</th>
+            <th className="px-4 py-2 border-b">Difference</th>
             <th className="px-4 py-2 border-b">Final Stock</th>
             <th className="px-4 py-2 border-b">Date</th>
             <th className="px-4 py-2 border-b">Change Type</th>
@@ -272,9 +273,10 @@ const StockReportPage = () => {
               }`}
             >
               <td className="px-4 py-2 border-b">{stock.id}</td>
-              <td className="px-4 py-2 border-b">
+              <td className="px-4 py-2 border-b text-left">
                 {getProductName(stock.productId)}
               </td>
+              <td className="px-4 py-2 border-b">{stock.stock}</td>
               <td className="px-4 py-2 border-b">{stock.lastStock}</td>
               <td className="px-4 py-2 border-b">{stock.difference}</td>
               <td className="px-4 py-2 border-b">{stock.finalStock}</td>

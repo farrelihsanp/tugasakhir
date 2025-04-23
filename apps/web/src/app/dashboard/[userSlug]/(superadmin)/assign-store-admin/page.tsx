@@ -31,7 +31,7 @@ export default function AssignAdminPage() {
         });
         if (!res.ok) throw new Error('Failed to fetch stores');
         const data = await res.json();
-        setStores(data);
+        setStores(data.data);
       } catch (err: unknown) {
         if (err instanceof Error) {
           setError(err.message);

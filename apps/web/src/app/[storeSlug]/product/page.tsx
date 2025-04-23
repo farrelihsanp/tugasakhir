@@ -9,7 +9,7 @@ import { Product } from '@/types/types';
 import { toast } from 'react-toastify';
 
 const AllProductsPage = () => {
-  const { products, loading, error, nearestStore, categories } =
+  const { products, loading, error, nearestStore, categories, user } =
     useStoreContext();
 
   const [currentPage, setCurrentPage] = useState(1);
@@ -176,12 +176,14 @@ const AllProductsPage = () => {
                     </div>
                     <div className="mt-3">
                       <div className="mt-3">
-                        <button
-                          className="bg-primary text-quaternary w-full text-sm font-medium py-2 px-4 rounded hover:bg-green-700 transition"
-                          onClick={() => handleAddToCart(map)}
-                        >
-                          + Add
-                        </button>
+                        {user?.role === 'CUSTOMERS' && (
+                          <button
+                            className="bg-primary text-quaternary w-full text-sm font-medium py-2 px-4 rounded hover:bg-green-700 transition"
+                            onClick={() => handleAddToCart(map)}
+                          >
+                            + Add
+                          </button>
+                        )}
                       </div>
                     </div>
                   </div>

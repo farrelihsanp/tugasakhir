@@ -30,6 +30,7 @@ const RequestPasswordReset = () => {
 
       if (response.ok) {
         setSuccessMessage(data.message || 'Password reset email sent!');
+        setLoading(false);
       } else {
         setError(data.error || 'Something went wrong.');
       }
@@ -77,7 +78,7 @@ const RequestPasswordReset = () => {
           </div>
           <button
             type="submit"
-            className="w-full bg-blue-500 text-white py-2 px-4 rounded-md hover:bg-blue-600 disabled:opacity-50"
+            className="w-full bg-primary text-white py-2 px-4 rounded-md hover:bg-primary disabled:opacity-50"
             disabled={loading}
           >
             {loading ? 'Sending...' : 'Send Reset Link'}

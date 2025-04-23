@@ -5,7 +5,6 @@ import Link from 'next/link';
 import { Store } from '@prisma/client';
 import { useStoreContext } from '@/utility/StoreContext';
 import { useRouter } from 'next/navigation';
-import AccessDenied from '@/components/access-denied';
 
 const ManageStoresPage: React.FC = () => {
   const { user } = useStoreContext();
@@ -38,19 +37,8 @@ const ManageStoresPage: React.FC = () => {
       }
     };
 
-    if (user?.role !== 'SUPERADMIN') {
-      setTimeout(() => {
-        router.push('/');
-      }, 3000);
-      return;
-    }
-
     fetchStores();
   }, [router, user?.role]);
-
-  if (user?.role !== 'SUPERADMIN') {
-    return <AccessDenied />;
-  }
 
   return (
     <section className="min-h-screen flex items-center justify-center py-8">

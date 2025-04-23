@@ -25,6 +25,7 @@ const UpdateVoucher = () => {
     startDate: '',
     endDate: '',
     stock: 0,
+    stockVoucherAdmin: 0,
     isActive: true,
     minPurchase: 0,
     maxPriceReduction: 0,
@@ -62,6 +63,7 @@ const UpdateVoucher = () => {
               minPurchase: data.data.minPurchase,
               maxPriceReduction: data.data.maxPriceReduction,
               code: data.data.code,
+              stockVoucherAdmin: data.data.stockVoucherAdmin,
               voucherType: data.data.voucherType,
               voucherCategory: data.data.voucherCategory,
               voucherImage: data.data.voucherImage || '',
@@ -208,7 +210,7 @@ const UpdateVoucher = () => {
         </div>
 
         {/* Voucher Category */}
-        <div className="mb-4">
+        {/* <div className="mb-4">
           <label className="block text-sm font-medium text-gray-700">
             Voucher Category
           </label>
@@ -251,7 +253,7 @@ const UpdateVoucher = () => {
               Product
             </label>
           </div>
-        </div>
+        </div> */}
 
         {/* Voucher Value */}
         <div className="mb-4">

@@ -286,19 +286,17 @@ model Order {
     storeId           Int
     shippingAddressId Int
 
-    slug                       String
-    paymentMethodType          PaymentMethodType
-    totalAmount                Float
-    status                     OrderStatus       @default(PENDING_PAYMENT)
-    paymentProof               String?
-    paymentProofUploadedAt     DateTime?
-    orderConfirmationAt        DateTime?
-    createdAt                  DateTime          @default(now())
-    updatedAt                  DateTime          @updatedAt
-    shippingAt                 DateTime?
-    deliveredAt                DateTime?
-    acceptedProcessByAdmin     Boolean           @default(false)
-    acceptedProcessByCustomers Boolean           @default(false)
+    slug                   String
+    paymentMethodType      PaymentMethodType
+    totalAmount            Float
+    status                 OrderStatus       @default(PENDING_PAYMENT)
+    paymentProof           String?
+    paymentProofUploadedAt DateTime?
+    orderConfirmationAt    DateTime?
+    createdAt              DateTime          @default(now())
+    updatedAt              DateTime          @updatedAt
+    shippingAt             DateTime?
+    deliveredAt            DateTime?
 
     shippingAddress     Address              @relation(fields: [shippingAddressId], references: [id], onDelete: Cascade)
     store               Store                @relation(fields: [storeId], references: [id], onDelete: Cascade)
@@ -361,8 +359,8 @@ model ProductChangeData {
     createdAt DateTime @default(now())
 
     order   Order?  @relation(fields: [orderId], references: [id], onDelete: Cascade)
-    product Product @relation(fields: [productId], references: [id])
-    User    User    @relation(fields: [userId], references: [id])
+    product Product @relation(fields: [productId], references: [id], onDelete: Cascade)
+    User    User    @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
 model Discount {
@@ -414,13 +412,15 @@ model CategoryProduct {
 }
 
 model StoreUser {
-    id        Int      @id @default(autoincrement())
-    userId    Int
-    storeId   Int
+    id Int @id @default(autoincrement())
+
+    userId  Int
+    storeId Int
+
     createdAt DateTime @default(now())
     updatedAt DateTime @updatedAt
-    store     Store    @relation(fields: [storeId], references: [id], onDelete: Cascade)
-    user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+    store     Store    @relation(fields: [storeId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+    user      User     @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
 }
 
 model VoucherProduct {

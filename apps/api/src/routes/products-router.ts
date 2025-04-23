@@ -47,25 +47,17 @@ router
   .route('/delete-product')
   .delete(verifyToken, roleGuard(['SUPERADMIN']), deleteProduct);
 
-router
-  .route('/all-products')
-  .get(verifyToken, roleGuard(['SUPERADMIN', 'STOREADMIN']), getAllProducts);
+router.route('/all-products').get(getAllProducts);
 
 // Get a product by ID
 router
   .route('/detail-product/:storeSlug/:productSlug')
-  .get(verifyToken, getDetailProductBySlugByStoreSlug);
+  .get(getDetailProductBySlugByStoreSlug);
 
 // Get all products by store
 router.route('/products-store/:storeId').get(getAllProductsByStoreId);
 
-router
-  .route('/products-store-slug/:storeSlug')
-  .get(
-    verifyToken,
-    roleGuard(['CUSTOMERS', 'SUPERADMIN', 'STOREADMIN']),
-    getAllProductsByStoreSlug,
-  );
+router.route('/products-store-slug/:storeSlug').get(getAllProductsByStoreSlug);
 
 // get all products by category
 router

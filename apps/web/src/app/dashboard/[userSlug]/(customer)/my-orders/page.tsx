@@ -71,26 +71,26 @@ const OrderStatusPage = () => {
     }
   };
 
-  const handleProcessOrder = async (orderId: number) => {
-    try {
-      const response = await fetch(
-        `http://localhost:8000/api/v1/confirm-process-order/${orderId}`,
-        {
-          method: 'PUT',
-          credentials: 'include',
-          headers: { 'Content-Type': 'application/json' },
-        },
-      );
-      if (response.ok) {
-        toast.success('Order processed successfully');
-      } else {
-        toast.error('Error processing the order');
-      }
-    } catch (error) {
-      console.error('Error processing order:', error);
-      toast.error('Error processing the order');
-    }
-  };
+  // const handleProcessOrder = async (orderId: number) => {
+  //   try {
+  //     const response = await fetch(
+  //       `http://localhost:8000/api/v1/confirm-process-order/${orderId}`,
+  //       {
+  //         method: 'PUT',
+  //         credentials: 'include',
+  //         headers: { 'Content-Type': 'application/json' },
+  //       },
+  //     );
+  //     if (response.ok) {
+  //       toast.success('Order processed successfully');
+  //     } else {
+  //       toast.error('Error processing the order');
+  //     }
+  //   } catch (error) {
+  //     console.error('Error processing order:', error);
+  //     toast.error('Error processing the order');
+  //   }
+  // };
 
   const handleConfirmOrder = async (orderId: number) => {
     try {
@@ -293,14 +293,6 @@ const OrderStatusPage = () => {
                     onClick={() => handleConfirmOrder(order.id)}
                   >
                     Confirm Order
-                  </button>
-                )}
-                {order.status === OrderStatus.PAID && (
-                  <button
-                    className="bg-primary text-white px-4 py-2 rounded hover:bg-green-700 transition"
-                    onClick={() => handleProcessOrder(order.id)}
-                  >
-                    Process Order
                   </button>
                 )}
               </div>

@@ -3,13 +3,7 @@
 import { useEffect, useState } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
-
-type Voucher = {
-  id: number;
-  code: string;
-  voucherImage: string;
-  name: string;
-};
+import { Voucher } from '@/types/types';
 
 export default function VouchersStore() {
   const [vouchers, setVouchers] = useState<Voucher[]>([]);

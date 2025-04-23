@@ -7,10 +7,11 @@ import { Voucher } from '@/types/types';
 
 export default function VouchersStore() {
   const [voucher, setVoucher] = useState<Voucher | undefined>(undefined);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   const { voucherId } = useParams();
+  const stockVoucherCustomer = voucher?.VoucherUser[0].stockCustomer;
 
   useEffect(() => {
     const fetchVoucher = async () => {
@@ -21,14 +22,18 @@ export default function VouchersStore() {
           {
             method: 'GET',
             credentials: 'include',
+            headers: {
+              'Content-Type': 'application/json',
+            },
           },
         );
 
         if (!res.ok) {
           throw new Error(`Error ${res.status}: ${res.statusText}`);
         }
-        const json = await res.json();
-        setVoucher(json.data);
+        const data = await res.json();
+        setVoucher(data.data);
+        setLoading(false);
       } catch (err: unknown) {
         setError(String(err));
       } finally {
@@ -36,9 +41,7 @@ export default function VouchersStore() {
       }
     };
 
-    if (voucherId) {
-      fetchVoucher();
-    }
+    fetchVoucher();
   }, [voucherId]);
 
   if (loading)
@@ -86,9 +89,7 @@ export default function VouchersStore() {
             <p className="text-xs mb-1">
               Max Reduction: Rp {voucher.maxPriceReduction.toLocaleString()}
             </p>
-            <p className="text-xs mb-1">
-              Stock Voucher Store: {voucher.stockVoucherAdmin}
-            </p>
+            <p className="text-xs mb-1">Stock: {stockVoucherCustomer}</p>
             <p className="text-xs mt-3">
               Status:{' '}
               <span

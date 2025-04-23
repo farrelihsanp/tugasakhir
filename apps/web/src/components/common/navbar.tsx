@@ -6,16 +6,14 @@ import { useEffect, useState } from 'react';
 import { useStoreContext } from '@/utility/StoreContext';
 import {
   FaMapMarkerAlt,
-  FaSearch,
+  // FaSearch,
   FaShoppingCart,
   FaTachometerAlt,
   FaBoxOpen,
   FaClipboardList,
   FaTicketAlt,
-  FaTags,
   FaThList,
   FaStore,
-  FaUserShield,
 } from 'react-icons/fa';
 
 interface LocationResult {
@@ -64,23 +62,23 @@ export default function Navbar() {
     <Link href="/">
       <Image
         src="https://res.cloudinary.com/dm1cnsldc/image/upload/v1745037127/QUICKMART_cd0cpb.png"
-        width={200}
-        height={125}
+        width={150}
+        height={75}
         alt="Landing Page Logo"
       />
     </Link>
   );
 
-  const SearchBar = () => (
-    <div className="flex items-center w-full max-w-md border rounded px-3 py-1">
-      <FaSearch className="text-gray-400 mr-2" />
-      <input
-        type="text"
-        placeholder="Search for products"
-        className="w-full focus:outline-none"
-      />
-    </div>
-  );
+  // const SearchBar = () => (
+  //   <div className="flex items-center w-full max-w-md border rounded px-3 py-1">
+  //     <FaSearch className="text-gray-400 mr-2" />
+  //     <input
+  //       type="text"
+  //       placeholder="Search for products"
+  //       className="w-full focus:outline-none"
+  //     />
+  //   </div>
+  // );
 
   const LocationButton = () => (
     <button className="flex items-center border px-3 py-1 rounded hover:bg-gray-100 cursor-pointer transition-all duration-200 group relative">
@@ -141,7 +139,7 @@ export default function Navbar() {
               href={`/dashboard/${user.username}/my-vouchers`}
               className="flex items-center gap-2 text-sm hover:text-green-700"
             >
-              <FaTicketAlt /> Vouchers
+              <FaTicketAlt /> My Vouchers
             </Link>
             <Link
               href={`/${nearestStore?.slug}/product`}
@@ -167,33 +165,29 @@ export default function Navbar() {
         {user?.role === 'STOREADMIN' && (
           <>
             <Link
-              href={`/dashboard/${user.username}/manage-products`}
+              href={`/${nearestStore?.slug}/product`}
               className="flex items-center gap-2 text-sm hover:text-green-700"
             >
-              <FaBoxOpen /> Manage Products
-            </Link>
-            <Link
-              href={`/dashboard/${user.username}/manage-orders`}
-              className="flex items-center gap-2 text-sm hover:text-green-700"
-            >
-              <FaClipboardList /> Manage Orders
-            </Link>
-            <Link
-              href={`/dashboard/${user.username}/vouchers`}
-              className="flex items-center gap-2 text-sm hover:text-green-700"
-            >
-              <FaTags /> Manage Vouchers
+              <FaBoxOpen /> Products
             </Link>
           </>
         )}
 
         {user?.role === 'SUPERADMIN' && (
-          <Link
-            href={`/profile/${user.username}`}
-            className="flex items-center gap-2 text-sm hover:text-green-700"
-          >
-            <FaUserShield /> My Profile
-          </Link>
+          <>
+            <Link
+              href={`/${nearestStore?.slug}/product`}
+              className="flex items-center gap-2 text-sm hover:text-green-700"
+            >
+              <FaBoxOpen /> Product
+            </Link>
+            <Link
+              href="/category"
+              className="flex items-center gap-2 text-sm hover:text-green-700"
+            >
+              <FaThList /> Category
+            </Link>
+          </>
         )}
       </div>
     </div>
@@ -214,7 +208,7 @@ export default function Navbar() {
     <nav className="bg-white border-b shadow-sm py-3 px-6 flex items-center justify-between">
       <div className="flex items-center gap-3">
         <LogoWebsite />
-        <SearchBar />
+        {/* <SearchBar /> */}
         <LocationButton />
       </div>
 
@@ -222,12 +216,18 @@ export default function Navbar() {
         {user?.role === 'SUPERADMIN' ||
         user?.role === 'STOREADMIN' ||
         user?.role === 'CUSTOMERS' ? (
-          <div>
+          <div className="flex items-center">
             <RoleDropdown />
             <UserSection />
           </div>
         ) : (
           <div className="flex items-center gap-3">
+            <Link
+              href="category"
+              className="text-sm text-gray-700 hover:text-green-700"
+            >
+              Category
+            </Link>
             <Link
               href={`/${nearestStore?.slug}/product`}
               className="text-sm text-gray-700 hover:text-green-700"

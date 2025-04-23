@@ -932,70 +932,14 @@ export const processOrder = async (
       },
     });
 
-    if (
-      orderCostumer.acceptedProcessByAdmin &&
-      orderCostumer.acceptedProcessByCustomers
-    ) {
-      await prisma.order.update({
-        where: { id: orderCostumer.id },
-        data: {
-          status: OrderStatus.PROCESSING,
-        },
-      });
-    }
-
-    res.status(200).json({ message: 'Order processed successfully' });
-  } catch (error) {
-    console.error(error);
-    next(error);
-  }
-};
-
-export const confirmProcessOrderByCustomers = async (
-  req: Request,
-  res: Response,
-  next: NextFunction,
-) => {
-  try {
-    const { orderId } = req.params;
-    const userId = req.user?.id;
-
-    if (!userId) {
-      res.status(401).json({ error: 'Unauthorized' });
-      return;
-    }
-
-    const orderCostumer = await prisma.order.findFirst({
-      where: {
-        id: Number(orderId),
-      },
-    });
-
-    if (!orderCostumer) {
-      res.status(404).json({ error: 'Order not found' });
-      return;
-    }
-
     await prisma.order.update({
       where: { id: orderCostumer.id },
       data: {
-        acceptedProcessByCustomers: true,
+        status: OrderStatus.PROCESSING,
       },
     });
 
-    if (
-      orderCostumer.acceptedProcessByAdmin &&
-      orderCostumer.acceptedProcessByCustomers
-    ) {
-      await prisma.order.update({
-        where: { id: orderCostumer.id },
-        data: {
-          status: OrderStatus.PROCESSING,
-        },
-      });
-    }
-
-    res.status(200).json({ ok: true, message: 'Order processed successfully' });
+    res.status(200).json({ message: 'Order processed successfully' });
   } catch (error) {
     console.error(error);
     next(error);

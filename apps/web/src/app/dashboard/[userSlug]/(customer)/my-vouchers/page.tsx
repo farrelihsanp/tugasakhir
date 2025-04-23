@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react';
 import { Voucher } from '@/types/types';
 import { toast } from 'react-toastify';
+import Link from 'next/link';
 
 export default function MyVouchersPage() {
   const [vouchers, setVouchers] = useState<Voucher[]>([]);
@@ -119,9 +120,7 @@ export default function MyVouchersPage() {
                   {/* Konten tulisan */}
                   <div className="relative z-20">
                     <h1 className="text-2xl font-bold mb-2">{voucher.name}</h1>
-                    {/* <h2 className="text-3xl font-bold mb-1">
-                      {voucher.maxPriceReduction}
-                    </h2> */}
+
                     <p className="text-sm">{voucher.description}</p>
                   </div>
                 </div>
@@ -141,9 +140,19 @@ export default function MyVouchersPage() {
                       {voucher.code}
                     </button>
                   </div>
-                  <p className="text-[10px] mt-4 italic">
-                    Excludes Sporting items and golf equipment.
-                  </p>
+                  <div>
+                    <p className="text-[10px] mt-4 italic">
+                      Vouchers have quotas, so dont miss this opportunity
+                    </p>
+                    <div className="mt-5 text-[10px] ">
+                      <Link
+                        href={`my-vouchers/${voucher.id}`}
+                        className="bg-primary py-1 px-2 rounded text-white"
+                      >
+                        Detail Voucher
+                      </Link>
+                    </div>
+                  </div>
                 </div>
               </div>
             ))}

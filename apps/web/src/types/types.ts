@@ -183,6 +183,7 @@ export interface Voucher {
   isActive: boolean;
   voucherImage: string;
   voucherCategory: VoucherCategory;
+  stockVoucherAdmin: number;
   VoucherUser: VoucherUser[];
 }
 

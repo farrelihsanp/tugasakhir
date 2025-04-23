@@ -1,104 +1,123 @@
 'use client';
 
-import { useState, useEffect } from 'react';
-import { useParams } from 'next/navigation';
+import { useEffect, useState } from 'react';
 import Image from 'next/image';
+import { useParams } from 'next/navigation';
 import { Voucher } from '@/types/types';
 
-export default function VoucherDetailPage() {
-  const { voucherId } = useParams();
+export default function VouchersStore() {
   const [voucher, setVoucher] = useState<Voucher | undefined>(undefined);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  const { voucherId } = useParams();
 
   useEffect(() => {
     const fetchVoucher = async () => {
+      setLoading(true);
       try {
-        const response = await fetch(
-          `http://localhost:8000/api/v1/my-voucher/${voucherId}`,
+        const res = await fetch(
+          `http://localhost:8000/api/v1/detail-voucher/${voucherId}`,
           {
             method: 'GET',
             credentials: 'include',
           },
         );
-        const data = await response.json();
-        if (!response.ok) {
-          throw new Error(data.message);
+
+        if (!res.ok) {
+          throw new Error(`Error ${res.status}: ${res.statusText}`);
         }
-        setVoucher(data.data);
-      } catch (error) {
-        console.error('Error fetching voucher:', error);
+        const json = await res.json();
+        setVoucher(json.data);
+      } catch (err: unknown) {
+        setError(String(err));
+      } finally {
+        setLoading(false);
       }
     };
 
-    fetchVoucher();
+    if (voucherId) {
+      fetchVoucher();
+    }
   }, [voucherId]);
 
+  if (loading)
+    return (
+      <div className="flex justify-center items-center h-screen bg-gray-100">
+        <p className="text-gray-500 text-lg">Loading voucher...</p>
+      </div>
+    );
+
+  if (error)
+    return (
+      <div className="flex justify-center items-center h-screen bg-gray-100">
+        <p className="text-red-500 text-lg">Error: {error}</p>
+      </div>
+    );
+
   return (
-    <section className="min-h-screen flex justify-center items-center p-4">
-      <div className="max-w-2xl w-full bg-white shadow-lg rounded-lg overflow-hidden">
-        {voucher ? (
-          <div className="p-6">
-            <div className="flex justify-center mb-4">
-              {voucher.voucherImage.trim() && (
-                <Image
-                  src={voucher.voucherImage.trim()}
-                  width={1000}
-                  height={1000}
-                  alt={voucher.name}
-                  className="object-cover w-64 h-64 rounded-full"
-                />
-              )}
-            </div>
-            <h1 className="text-3xl font-semibold text-center text-gray-800 mb-4">
-              {voucher.name}
-            </h1>
-            <p className="text-lg text-gray-600 mb-4 text-center">
+    <section className="h-[75vh] flex items-center justify-center py-10 px-4">
+      {voucher ? (
+        <div className="flex max-w-4xl w-full bg-white rounded-lg overflow-hidden shadow-lg">
+          {/* LEFT: DISKON BESAR */}
+          <div className="w-1/4 bg-white border-r border-dashed border-gray-300 flex flex-col items-center justify-center px-4 py-10">
+            <h2 className="text-3xl font-bold text-black mb-2">
+              {voucher.code}
+            </h2>
+            <p className="text-[10px] text-center text-gray-500 italic mt-4">
               {voucher.description}
             </p>
-            <div className="flex justify-between items-center border-t pt-4">
-              <h2 className="text-xl font-medium text-gray-800">
-                Voucher Code:
-              </h2>
-              <p className="text-lg text-gray-700">{voucher.code}</p>
-            </div>
-            <div className="mt-4">
-              <div className="flex justify-between items-center">
-                <h2 className="text-xl font-medium text-gray-800">
-                  Max Price Reduction:
-                </h2>
-                <p className="text-lg text-gray-700">
-                  {voucher.maxPriceReduction}
-                </p>
-              </div>
-              <div className="flex justify-between items-center mt-2">
-                <h2 className="text-xl font-medium text-gray-800">
-                  Min Purchase:
-                </h2>
-                <p className="text-lg text-gray-700">{voucher.minPurchase}</p>
-              </div>
-              <div className="flex justify-between items-center mt-2">
-                <h2 className="text-xl font-medium text-gray-800">
-                  Start Date:
-                </h2>
-                <p className="text-lg text-gray-700">{voucher.startDate}</p>
-              </div>
-              <div className="flex justify-between items-center mt-2">
-                <h2 className="text-xl font-medium text-gray-800">End Date:</h2>
-                <p className="text-lg text-gray-700">{voucher.endDate}</p>
-              </div>
-              <div className="flex justify-between items-center mt-2">
-                <h2 className="text-xl font-medium text-gray-800">
-                  Voucher Value:
-                </h2>
-                <p className="text-lg text-gray-700">{voucher.value}%</p>
-              </div>
+          </div>
+
+          {/* MIDDLE: DETAIL VOUCHER */}
+          <div className="w-1/2 bg-primary text-quaternary px-6 py-8 relative">
+            <h3 className="text-3xl font-bold mb-1">{voucher.name}</h3>
+            <div className="h-1 w-14 bg-quaternary mb-4"></div>
+            <p className="text-sm mb-6">{voucher.description}</p>
+            <p className="text-xs mb-1">
+              Valid from: {new Date(voucher.startDate).toLocaleDateString()}
+            </p>
+            <p className="text-xs mb-1">
+              Until: {new Date(voucher.endDate).toLocaleDateString()}
+            </p>
+            <p className="text-xs mb-1">
+              Min Purchase: Rp {voucher.minPurchase.toLocaleString()}
+            </p>
+            <p className="text-xs mb-1">
+              Max Reduction: Rp {voucher.maxPriceReduction.toLocaleString()}
+            </p>
+            <p className="text-xs mb-1">
+              Stock Voucher Store: {voucher.stockVoucherAdmin}
+            </p>
+            <p className="text-xs mt-3">
+              Status:{' '}
+              <span
+                className={`font-semibold ${
+                  voucher.isActive ? 'text-quaternary' : 'text-red-500'
+                }`}
+              >
+                {voucher.isActive ? 'Active' : 'Inactive'}
+              </span>
+            </p>
+          </div>
+
+          {/* RIGHT: GAMBAR */}
+          <div className="w-1/4 relative">
+            <Image
+              src={voucher.voucherImage.trim()}
+              alt={voucher.name}
+              layout="fill"
+              objectFit="cover"
+              className="h-full w-full"
+            />
+            <div className="absolute top-0 right-0 bg-tertiary text-quaternary px-2 py-1 text-[10px] font-semibold tracking-widest rounded-bl">
+              NO. {voucher.id.toString().padStart(2, '0')}
             </div>
           </div>
-        ) : (
-          <p className="text-center text-xl text-gray-600">
-            Loading voucher details...
-          </p>
-        )}
-      </div>
+        </div>
+      ) : (
+        <p className="text-center text-red-500 text-xl">Voucher not found</p>
+      )}
     </section>
   );
 }

@@ -3,15 +3,20 @@
 import React, { useState, useEffect } from 'react';
 import { useParams } from 'next/navigation';
 import { toast } from 'react-toastify';
-import { Product } from '@/types/types';
+import { Product, Store } from '@/types/types';
+import { useRouter } from 'next/navigation';
 
 const UpdateProductForm: React.FC = () => {
+  const router = useRouter();
   const { storeSlug } = useParams();
+
   const [selectedProductId, setSelectedProductId] = useState<number | null>(
     null,
   );
-  const [stock, setStock] = useState<number>(100);
-  const [price, setPrice] = useState<number>(50000);
+  const [stock, setStock] = useState<number>(0);
+  const [price, setPrice] = useState<number>(0);
+  const [store, setStore] = useState<Store | null>(null);
+
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState<boolean>(false);
   const [productList, setProductList] = useState<Product[]>([]);
@@ -39,6 +44,28 @@ const UpdateProductForm: React.FC = () => {
       }
     };
 
+    const fetchStore = async () => {
+      try {
+        const res = await fetch(
+          `http://localhost:8000/api/v1/stores/store-slug/${storeSlug}`,
+          {
+            method: 'GET',
+            credentials: 'include',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+          },
+        );
+        if (!res.ok) throw new Error('Failed to fetch store');
+        const data = await res.json();
+        setStore(data.data);
+      } catch (error: unknown) {
+        console.error('Error fetching store:', error);
+        setError('Failed to load store');
+      }
+    };
+
+    fetchStore();
     fetchProducts();
   }, [storeSlug]);
 
@@ -62,6 +89,7 @@ const UpdateProductForm: React.FC = () => {
         throw new Error('Failed to update product');
       }
       toast.success('Product updated successfully');
+      router.back();
     } catch (error: unknown) {
       setError(`Error updating product: ${error}`);
       toast.error('Failed to update product');
@@ -71,16 +99,17 @@ const UpdateProductForm: React.FC = () => {
   };
 
   return (
-    <div className="container mx-auto p-4">
-      <h1 className="text-2xl font-semibold mb-4">
-        Update Product in {storeSlug}
+    <div className="min-h-screen flex flex-col justify-center mx-auto max-w-2xl p-6">
+      <h1 className="text-3xl font-bold text-center text-gray-800 mb-6">
+        Update Product in <span className="text-primary">{store?.name}</span>
       </h1>
-
-      {error && <p className="text-red-500">{error}</p>}
-
-      <form onSubmit={handleSubmit} className="space-y-4">
+      {error && <p className="text-red-500 text-center mb-4">{error}</p>}
+      <form onSubmit={handleSubmit} className="space-y-6">
         <div>
-          <label htmlFor="product" className="block text-lg font-medium">
+          <label
+            htmlFor="product"
+            className="block text-lg font-medium text-gray-700 mb-2"
+          >
             Select Product
           </label>
           <select
@@ -88,7 +117,7 @@ const UpdateProductForm: React.FC = () => {
             name="product"
             value={selectedProductId ?? ''}
             onChange={(e) => setSelectedProductId(Number(e.target.value))}
-            className="w-full p-2 border border-gray-300 rounded-md"
+            className="w-full p-3 border border-gray-300 rounded-lg text-lg focus:outline-none focus:ring-2 focus:ring-primary"
             required
           >
             <option value="">Select a product</option>
@@ -101,7 +130,10 @@ const UpdateProductForm: React.FC = () => {
         </div>
 
         <div>
-          <label htmlFor="stock" className="block text-lg font-medium">
+          <label
+            htmlFor="stock"
+            className="block text-lg font-medium text-gray-700 mb-2"
+          >
             Stock
           </label>
           <input
@@ -110,13 +142,16 @@ const UpdateProductForm: React.FC = () => {
             name="stock"
             value={stock}
             onChange={(e) => setStock(Number(e.target.value))}
-            className="w-full p-2 border border-gray-300 rounded-md"
+            className="w-full p-3 border border-gray-300 rounded-lg text-lg focus:outline-none focus:ring-2 focus:ring-primary"
             min={1}
           />
         </div>
 
         <div>
-          <label htmlFor="price" className="block text-lg font-medium">
+          <label
+            htmlFor="price"
+            className="block text-lg font-medium text-gray-700 mb-2"
+          >
             Price (Rp)
           </label>
           <input
@@ -125,15 +160,15 @@ const UpdateProductForm: React.FC = () => {
             name="price"
             value={price}
             onChange={(e) => setPrice(Number(e.target.value))}
-            className="w-full p-2 border border-gray-300 rounded-md"
+            className="w-full p-3 border border-gray-300 rounded-lg text-lg focus:outline-none focus:ring-2 focus:ring-primary"
             min={0}
           />
         </div>
 
-        <div className="flex justify-end">
+        <div className="flex justify-center">
           <button
             type="submit"
-            className="bg-blue-500 text-white px-6 py-2 rounded-md"
+            className="bg-primary text-white text-lg font-semibold py-3 px-8 rounded-lg shadow-md hover:bg-primary-dark focus:outline-none focus:ring-2 focus:ring-primary"
             disabled={loading || !selectedProductId}
           >
             {loading ? 'Updating...' : 'Update Product'}

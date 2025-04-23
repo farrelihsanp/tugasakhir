@@ -155,11 +155,11 @@ export const deleteAdmin = async (
   try {
     const { id } = req.params;
 
-    // Delete admin
     await prisma.user.delete({
       where: { id: Number(id) },
     });
-    res.status(204).send();
+
+    res.status(200).json({ ok: true, message: 'Admin deleted successfully' });
   } catch (error) {
     next(error);
   }

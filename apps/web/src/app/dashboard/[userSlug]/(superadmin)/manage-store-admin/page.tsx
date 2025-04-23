@@ -4,6 +4,7 @@ import React, { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { useStoreContext } from '@/utility/StoreContext';
 import { User } from '@/types/types';
+import { toast } from 'react-toastify';
 
 const ManageStoreAdmin: React.FC = () => {
   const [admins, setAdmins] = useState<User[]>([]);
@@ -51,6 +52,12 @@ const ManageStoreAdmin: React.FC = () => {
     );
     if (response.ok) {
       setAdmins(admins.filter((admin) => admin.id !== id));
+      toast.success('Admin deleted successfully');
+      setTimeout(() => {
+        window.location.reload();
+      }, 1500);
+    } else {
+      toast.error('Failed to delete admin');
     }
   };
 

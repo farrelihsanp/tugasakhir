@@ -101,7 +101,7 @@ export default function Hero({ heightClass = 'h-[50vh]' }: HeroProps) {
                 href={`/vouchers-store`}
                 className="bg-primary text-sm font-medium text-quaternary px-2 py-1 rounded"
               >
-                Claim Voucher
+                Detail Voucher
               </Link>
             </div>
           </div>

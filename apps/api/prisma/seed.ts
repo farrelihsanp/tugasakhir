@@ -410,7 +410,7 @@ async function main() {
     const tomat = await prisma.product.create({
       data: {
         name: 'Tomat',
-        excerpt: 'Tomat segar',
+        excerpt: 'Tomat Higenis',
         description: 'Tomat segar berkualitas tinggi',
         slug: 'tomat',
         weight: 1.0,
@@ -484,7 +484,7 @@ async function main() {
     const semangka = await prisma.product.create({
       data: {
         name: 'Semangka',
-        excerpt: 'Semangka dari pohon',
+        excerpt: 'Semangka Higenis',
         description: 'Semangka segar berkualitas tinggi',
         slug: 'semangka',
         weight: 5.0,
@@ -547,8 +547,9 @@ async function main() {
     const chitato = await prisma.product.create({
       data: {
         name: 'Chitato',
-        excerpt: 'Chitato ',
-        description: 'Chitato segar',
+        excerpt: 'Chitato Rasa Original',
+        description:
+          'Chitato di produksi di Indonesia dan dijual di seluruh dunia',
         slug: 'chitato',
         weight: 0.2,
         ProductImages: {
@@ -601,8 +602,9 @@ async function main() {
     const airAqua = await prisma.product.create({
       data: {
         name: 'Air Mineral',
-        excerpt: 'Air mineral',
-        description: 'Air mineral segar',
+        excerpt: 'Air Mineral Higenis',
+        description:
+          'Air mineral segar berkualitas tinggi dari Indonesia dan dijual di seluruh dunia',
         slug: 'air-mineral',
         weight: 0.5,
         ProductImages: {
@@ -655,8 +657,9 @@ async function main() {
     const sabunMandi = await prisma.product.create({
       data: {
         name: 'Sabun Life Boy',
-        excerpt: 'Sabun mandi',
-        description: 'Sabun mandi berkualitas tinggi',
+        excerpt: 'dengan bahan alami',
+        description:
+          'Sabun mandi berkualitas tinggi dari Indonesia dan dijual di seluruh dunia',
         slug: 'sabun-mandi',
         weight: 0.5,
         ProductImages: {
@@ -709,8 +712,9 @@ async function main() {
     const panci = await prisma.product.create({
       data: {
         name: 'Panci',
-        excerpt: 'Panci',
-        description: 'Panci berkualitas tinggi',
+        excerpt: 'Panci Besi',
+        description:
+          'Panci berkualitas tinggi dari Indonesia dan dijual di seluruh dunia',
         slug: 'panci',
         weight: 2.0,
         ProductImages: {
@@ -763,8 +767,9 @@ async function main() {
     const wortel = await prisma.product.create({
       data: {
         name: 'Wortel',
-        excerpt: 'Wortel',
-        description: 'Wortel berkualitas tinggi',
+        excerpt: 'Wortel Higenis',
+        description:
+          'Wortel berkualitas tinggi dari Indonesia dan dijual di seluruh dunia',
         slug: 'wortel',
         weight: 0.3,
         ProductImages: {
@@ -815,8 +820,9 @@ async function main() {
     const bayam = await prisma.product.create({
       data: {
         name: 'Bayam',
-        excerpt: 'Bayam',
-        description: 'Bayam berkualitas tinggi',
+        excerpt: 'Bayam segar',
+        description:
+          'Bayam berkualitas tinggi dari Indonesia dan dijual di seluruh dunia',
         slug: 'bayam',
         weight: 0.8,
         ProductImages: {
@@ -867,8 +873,9 @@ async function main() {
     const kol = await prisma.product.create({
       data: {
         name: 'Kol',
-        excerpt: 'Kol',
-        description: 'Kol berkualitas tinggi',
+        excerpt: 'Kol Higenis',
+        description:
+          'Kol berkualitas tinggi dari Indonesia dan dijual di seluruh dunia',
         slug: 'kol',
         weight: 1.3,
         ProductImages: {
@@ -919,7 +926,7 @@ async function main() {
     const kangkung = await prisma.product.create({
       data: {
         name: 'Kangkung',
-        excerpt: 'Kangkung',
+        excerpt: 'Kangkung Alami',
         description: 'Kangkung berkualitas tinggi',
         slug: 'kangkung',
         weight: 0.3,
@@ -971,7 +978,7 @@ async function main() {
     const jeruk = await prisma.product.create({
       data: {
         name: 'Jeruk',
-        excerpt: 'Jeruk',
+        excerpt: 'Jeruk Segar',
         description: 'Jeruk berkualitas tinggi',
         slug: 'jeruk',
         weight: 0.8,
@@ -1023,7 +1030,7 @@ async function main() {
     const pisang = await prisma.product.create({
       data: {
         name: 'Pisang',
-        excerpt: 'Pisang',
+        excerpt: 'Pisang Alami',
         description: 'Pisang berkualitas tinggi',
         slug: 'pisang',
         weight: 1.3,
@@ -1075,7 +1082,7 @@ async function main() {
     const anggur = await prisma.product.create({
       data: {
         name: 'Anggur',
-        excerpt: 'Anggur',
+        excerpt: 'Anggur Segar',
         description: 'Anggur berkualitas tinggi',
         slug: 'anggur',
         weight: 0.3,
@@ -1127,7 +1134,7 @@ async function main() {
     const apel = await prisma.product.create({
       data: {
         name: 'Apel',
-        excerpt: 'Apel',
+        excerpt: 'Apel Segar',
         description: 'Apel berkualitas tinggi',
         slug: 'apel',
         weight: 0.8,
@@ -1179,7 +1186,7 @@ async function main() {
     const taro = await prisma.product.create({
       data: {
         name: 'Taro',
-        excerpt: 'Taro',
+        excerpt: 'Taro rasa original',
         description: 'Taro berkualitas tinggi',
         slug: 'taro',
         weight: 1.3,
@@ -1231,7 +1238,7 @@ async function main() {
     const qtela = await prisma.product.create({
       data: {
         name: 'Qtela',
-        excerpt: 'Qtela',
+        excerpt: 'Qtela rasa original',
         description: 'Qtela berkualitas tinggi',
         slug: 'qtela',
         weight: 0.3,
@@ -1283,7 +1290,7 @@ async function main() {
     const nabati = await prisma.product.create({
       data: {
         name: 'Nabati',
-        excerpt: 'Nabati',
+        excerpt: 'Nabati rasa original',
         description: 'Nabati berkualitas tinggi',
         slug: 'nabati',
         weight: 0.8,
@@ -1335,7 +1342,7 @@ async function main() {
     const oreo = await prisma.product.create({
       data: {
         name: 'Oreo',
-        excerpt: 'Oreo',
+        excerpt: 'Oreo rasa original',
         description: 'Oreo berkualitas tinggi',
         slug: 'oreo',
         weight: 1.3,
@@ -1387,7 +1394,7 @@ async function main() {
     const teh_botol = await prisma.product.create({
       data: {
         name: 'Teh Botol',
-        excerpt: 'Teh Botol',
+        excerpt: 'less sugar',
         description: 'Teh Botol berkualitas tinggi',
         slug: 'teh-botol',
         weight: 0.3,
@@ -1439,7 +1446,7 @@ async function main() {
     const jus_mangga = await prisma.product.create({
       data: {
         name: 'Jus Mangga',
-        excerpt: 'Jus Mangga',
+        excerpt: 'Buah Asli',
         description: 'Jus Mangga berkualitas tinggi',
         slug: 'jus-mangga',
         weight: 0.8,
@@ -1491,7 +1498,7 @@ async function main() {
     const susu_uht = await prisma.product.create({
       data: {
         name: 'Susu UHT',
-        excerpt: 'Susu UHT',
+        excerpt: 'produksi indonesia',
         description: 'Susu UHT berkualitas tinggi',
         slug: 'susu-uht',
         weight: 1.3,
@@ -1543,7 +1550,7 @@ async function main() {
     const kopi_instan = await prisma.product.create({
       data: {
         name: 'Kopi Instan',
-        excerpt: 'Kopi Instan',
+        excerpt: '100% kualitas',
         description: 'Kopi Instan berkualitas tinggi',
         slug: 'kopi-instan',
         weight: 0.3,
@@ -1595,7 +1602,7 @@ async function main() {
     const pasta_gigi = await prisma.product.create({
       data: {
         name: 'Pasta Gigi',
-        excerpt: 'Pasta Gigi',
+        excerpt: '100% kualitas',
         description: 'Pasta Gigi berkualitas tinggi',
         slug: 'pasta-gigi',
         weight: 0.8,
@@ -1647,7 +1654,7 @@ async function main() {
     const shampo = await prisma.product.create({
       data: {
         name: 'Shampo Pantene',
-        excerpt: 'Shampo',
+        excerpt: 'Anti Ketombo',
         description: 'Shampo berkualitas tinggi',
         slug: 'shampo',
         weight: 1.3,
@@ -1699,7 +1706,7 @@ async function main() {
     const tisu_basah = await prisma.product.create({
       data: {
         name: 'Tisu Basah',
-        excerpt: 'Tisu Basah',
+        excerpt: '100% kualitas',
         description: 'Tisu Basah berkualitas tinggi',
         slug: 'tisu-basah',
         weight: 0.3,
@@ -1751,7 +1758,7 @@ async function main() {
     const sabun_cuci_muka = await prisma.product.create({
       data: {
         name: 'KAHF Cuci Muka',
-        excerpt: 'Sabun Cuci Muka',
+        excerpt: '100% kualitas',
         description: 'Sabun Cuci Muka berkualitas tinggi',
         slug: 'sabun-cuci-muka',
         weight: 0.8,
@@ -1803,7 +1810,7 @@ async function main() {
     const wajan = await prisma.product.create({
       data: {
         name: 'Wajan',
-        excerpt: 'Wajan',
+        excerpt: 'Bahan Besi',
         description: 'Wajan berkualitas tinggi',
         slug: 'wajan',
         weight: 1.3,
@@ -1855,7 +1862,7 @@ async function main() {
     const spatula = await prisma.product.create({
       data: {
         name: 'Spatula',
-        excerpt: 'Spatula',
+        excerpt: 'Bahan Besi',
         description: 'Spatula berkualitas tinggi',
         slug: 'spatula',
         weight: 0.3,
@@ -1907,7 +1914,7 @@ async function main() {
     const saringan = await prisma.product.create({
       data: {
         name: 'Saringan',
-        excerpt: 'Saringan',
+        excerpt: 'Bahan Besi',
         description: 'Saringan berkualitas tinggi',
         slug: 'saringan',
         weight: 0.8,
@@ -1959,7 +1966,7 @@ async function main() {
     const kompor_portable = await prisma.product.create({
       data: {
         name: 'Kompor Portable',
-        excerpt: 'Kompor Portable',
+        excerpt: 'Antipanas',
         description: 'Kompor Portable berkualitas tinggi',
         slug: 'kompor-portable',
         weight: 1.3,
@@ -2148,7 +2155,7 @@ async function main() {
 
     const voucher2 = await prisma.voucher.create({
       data: {
-        name: 'Voucher 1000 rupiah',
+        name: 'Voucher Rp. 1K',
         description: 'Dapatkan diskon 1000 rupiah pada semua produk',
         code: 'HEMAT1K',
         stockVoucherAdmin: 100,
@@ -2167,7 +2174,7 @@ async function main() {
 
     const voucher3 = await prisma.voucher.create({
       data: {
-        name: 'Diskon Ongkir 1000 rupiah',
+        name: 'Voucher Ongkir Rp. 1K',
         description: 'Dapatkan diskon 1000 rupiah untuk ongkos kirim',
         code: 'DISKON1000',
         stockVoucherAdmin: 100,
@@ -2186,7 +2193,7 @@ async function main() {
 
     const voucher4 = await prisma.voucher.create({
       data: {
-        name: 'Diskon tomat 1000 rupiah',
+        name: 'Tomatoes Voucher',
         description: 'Dapatkan diskon 1000 rupiah untuk produk tomat',
         code: 'TOMAT1000',
         stockVoucherAdmin: 100,
@@ -2538,7 +2545,7 @@ async function main() {
 
     const discount1 = await prisma.discount.create({
       data: {
-        name: 'Diskon Tomat',
+        name: 'Tomatoes Discount 75%',
         type: DiscountType.PERCENTAGE,
         value: 75,
         minPurchase: 10,
@@ -2571,7 +2578,7 @@ async function main() {
 
     const discount2 = await prisma.discount.create({
       data: {
-        name: 'Diskon Semangka',
+        name: 'Semangka Discount 5k',
         type: DiscountType.AMOUNT,
         value: 5000,
         minPurchase: 100000,
@@ -2606,22 +2613,22 @@ async function main() {
         stock: 125,
         lastStock: 200,
         difference: 75,
-        typeOfChange: typeOfChange.PENGURANGAN,
+        typeOfChange: typeOfChange.PEMBELIAN,
         role: Role.SUPERADMIN,
         storeId: store1.id,
-        finalStock: 125,
+        finalStock: 75,
         createdAt: new Date(2025, 0, 15), // January
       },
       {
         productId: sabunMandi.id,
         userId: customer1.id,
-        stock: 500,
+        stock: 10,
         lastStock: 60,
-        difference: 440,
-        typeOfChange: typeOfChange.PENAMBAHAN,
+        difference: 50,
+        typeOfChange: typeOfChange.PEMBELIAN,
         role: Role.SUPERADMIN,
         storeId: store1.id,
-        finalStock: 500,
+        finalStock: 50,
         createdAt: new Date(2025, 1, 20), // February
       },
       {
@@ -2639,7 +2646,7 @@ async function main() {
       {
         productId: jeruk.id,
         userId: superadmin.id,
-        stock: 20,
+        stock: 520,
         lastStock: 500,
         difference: 20,
         typeOfChange: typeOfChange.PENAMBAHAN,
@@ -2651,7 +2658,7 @@ async function main() {
       {
         productId: panci.id,
         userId: superadmin.id,
-        stock: 20,
+        stock: 520,
         lastStock: 500,
         difference: 20,
         typeOfChange: typeOfChange.PENAMBAHAN,
@@ -2666,11 +2673,11 @@ async function main() {
         stock: 110,
         lastStock: 125,
         difference: 15,
-        typeOfChange: typeOfChange.PENGURANGAN,
+        typeOfChange: typeOfChange.PEMBELIAN,
         role: Role.CUSTOMERS,
         storeId: store1.id,
-        finalStock: 110,
-        createdAt: new Date(2025, 4, 10), // May
+        finalStock: 15,
+        createdAt: new Date(2025, 4, 10),
       },
       {
         productId: sabunMandi.id,
@@ -2678,23 +2685,23 @@ async function main() {
         stock: 450,
         lastStock: 500,
         difference: 50,
-        typeOfChange: typeOfChange.PENGURANGAN,
+        typeOfChange: typeOfChange.PEMBELIAN,
         role: Role.CUSTOMERS,
         storeId: store1.id,
-        finalStock: 450,
-        createdAt: new Date(2025, 5, 12), // June
+        finalStock: 50,
+        createdAt: new Date(2025, 5, 12),
       },
       {
         productId: jeruk.id,
         userId: customer1.id,
-        stock: 100,
+        stock: 10,
         lastStock: 50,
-        difference: 50,
-        typeOfChange: typeOfChange.PENAMBAHAN,
+        difference: 40,
+        typeOfChange: typeOfChange.PEMBELIAN,
         role: Role.CUSTOMERS,
         storeId: store1.id,
-        finalStock: 100,
-        createdAt: new Date(2025, 6, 15), // July
+        finalStock: 40,
+        createdAt: new Date(2025, 6, 15),
       },
       {
         productId: panci.id,
@@ -2705,24 +2712,24 @@ async function main() {
         typeOfChange: typeOfChange.PENAMBAHAN,
         role: Role.SUPERADMIN,
         storeId: store1.id,
-        finalStock: 120,
-        createdAt: new Date(2025, 7, 20), // August
+        finalStock: 100,
+        createdAt: new Date(2025, 7, 20),
       },
       {
         productId: tomat.id,
-        userId: storeadmin1.id,
+        userId: superadmin.id,
         stock: 200,
-        lastStock: 180,
-        difference: 20,
-        typeOfChange: typeOfChange.PENAMBAHAN,
+        lastStock: 410,
+        difference: 210,
+        typeOfChange: typeOfChange.PENGURANGAN,
         role: Role.STOREADMIN,
         storeId: store1.id,
         finalStock: 200,
-        createdAt: new Date(2025, 8, 25), // September
+        createdAt: new Date(2025, 8, 25),
       },
       {
         productId: semangka.id,
-        userId: storeadmin2.id,
+        userId: superadmin.id,
         stock: 300,
         lastStock: 250,
         difference: 50,
@@ -2730,14 +2737,14 @@ async function main() {
         role: Role.STOREADMIN,
         storeId: store2.id,
         finalStock: 300,
-        createdAt: new Date(2025, 9, 30), // October
+        createdAt: new Date(2025, 9, 30),
       },
       {
         productId: wortel.id,
-        userId: customer1.id,
+        userId: superadmin.id,
         stock: 50,
         lastStock: 100,
-        difference: -50,
+        difference: 50,
         typeOfChange: typeOfChange.PENGURANGAN,
         role: Role.CUSTOMERS,
         storeId: store1.id,
@@ -2747,30 +2754,30 @@ async function main() {
       {
         productId: bayam.id,
         userId: superadmin.id,
-        stock: 150,
+        stock: 35,
         lastStock: 100,
-        difference: 50,
-        typeOfChange: typeOfChange.PENAMBAHAN,
+        difference: 65,
+        typeOfChange: typeOfChange.PENGURANGAN,
         role: Role.SUPERADMIN,
         storeId: store1.id,
-        finalStock: 150,
+        finalStock: 35,
         createdAt: new Date(2025, 11, 10), // December
       },
       {
         productId: kol.id,
-        userId: storeadmin3.id,
-        stock: 200,
+        userId: superadmin.id,
+        stock: 10,
         lastStock: 150,
-        difference: 50,
-        typeOfChange: typeOfChange.PENAMBAHAN,
+        difference: 140,
+        typeOfChange: typeOfChange.PENGURANGAN,
         role: Role.STOREADMIN,
         storeId: store3.id,
-        finalStock: 200,
-        createdAt: new Date(2025, 0, 1), // January 2026
+        finalStock: 10,
+        createdAt: new Date(2023, 0, 1),
       },
       {
         productId: kangkung.id,
-        userId: storeadmin4.id,
+        userId: superadmin.id,
         stock: 120,
         lastStock: 100,
         difference: 20,
@@ -2778,19 +2785,19 @@ async function main() {
         role: Role.STOREADMIN,
         storeId: store4.id,
         finalStock: 120,
-        createdAt: new Date(2026, 1, 10), // February 2026
+        createdAt: new Date(2023, 1, 10),
       },
       {
         productId: anggur.id,
         userId: customer1.id,
-        stock: 70,
+        stock: 50,
         lastStock: 80,
-        difference: 10,
-        typeOfChange: typeOfChange.PENGURANGAN,
+        difference: 30,
+        typeOfChange: typeOfChange.PEMBELIAN,
         role: Role.CUSTOMERS,
         storeId: store1.id,
-        finalStock: 70,
-        createdAt: new Date(2025, 2, 20), // March 2026
+        finalStock: 30,
+        createdAt: new Date(2025, 2, 20),
       },
       {
         productId: apel.id,
@@ -2802,11 +2809,11 @@ async function main() {
         role: Role.SUPERADMIN,
         storeId: store1.id,
         finalStock: 130,
-        createdAt: new Date(2025, 3, 25), // April 2026
+        createdAt: new Date(2025, 3, 25),
       },
       {
         productId: taro.id,
-        userId: storeadmin1.id,
+        userId: superadmin.id,
         stock: 250,
         lastStock: 200,
         difference: 50,
@@ -2822,15 +2829,15 @@ async function main() {
         stock: 60,
         lastStock: 100,
         difference: 40,
-        typeOfChange: typeOfChange.PENGURANGAN,
+        typeOfChange: typeOfChange.PEMBELIAN,
         role: Role.CUSTOMERS,
         storeId: store1.id,
-        finalStock: 60,
-        createdAt: new Date(2025, 5, 15), // June 2026
+        finalStock: 40,
+        createdAt: new Date(2025, 5, 15),
       },
       {
         productId: nabati.id,
-        userId: storeadmin2.id,
+        userId: superadmin.id,
         stock: 300,
         lastStock: 250,
         difference: 50,
@@ -2842,7 +2849,7 @@ async function main() {
       },
       {
         productId: oreo.id,
-        userId: storeadmin3.id,
+        userId: superadmin.id,
         stock: 150,
         lastStock: 100,
         difference: 50,

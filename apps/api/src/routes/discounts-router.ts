@@ -51,7 +51,7 @@ router.get(
   getDiscountById,
 );
 
-router.post('/discount-for-product', verifyToken, getDiscountForProduct);
+router.post('/discount-for-product', getDiscountForProduct);
 
 router.get(
   '/discount-reports',
