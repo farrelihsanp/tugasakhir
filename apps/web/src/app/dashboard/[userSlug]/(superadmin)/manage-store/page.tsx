@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
-import { Store } from '@prisma/client';
+import { Store } from '@/types/types';
 
 const ManageStoresPage: React.FC = () => {
   const [stores, setStores] = useState<Store[]>([]);

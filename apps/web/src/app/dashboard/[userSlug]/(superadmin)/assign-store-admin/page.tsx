@@ -1,10 +1,10 @@
 'use client';
 
 import React, { useEffect, useState } from 'react';
-import { Store, User } from '@prisma/client';
 import { toast } from 'react-toastify';
 import { useRouter } from 'next/navigation';
 import { useParams } from 'next/navigation';
+import { Store, User } from '@/types/types';
 
 export default function AssignAdminPage() {
   const [stores, setStores] = useState<Store[]>([]);

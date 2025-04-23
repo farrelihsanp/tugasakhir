@@ -1,7 +1,6 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { VoucherCategory, VoucherType } from '@prisma/client';
 import { useStoreContext } from '@/utility/StoreContext';
 import { Product } from '@/types/types';
 import { useRouter } from 'next/navigation';
@@ -245,11 +244,8 @@ const CreateVoucher = () => {
                 <input
                   type="radio"
                   name="voucherCategory"
-                  value={VoucherCategory.SHOPPING_RESULT}
-                  checked={
-                    voucherData.voucherCategory ===
-                    VoucherCategory.SHOPPING_RESULT
-                  }
+                  value="SHOPPING_RESULT"
+                  checked={voucherData.voucherCategory === 'SHOPPING_RESULT'}
                   onChange={handleRadioChange}
                 />
                 Shopping Result
@@ -258,11 +254,8 @@ const CreateVoucher = () => {
                 <input
                   type="radio"
                   name="voucherCategory"
-                  value={VoucherCategory.SHIPPING_COST}
-                  checked={
-                    voucherData.voucherCategory ===
-                    VoucherCategory.SHIPPING_COST
-                  }
+                  value="SHIPPING_COST"
+                  checked={voucherData.voucherCategory === 'SHIPPING_COST'}
                   onChange={handleRadioChange}
                 />
                 Shipping Cost
@@ -271,10 +264,8 @@ const CreateVoucher = () => {
                 <input
                   type="radio"
                   name="voucherCategory"
-                  value={VoucherCategory.PRODUCT}
-                  checked={
-                    voucherData.voucherCategory === VoucherCategory.PRODUCT
-                  }
+                  value="PRODUCT"
+                  checked={voucherData.voucherCategory === 'PRODUCT'}
                   onChange={handleRadioChange}
                 />
                 Product
@@ -292,8 +283,8 @@ const CreateVoucher = () => {
                 <input
                   type="radio"
                   name="voucherType"
-                  value={VoucherType.AMOUNT}
-                  checked={voucherData.voucherType === VoucherType.AMOUNT}
+                  value="AMOUNT"
+                  checked={voucherData.voucherType === 'AMOUNT'}
                   onChange={handleRadioChange}
                 />
                 Amount
@@ -302,8 +293,8 @@ const CreateVoucher = () => {
                 <input
                   type="radio"
                   name="voucherType"
-                  value={VoucherType.PERCENTAGE}
-                  checked={voucherData.voucherType === VoucherType.PERCENTAGE}
+                  value="PERCENTAGE"
+                  checked={voucherData.voucherType === 'PERCENTAGE'}
                   onChange={handleRadioChange}
                 />
                 Percentage

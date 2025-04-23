@@ -14,7 +14,6 @@ import {
   FaRegCreditCard,
 } from 'react-icons/fa';
 import { CartItem } from '@/types/types';
-import { VoucherCategory } from '@prisma/client';
 
 export default function CartPage() {
   const [cart, setCart] = useState<Cart | null>(null);
@@ -389,10 +388,7 @@ export default function CartPage() {
               >
                 <option value="">Choose a Voucher</option>
                 {vouchers
-                  .filter(
-                    (voucher) =>
-                      voucher.voucherCategory === VoucherCategory.PRODUCT,
-                  )
+                  .filter((voucher) => voucher.voucherCategory === 'PRODUCT')
                   .map((voucher) => (
                     <option key={voucher.id} value={voucher.id}>
                       {voucher.name} - {voucher.value} {voucher.voucherType}

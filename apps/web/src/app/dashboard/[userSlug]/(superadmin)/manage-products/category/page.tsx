@@ -1,14 +1,12 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import { Category } from '@prisma/client';
 import Link from 'next/link';
 import { toast } from 'react-toastify';
-
-type CategoryData = Category;
+import { Category } from '@/types/types';
 
 const ManageCategoriesPage: React.FC = () => {
-  const [categories, setCategories] = useState<CategoryData[]>([]);
+  const [categories, setCategories] = useState<Category[]>([]);
   const [error, setError] = useState<string>('');
 
   useEffect(() => {

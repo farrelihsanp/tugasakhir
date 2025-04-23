@@ -3,9 +3,9 @@
 import { useState, useEffect } from 'react';
 import { toast } from 'react-toastify';
 import Image from 'next/image';
-import { Voucher } from '@prisma/client';
 import Link from 'next/link';
 import { FaChevronLeft, FaChevronRight } from 'react-icons/fa';
+import { Voucher } from '@/types/types';
 
 interface HeroProps {
   heightClass?: string;

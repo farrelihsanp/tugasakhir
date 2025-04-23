@@ -3,7 +3,6 @@
 import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { toast } from 'react-toastify';
-import { Role } from '@prisma/client';
 
 const CompleteRegisterForm = () => {
   const [formData, setFormData] = useState({
@@ -12,7 +11,7 @@ const CompleteRegisterForm = () => {
     username: '',
     password: '',
     reTypePassword: '',
-    role: Role.CUSTOMERS,
+    role: 'CUSTOMERS',
     profileImage: null as File | null,
   });
 

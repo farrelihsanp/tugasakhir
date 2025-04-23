@@ -3,7 +3,6 @@
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { toast } from 'react-toastify';
-import { VoucherCategory, VoucherType } from '@prisma/client';
 import { Voucher } from '@/types/types';
 import { useParams } from 'next/navigation';
 import Image from 'next/image';
@@ -19,8 +18,8 @@ const UpdateVoucher = () => {
     name: '',
     description: '',
     code: voucherCode as string,
-    voucherType: VoucherType.AMOUNT,
-    voucherCategory: VoucherCategory.SHOPPING_RESULT,
+    voucherType: 'AMOUNT',
+    voucherCategory: 'SHOPPING_RESULT',
     value: 0,
     startDate: '',
     endDate: '',
@@ -190,8 +189,8 @@ const UpdateVoucher = () => {
               <input
                 type="radio"
                 name="voucherType"
-                value={VoucherType.PERCENTAGE}
-                checked={voucherData.voucherType === VoucherType.PERCENTAGE}
+                value="PERCENTAGE"
+                checked={voucherData.voucherType === 'PERCENTAGE'}
                 onChange={handleInputChange}
               />
               Percentage
@@ -200,8 +199,8 @@ const UpdateVoucher = () => {
               <input
                 type="radio"
                 name="voucherType"
-                value={VoucherType.AMOUNT}
-                checked={voucherData.voucherType === VoucherType.AMOUNT}
+                value="AMOUNT"
+                checked={voucherData.voucherType === 'AMOUNT'}
                 onChange={handleInputChange}
               />
               Amount

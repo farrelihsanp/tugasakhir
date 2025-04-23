@@ -78,6 +78,7 @@ export interface Address {
   street: string;
   city: string;
   postalCode: string;
+  number: number;
   country: string;
   isPrimary: boolean;
 }

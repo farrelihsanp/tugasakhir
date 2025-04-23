@@ -2,7 +2,6 @@
 
 import { useState, useEffect } from 'react';
 import { toast } from 'react-toastify';
-import { OrderStatus } from '@prisma/client';
 import Link from 'next/link';
 import { useStoreContext } from '@/utility/StoreContext';
 import { Order } from '@/types/types';
@@ -15,7 +14,17 @@ const OrderStatusPage = () => {
   const [selectedYear, setSelectedYear] = useState('');
 
   const { user } = useStoreContext();
-  const fetchOrderStatus = OrderStatus;
+  const fetchOrderStatus = {
+    WAITING_FOR_PAYMENT: 'WAITING_FOR_PAYMENT',
+    PENDING_PAYMENT: 'PENDING_PAYMENT',
+    PAYMENT_DECLINED: 'PAYMENT_DECLINED',
+    PAID: 'PAID',
+    PROCESSING: 'PROCESSING',
+    SHIPPED: 'SHIPPED',
+    DELIVERED: 'DELIVERED',
+    COMPLETED: 'COMPLETED',
+    CANCELLED: 'CANCELLED',
+  };
   const orderStatus = Object.keys(fetchOrderStatus);
 
   useEffect(() => {
@@ -59,9 +68,7 @@ const OrderStatusPage = () => {
       toast.success('Order cancelled successfully');
       setOrders(
         orders.map((order) =>
-          order.id === orderId
-            ? { ...order, status: OrderStatus.CANCELLED }
-            : order,
+          order.id === orderId ? { ...order, status: 'CANCELLED' } : order,
         ),
       );
       setTimeout(() => window.location.reload(), 2000);
@@ -87,9 +94,7 @@ const OrderStatusPage = () => {
       toast.success('Order confirmed successfully');
       setOrders(
         orders.map((order) =>
-          order.id === orderId
-            ? { ...order, status: OrderStatus.COMPLETED }
-            : order,
+          order.id === orderId ? { ...order, status: 'COMPLETED' } : order,
         ),
       );
       setTimeout(() => window.location.reload(), 2000);
@@ -257,8 +262,8 @@ const OrderStatusPage = () => {
               </div>
 
               <div className="flex justify-between mt-4 gap-4">
-                {(order.status === OrderStatus.WAITING_FOR_PAYMENT ||
-                  order.status === OrderStatus.PAYMENT_DECLINED) && (
+                {(order.status === 'WAITING_FOR_PAYMENT' ||
+                  order.status === 'PAYMENT_DECLINED') && (
                   <button
                     className="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600 transition"
                     onClick={() => handleCancelOrder(order.id)}
@@ -266,7 +271,7 @@ const OrderStatusPage = () => {
                     Cancel Order
                   </button>
                 )}
-                {order.status === OrderStatus.DELIVERED && (
+                {order.status === 'DELIVERED' && (
                   <button
                     className="bg-primary text-white px-4 py-2 rounded hover:bg-green-700 transition"
                     onClick={() => handleConfirmOrder(order.id)}
@@ -285,7 +290,7 @@ const OrderStatusPage = () => {
                 </Link>
               </div>
               <div className="text-right">
-                {order.status === OrderStatus.PAYMENT_DECLINED && (
+                {order.status === 'PAYMENT_DECLINED' && (
                   <p className="text-red-500">
                     Payment rejected, please make payment again
                   </p>

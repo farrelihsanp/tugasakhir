@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
-import { User } from '@prisma/client';
+import { User } from '@/types/types';
 
 const AllUsersPage: React.FC = () => {
   const [users, setUsers] = useState<User[]>([]);

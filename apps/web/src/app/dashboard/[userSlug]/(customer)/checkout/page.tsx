@@ -4,7 +4,6 @@ import { useState, useEffect } from 'react';
 import { toast } from 'react-toastify';
 import { useStoreContext } from '@/utility/StoreContext';
 import { ShippingCost, Voucher, Address } from '@/types/types';
-import { VoucherCategory } from '@prisma/client';
 import { useRouter } from 'next/navigation';
 import { Cart } from '@/types/types';
 
@@ -178,17 +177,14 @@ const OrderForm = () => {
       return;
     }
 
-    if (selectedVoucherFulldata.voucherCategory === VoucherCategory.PRODUCT) {
+    if (selectedVoucherFulldata.voucherCategory === 'PRODUCT') {
       toast.error('Product voucher cannot be applied in this page');
       setLoading(false);
       return;
     }
 
     try {
-      if (
-        selectedVoucherFulldata.voucherCategory ===
-        VoucherCategory.SHOPPING_RESULT
-      ) {
+      if (selectedVoucherFulldata.voucherCategory === 'SHOPPING_RESULT') {
         const response = await fetch(
           `${process.env.NEXT_PUBLIC_API_DOMAIN}/api/v1/apply-voucher-to-cart`,
           {
@@ -212,8 +208,7 @@ const OrderForm = () => {
         }
       } else if (
         selectedShipping &&
-        selectedVoucherFulldata.voucherCategory ===
-          VoucherCategory.SHIPPING_COST
+        selectedVoucherFulldata.voucherCategory === 'SHIPPING_COST'
       ) {
         const response = await fetch(
           `${process.env.NEXT_PUBLIC_API_DOMAIN}/api/v1/apply-voucher-to-shipping-cost`,

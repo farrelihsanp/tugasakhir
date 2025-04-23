@@ -2,9 +2,9 @@
 
 import React, { useState, useEffect } from 'react';
 import { useParams } from 'next/navigation';
-import { User } from '@prisma/client';
 import Image from 'next/image';
 import { format } from 'date-fns';
+import { User } from '@/types/types';
 
 const UserDetailPage: React.FC = () => {
   const [user, setUser] = useState<User | null>(null);

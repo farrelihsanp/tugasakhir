@@ -3,7 +3,6 @@
 import { useStoreContext } from '@/utility/StoreContext';
 import Image from 'next/image';
 import Link from 'next/link';
-import { Role } from '@prisma/client';
 import { FaStar } from 'react-icons/fa';
 import { useState } from 'react';
 import { toast } from 'react-toastify';
@@ -14,7 +13,7 @@ export const ProductsPage = () => {
 
   const storeSlugStoreAdmin = storeStoreAdmin?.slug;
   const storeSlugToUse =
-    user?.role === Role.STOREADMIN ? storeSlugStoreAdmin : nearestStore?.slug;
+    user?.role === 'STOREADMIN' ? storeSlugStoreAdmin : nearestStore?.slug;
 
   const [currentPage, setCurrentPage] = useState(1);
   const productsPerPage = 10;
@@ -133,7 +132,7 @@ export const ProductsPage = () => {
                             ? `Stock: ${map.stock}`
                             : 'Out of stock'}
                         </p>
-                        {user?.role === Role.CUSTOMERS && map.stock > 0 ? (
+                        {user?.role === 'CUSTOMERS' && map.stock > 0 ? (
                           <div className="flex justify-start">
                             <button
                               onClick={() => handleAddToCart(map.product.id)}

@@ -2,9 +2,9 @@
 
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
-import { Store } from '@prisma/client';
 import { useStoreContext } from '@/utility/StoreContext';
 import { useRouter } from 'next/navigation';
+import { Store } from '@/types/types';
 
 const ManageStoresPage: React.FC = () => {
   const { user } = useStoreContext();

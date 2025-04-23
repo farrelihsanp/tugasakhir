@@ -3,9 +3,8 @@
 import React, { useEffect, useState } from 'react';
 import { useStoreContext } from '@/utility/StoreContext';
 import Link from 'next/link';
-import { Address } from '@prisma/client';
-import { toast } from 'react-toastify'; // Import toast
-import 'react-toastify/dist/ReactToastify.css'; // Import styles for react-toastify
+import { toast } from 'react-toastify';
+import { Address } from '@/types/types';
 
 const AddressPage = () => {
   const [addresses, setAddresses] = useState<Address[]>([]);

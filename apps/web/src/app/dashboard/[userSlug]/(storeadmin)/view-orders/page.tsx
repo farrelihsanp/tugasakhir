@@ -5,7 +5,6 @@ import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { useStoreContext } from '@/utility/StoreContext';
 import { Order, Store } from '@/types/types';
-import { OrderStatus } from '@prisma/client';
 
 type FetchError = {
   error: string;
@@ -104,7 +103,7 @@ export default function PendingOrdersPage() {
                     Payment Status: {order.status}
                   </p>
                   <p className="text-red-500 text-xs mt-2">
-                    {order.status === OrderStatus.PENDING_PAYMENT &&
+                    {order.status === 'PENDING_PAYMENT' &&
                       'Payment confirmation required'}
                   </p>
                 </div>
