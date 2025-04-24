@@ -856,28 +856,6 @@ export const processOrder = async (
       return;
     }
 
-    // ---
-    const paymentProofCostumer = await prisma.order.findFirst({
-      where: {
-        id: Number(orderId),
-      },
-      select: {
-        paymentProof: true,
-      },
-    });
-
-    if (!paymentProofCostumer) {
-      res.status(404).json({ error: 'Order not found' });
-      return;
-    }
-
-    if (!paymentProofCostumer.paymentProof) {
-      res.status(404).json({ error: 'Customer payment proof not found' });
-      return;
-    }
-
-    // -----
-
     const orderCostumer = await prisma.order.findFirst({
       where: {
         id: Number(orderId),
@@ -908,6 +886,30 @@ export const processOrder = async (
       return;
     }
 
+    // ---
+    if (orderCostumer.paymentMethodType === PaymentMethodType.BANK_TRANSFER) {
+      const paymentProofCostumer = await prisma.order.findFirst({
+        where: {
+          id: Number(orderId),
+        },
+        select: {
+          paymentProof: true,
+        },
+      });
+
+      if (!paymentProofCostumer) {
+        res.status(404).json({ error: 'Order not found' });
+        return;
+      }
+
+      if (!paymentProofCostumer.paymentProof) {
+        res.status(404).json({ error: 'Customer payment proof not found' });
+        return;
+      }
+    }
+
+    // -----
+
     const productChangesData = orderCostumer.orderItems.map((item) => ({
       orderId: orderCostumer.id,
       userId: userId,
@@ -924,13 +926,6 @@ export const processOrder = async (
     await prisma.productChangeData.createMany({
       data: productChangesData,
     });
-
-    // await prisma.order.update({
-    //   where: { id: orderCostumer.id },
-    //   data: {
-    //     acceptedProcessByAdmin: true,
-    //   },
-    // });
 
     await prisma.order.update({
       where: { id: orderCostumer.id },

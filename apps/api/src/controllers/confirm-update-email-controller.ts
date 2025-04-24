@@ -64,7 +64,7 @@ export async function confirmUpdateEmail(
 
     // Send the email via Resend
     const { error } = await resend.emails.send({
-      from: 'Email Updated <update@resend.dev>',
+      from: 'Email Updated <update@quickmart.click>',
       to: user.email,
       subject: 'Email Updated Successfully',
       html: htmlTemplate,

@@ -82,12 +82,21 @@ export async function login(req: Request, res: Response, next: NextFunction) {
     //     secure: process.env.NODE_ENV === 'production',
     //   })
 
+    // LOCAL
+    // res
+    // .cookie('accessToken', token, {
+    //   httpOnly: true,
+    //   sameSite: 'lax',
+    //   domain:
+    //     process.env.NODE_ENV === 'development' ? 'localhost' : 'quickmart',
+    //   path: '/',
+    //   secure: process.env.NODE_ENV === 'production',
+    // })
+
     res
       .cookie('accessToken', token, {
         httpOnly: true,
-        sameSite: 'lax',
-        domain:
-          process.env.NODE_ENV === 'development' ? 'localhost' : 'quickmart',
+        sameSite: 'none',
         path: '/',
         secure: process.env.NODE_ENV === 'production',
       })
@@ -180,7 +189,7 @@ export const sendEmailresetPassword = async (
     });
 
     const { error } = await resend.emails.send({
-      from: 'Password Reset <reset@resend.dev>',
+      from: 'Password Reset <reset@quickmart.click>',
       to: email,
       subject: 'Password Reset Request',
       html: htmlTemplate,
@@ -333,7 +342,7 @@ export const updateUserProfile = async (
       });
 
       const { error } = await resend.emails.send({
-        from: 'Update email <onboarding@resend.dev>',
+        from: 'Update email <onboarding@quickmart.click>',
         to: email,
         subject: 'Update Confirmation Email',
         html: htmlTemplate,

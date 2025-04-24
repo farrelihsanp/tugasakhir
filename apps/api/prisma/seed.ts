@@ -70,7 +70,7 @@ async function main() {
         isVerified: true,
         role: 'STOREADMIN',
         profileImage:
-          'https://res.cloudinary.com/dm1cnsldc/image/upload/v1739627186/education-confrence_jujt4f.jpg',
+          'https://images.unsplash.com/photo-1649433658557-54cf58577c68?q=80&w=1964&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
         referralNumber: 'REF654321',
         provider: 'CREDENTIALS',
       },
@@ -87,7 +87,7 @@ async function main() {
         isVerified: true,
         role: 'STOREADMIN',
         profileImage:
-          'https://res.cloudinary.com/dm1cnsldc/image/upload/v1739627186/education-confrence_jujt4f.jpg',
+          'https://plus.unsplash.com/premium_photo-1658527049634-15142565537a?q=80&w=1976&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
         referralNumber: 'REF654324',
         provider: 'CREDENTIALS',
       },
@@ -104,7 +104,7 @@ async function main() {
         isVerified: true,
         role: 'STOREADMIN',
         profileImage:
-          'https://res.cloudinary.com/dm1cnsldc/image/upload/v1739627186/education-confrence_jujt4f.jpg',
+          'https://images.unsplash.com/photo-1724435811349-32d27f4d5806?q=80&w=1935&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
         referralNumber: 'REF123321',
         provider: 'CREDENTIALS',
       },
@@ -121,7 +121,7 @@ async function main() {
         isVerified: true,
         role: 'STOREADMIN',
         profileImage:
-          'https://res.cloudinary.com/dm1cnsldc/image/upload/v1739627186/education-confrence_jujt4f.jpg',
+          'https://images.unsplash.com/photo-1581391528803-54be77ce23e3?q=80&w=1974&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
         referralNumber: 'REF123399',
         provider: 'CREDENTIALS',
       },
@@ -151,7 +151,7 @@ async function main() {
         name: 'Farrel Ihsan Prahaditya',
         username: 'farrelihsanp',
         password: customerPassword,
-        email: 'farrel.prahaditya2@gmail.com',
+        email: 'farrel.prahaditya@gmail.com',
         emailConfirmed: true,
         isVerified: true,
         role: 'CUSTOMERS',

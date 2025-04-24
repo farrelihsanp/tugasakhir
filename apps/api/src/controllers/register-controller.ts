@@ -69,7 +69,7 @@ export async function register(
     });
 
     const { error } = await resend.emails.send({
-      from: 'User Confirmation <onboarding@resend.dev>',
+      from: 'User Confirmation <onboarding@quickmart.click>',
       to: emailInput,
       subject: 'Confirmation Email',
       html: htmlTemplate,

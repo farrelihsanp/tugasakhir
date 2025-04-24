@@ -26,7 +26,9 @@ const updateOrderStatus = async () => {
 
         const shippingAt = order.shippingAt;
         const estimatedDeliveryTime = shippingAt
-          ? new Date(shippingAt.getTime() + estimatedTime * 1000 * 60 * 60 * 24)
+          ? new Date(
+              shippingAt.getTime() + estimatedTime * 1000 * 60 * 60 * 60 * 24,
+            )
           : null;
         const currentTime = new Date();
 

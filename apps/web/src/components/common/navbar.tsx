@@ -6,7 +6,6 @@ import { useEffect, useState } from 'react';
 import { useStoreContext } from '@/utility/StoreContext';
 import {
   FaMapMarkerAlt,
-  // FaSearch,
   FaShoppingCart,
   FaTachometerAlt,
   FaBoxOpen,
@@ -228,6 +227,12 @@ export default function Navbar() {
           </div>
         ) : (
           <div className="flex items-center gap-3">
+            <Link
+              href="vouchers-store"
+              className="text-sm text-gray-700 hover:text-green-700"
+            >
+              Vouchers Store
+            </Link>
             <Link
               href="category"
               className="text-sm text-gray-700 hover:text-green-700"

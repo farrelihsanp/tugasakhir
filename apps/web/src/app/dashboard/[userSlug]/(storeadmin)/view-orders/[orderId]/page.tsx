@@ -12,6 +12,7 @@ const StoreAdminActionPage = () => {
   const { user } = useStoreContext();
 
   const [order, setOrder] = useState<Order | null>(null);
+  // console.log('isinya order', order);
   const [error, setError] = useState<string | null>(null);
   const [paymentProofUrl, setPaymentProofUrl] = useState<string | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -168,7 +169,12 @@ const StoreAdminActionPage = () => {
               <div className="flex flex-col gap-4">
                 <button
                   onClick={handleSeeProof}
-                  className="bg-gradient-to-r bg-primary text-white py-3 rounded-lg font-semibold transition hover:opacity-90"
+                  className={`bg-gradient-to-r bg-primary text-white py-3 rounded-lg font-semibold transition hover:opacity-90 ${
+                    order.paymentMethodType === 'MIDTRANS'
+                      ? 'opacity-50 cursor-not-allowed'
+                      : ''
+                  }`}
+                  disabled={order.paymentMethodType === 'MIDTRANS'}
                 >
                   LIHAT BUKTI TRANSFER
                 </button>
@@ -180,7 +186,8 @@ const StoreAdminActionPage = () => {
                     order.status === 'PROCESSING' ||
                     order.status === 'SHIPPED' ||
                     order.status === 'DELIVERED' ||
-                    order.status === 'COMPLETED'
+                    order.status === 'COMPLETED' ||
+                    order.status === 'PAID'
                       ? 'opacity-50 cursor-not-allowed'
                       : ''
                   }`}
@@ -188,7 +195,8 @@ const StoreAdminActionPage = () => {
                     order.status === 'PROCESSING' ||
                     order.status === 'SHIPPED' ||
                     order.status === 'DELIVERED' ||
-                    order.status === 'COMPLETED'
+                    order.status === 'COMPLETED' ||
+                    order.status === 'PAID'
                   }
                 >
                   TOLAK PEMBAYARAN
@@ -201,7 +209,8 @@ const StoreAdminActionPage = () => {
                     order.status === 'PROCESSING' ||
                     order.status === 'SHIPPED' ||
                     order.status === 'DELIVERED' ||
-                    order.status === 'COMPLETED'
+                    order.status === 'COMPLETED' ||
+                    order.status === 'PAID'
                       ? 'opacity-50 cursor-not-allowed'
                       : ''
                   }`}
@@ -209,7 +218,8 @@ const StoreAdminActionPage = () => {
                     order.status === 'PROCESSING' ||
                     order.status === 'SHIPPED' ||
                     order.status === 'DELIVERED' ||
-                    order.status === 'COMPLETED'
+                    order.status === 'COMPLETED' ||
+                    order.status === 'PAID'
                   }
                 >
                   TERIMA PEMBAYARAN

@@ -216,7 +216,7 @@ export default function CartPage() {
           className="w-100 h-100 mb-6"
         />
         <div className="text-xl font-semibold text-gray-800">
-          Keranjang kamu kosong.
+          Keranjang kamu kosong
         </div>
         <p className="text-md text-gray-600 mt-4">
           Ayo tambahkan beberapa barang ke dalam keranjang!
