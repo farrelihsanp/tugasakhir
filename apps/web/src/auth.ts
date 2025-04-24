@@ -110,9 +110,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
       name: 'accessToken',
       options: {
         httpOnly: true,
-        sameSite: 'lax',
-        domain:
-          process.env.NODE_ENV === 'development' ? 'localhost' : 'quickmart',
+        sameSite: 'none',
         path: '/',
         secure: process.env.NODE_ENV === 'production',
       },
@@ -120,14 +118,20 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
   },
 });
 
-// BACKUP
+// CODE UNTUK DEPLOY - BARIS KE 108
+
+// ---
+
+// CODE UNTUK LOCAL
 
 // cookies: {
 //   sessionToken: {
 //     name: 'accessToken',
 //     options: {
 //       httpOnly: true,
-//       sameSite: 'none',
+//       sameSite: 'lax',
+//       domain:
+//         process.env.NODE_ENV === 'development' ? 'localhost' : 'quickmart',
 //       path: '/',
 //       secure: process.env.NODE_ENV === 'production',
 //     },

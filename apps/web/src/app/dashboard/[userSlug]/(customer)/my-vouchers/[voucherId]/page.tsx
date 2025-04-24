@@ -9,6 +9,7 @@ export default function VouchersStore() {
   const [voucher, setVoucher] = useState<Voucher | undefined>(undefined);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  console.log(voucher);
 
   const { voucherId } = useParams();
   const stockVoucherCustomer = voucher?.VoucherUser[0].stockCustomer;

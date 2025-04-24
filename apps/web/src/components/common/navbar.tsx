@@ -170,6 +170,12 @@ export default function Navbar() {
             >
               <FaBoxOpen /> Products
             </Link>
+            <Link
+              href="/category"
+              className="flex items-center gap-2 text-sm hover:text-green-700"
+            >
+              <FaThList /> Category
+            </Link>
           </>
         )}
 

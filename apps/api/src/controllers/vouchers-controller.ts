@@ -262,6 +262,7 @@ export const getVoucherById = async (
 
     const voucher = await prisma.voucher.findUnique({
       where: { id: Number(id) },
+      include: { VoucherUser: true },
     });
 
     if (!voucher) {

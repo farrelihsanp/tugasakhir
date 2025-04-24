@@ -25,7 +25,7 @@ import discountRouter from './routes/discounts-router.js';
 import reportRouter from './routes/reports-stock-router.js';
 
 const app: Application = express();
-const PORT = process.env.PORT || 8000;
+// const PORT = process.env.PORT || 8000;
 
 app.use(express.json());
 app.use(cookieParser());
@@ -59,8 +59,8 @@ app.use('/api/v1/report-stock', reportRouter);
 app.use(notFoundMiddleware);
 app.use(errorMiddleware);
 
-app.listen(PORT, () => {
-  console.info(`Server is listening on port: ${PORT}`);
-});
+// app.listen(PORT, () => {
+//   console.info(`Server is listening on port: ${PORT}`);
+// });
 
 export default app;
