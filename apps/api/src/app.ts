@@ -66,10 +66,17 @@
 // export default app;
 
 import express, { Application, Request, Response } from 'express';
+import { prisma } from './configs/prisma.js';
 
 const app: Application = express();
 app.get('/api/v1/status', (_req: Request, res: Response) => {
   res.status(200).json({ message: 'API is running well' });
+});
+
+app.get('/api/v1/users', async (_req: Request, res: Response) => {
+  const users = await prisma.user.findMany();
+
+  res.status(200).json(users);
 });
 
 export default app;
